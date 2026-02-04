@@ -38,7 +38,7 @@
         .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
         .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: var(--primary-bg); padding: 30px; border-radius: 25px; border: 2px solid var(--gold); width: 90%; max-width: 400px; text-align: center; }
-        .modal input { width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; font-size: 1.2rem; outline: none; }
+        .modal input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; font-size: 1.2rem; outline: none; }
         .btn-confirm { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1rem; }
         footer { text-align: center; padding: 40px; border-top: 1px solid var(--gold); margin-top: 50px; background: rgba(0,0,0,0.3); }
         .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
@@ -75,6 +75,7 @@
             <h2 id="modalTitle" style="color: var(--gold);">تأكيد الطلب</h2>
             <p id="modalData"></p>
             <input type="text" id="phoneInput" placeholder="رقم الهاتف أو الحساب" />
+            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
             <button id="submitBtn" class="btn-confirm" onclick="sendToGoogle()">إرسال الطلب</button>
             <button onclick="closeModal()" style="background:none; border:none; color:gray; margin-top:15px; cursor:pointer;">إلغاء</button>
         </div>
@@ -83,7 +84,7 @@
     <footer><p style="color: var(--gold); font-size: 1.4rem;">🌙 شبكة الماجد اللاسلكية 🌙</p></footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxkuHQrbd6njBQtoxpqD1twDriVzxw6iAAh6CQZ769WQ1261iYuJR4Ez404f4WoLKbG/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwNtLWRFQvgpQ7Uu7sojZt8dxAf0JLLjVgAtuoumAnw4tuANIVbTyflbLGw17XAFeCI/exec';
         let selectedPackage = '';
 
         function openModal(name, data) {
@@ -97,25 +98,28 @@
 
         function sendToGoogle() {
             const phone = document.getElementById('phoneInput').value;
+            const ref = document.getElementById('refInput').value;
             const btn = document.getElementById('submitBtn');
-            if (!phone) { alert('يرجى إدخال الرقم'); return; }
+            if (!phone || !ref) { alert('يرجى إدخال جميع البيانات'); return; }
+            
             btn.disabled = true; btn.innerText = 'جاري الإرسال...';
             
             const formData = new FormData();
             formData.append('package', selectedPackage);
             formData.append('phone', phone);
+            formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
 
             fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => { alert('تم الإرسال! راجعنا لاحقاً لاستلام كرتك.'); closeModal(); })
+            .then(() => { alert('تم الإرسال! احتفظ برقم المرجع لاستلام كرتك.'); closeModal(); })
             .catch(() => { alert('تم استلام طلبك بنجاح!'); closeModal(); })
             .finally(() => { btn.disabled = false; btn.innerText = 'إرسال الطلب'; });
         }
 
         function checkMyCard() {
-            const phone = prompt("أدخل رقم الهاتف للاستعلام عن الكرت:");
-            if (!phone) return;
-            fetch(scriptURL + "?action=check&phone=" + phone)
+            const ref = prompt("يرجى إدخال رقم المرجع (الذي أدخلته عند الطلب):");
+            if (!ref) return;
+            fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text())
             .then(text => alert(text))
             .catch(() => alert("الطلب لا يزال تحت المراجعة."));
