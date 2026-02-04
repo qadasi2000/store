@@ -70,7 +70,6 @@
 
         .btn-style:hover { transform: translateY(-3px); background: var(--gold); color: var(--primary-bg); }
         .btn-free-card { background: linear-gradient(135deg, #8b0032, #4a001a); border-color: #fff; }
-        .btn-speed { border-color: #ff4d4d; color: #ffcccc; } /* تمييز زر السرعة بلون تنبيهي خفيف */
 
         .grid-container {
             display: grid;
@@ -126,15 +125,6 @@
         footer { text-align: center; padding: 40px; border-top: 1px solid var(--gold); margin-top: 50px; background: rgba(0,0,0,0.3); }
         .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
     </style>
-    
-    <script>
-        function confirmSpeedTest(event) {
-            var confirmation = confirm("⚠️ تنبيه: عند البدء بقياس السرعة سيتم الخصم من رصيدك الحالي. هل أنت متأكد من المتابعة؟");
-            if (!confirmation) {
-                event.preventDefault(); // إلغاء عملية الانتقال للرابط
-            }
-        }
-    </script>
 </head>
 <body>
 
@@ -162,14 +152,6 @@
 
         <a href="http://m.com" class="btn-style">
             <span>ℹ️</span> معلومات الكرت
-        </a>
-
-        <a href="/files" class="btn-style">
-            <span>🎮</span> متجر الألعاب
-        </a>
-
-        <a href="http://m.net:8080" onclick="confirmSpeedTest(event)" target="_blank" class="btn-style btn-speed">
-            <span>🚀</span> قياس السرعة
         </a>
     </div>
 
