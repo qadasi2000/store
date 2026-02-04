@@ -3,126 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شبكة الماجد اللاسلكية - رمضان 2026</title>
+    <title>شبكة الماجد اللاسلكية - سلة التسوق</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --accent-red: #8b0032; --gold: #f9d976; }
-        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; }
-        h1, .main-mosque, .btn-style, footer p { font-family: 'Amiri', serif; }
-        .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; font-weight: bold; overflow: hidden; backdrop-filter: blur(10px); position: relative; z-index: 100; }
+        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 80px; overflow-x: hidden; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; }
+        h1, h2, .btn-style { font-family: 'Amiri', serif; }
+        
+        /* شريط التنبيه */
+        .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; font-weight: bold; overflow: hidden; backdrop-filter: blur(10px); }
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 30s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .lantern-header { text-align: center; padding: 30px 0 10px 0; }
-        .main-mosque { font-size: 70px; filter: drop-shadow(0 0 15px var(--gold)); }
-        .central-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 40px; padding: 0 15px; }
-        @media (min-width: 768px) { .central-btns { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 1100px; margin-left: auto; margin-right: auto; } }
-        .btn-style { display: inline-flex; align-items: center; justify-content: center; gap: 10px; color: #fff; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.05rem; transition: 0.4s; border: 1px solid var(--gold); width: 100%; max-width: 260px; box-sizing: border-box; background: rgba(0,0,0,0.3); cursor: pointer; }
-        .btn-style:hover { transform: translateY(-3px); background: var(--gold); color: var(--primary-bg); }
-        .btn-check { background: #4a001a; border-color: var(--gold); }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
-        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; cursor: pointer; }
-        .card-wrapper { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; border-radius: 45px; overflow: hidden; }
-        .card-wrapper::before { content: ""; position: absolute; width: 160%; height: 160%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
-        .card-wrapper::after { content: ""; position: absolute; inset: 5px; background: var(--primary-bg); border-radius: 40px; z-index: 1; }
-        @keyframes rotate-border { 100% { transform: rotate(360deg); } }
-        .diamond-card { width: 210px; height: 210px; background: var(--card-gradient); border-radius: 35px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; transform: rotate(45deg); transition: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .card-content { transform: rotate(-45deg); text-align: center; }
-        .card-wrapper:hover .diamond-card { transform: rotate(0deg); border-radius: 40px; }
-        .card-wrapper:hover .card-content { transform: rotate(0deg); }
-        .icon { font-size: 55px; display: block; margin-bottom: 5px; }
-        .price { font-size: 1.8rem; font-weight: 900; display: block; }
-        .data { font-size: 1.2rem; font-weight: bold; opacity: 0.9; }
-        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
-        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
-        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--primary-bg); padding: 30px; border-radius: 25px; border: 2px solid var(--gold); width: 90%; max-width: 400px; text-align: center; }
-        .modal input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; font-size: 1.2rem; outline: none; }
-        .btn-confirm { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1rem; }
-        footer { text-align: center; padding: 40px; border-top: 1px solid var(--gold); margin-top: 50px; background: rgba(0,0,0,0.3); }
-        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
+
+        /* الأزرار العلوية */
+        .central-btns { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 20px 0; padding: 0 15px; }
+        @media (min-width: 768px) { .central-btns { flex-direction: row; justify-content: center; } }
+        .btn-style { display: inline-flex; align-items: center; justify-content: center; gap: 10px; color: #fff; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); cursor: pointer; transition: 0.3s; width: 220px; }
+        .btn-style:hover { background: var(--gold); color: var(--primary-bg); }
+
+        /* شبكة الباقات */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .package-card { background: rgba(255,255,255,0.05); border: 1px solid var(--gold); border-radius: 25px; padding: 25px; text-align: center; transition: 0.3s; position: relative; }
+        .package-card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .price { font-size: 2rem; color: var(--gold); display: block; margin: 10px 0; }
+        .btn-add { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem; }
+
+        /* السلة العائمة */
+        .cart-float { position: fixed; bottom: 20px; left: 20px; background: var(--gold); color: var(--primary-bg); padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 20px rgba(0,0,0,0.6); z-index: 1000; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .cart-float:hover { transform: scale(1.1); }
+        .cart-count { background: #8b0032; color: white; border-radius: 50%; padding: 2px 10px; font-size: 0.9rem; }
+
+        /* النافذة المنبثقة (السلة والدفع) */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 30px; border-radius: 30px; width: 90%; max-width: 450px; text-align: center; }
+        .cart-items-list { max-height: 200px; overflow-y: auto; margin-bottom: 20px; }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(249,217,118,0.2); }
+        .modal input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-size: 1.1rem; }
+        .btn-pay { background: #28a745; color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.2rem; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="stars"></div>
+
     <div class="marquee"><div class="marquee-content">🌙 شبكة الماجد اللاسلكية تهنئكم بحلول شهر رمضان المبارك 🌙 استمتع بأقوى العروض والسرعات 🌙</div></div>
-    <div class="lantern-header"><span class="main-mosque">🕌</span><h1 style="color: var(--gold);">عروض الماجد الرمضانية 🌙</h1></div>
-    
+
+    <div style="text-align: center; padding: 30px 0;">
+        <h1 style="color: var(--gold); font-size: 2.5rem; margin: 0;">🕌 متجر الماجد</h1>
+        <p>اختر باقاتك المفضلة وأضفها للسلة</p>
+    </div>
+
     <div class="central-btns">
-        <a href="https://quran.ksu.edu.sa/m.php#aya=2_185" target="_blank" class="btn-style"><span>📖</span> القرآن الكريم</a>
-        <button onclick="checkMyCard()" class="btn-style btn-check"><span>🔑</span> استلام الكرت</button>
-        <button onclick="openModal('كرت مجاني', 'تجريبي')" class="btn-style" style="background: linear-gradient(135deg, #8b0032, #4a001a);"><span>🎁</span> كرت مجاني</button>
+        <button onclick="checkMyCard()" class="btn-style"><span>🔑</span> استلام الكروت</button>
+        <a href="https://quran.ksu.edu.sa/m.php" target="_blank" class="btn-style"><span>📖</span> المصحف الإلكتروني</a>
     </div>
 
     <div class="grid-container">
-        <div class="package-unit b100" onclick="openModal('100 ريال', '500MB')">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📡</span><span class="price">100 ريال</span><div class="data">500 ميجا</div></div></div></div>
+        <div class="package-card">
+            <span style="font-size: 3rem;">📡</span>
+            <span class="price">100 ريال</span>
+            <p>سعة 500 ميجابايت</p>
+            <button class="btn-add" onclick="addToCart('باقة 100', 100)">إضافة للسلة 🛒</button>
         </div>
-        <div class="package-unit b200" onclick="openModal('200 ريال', '1GB')">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">⚡</span><span class="price">200 ريال</span><div class="data">1 جيجا</div></div></div></div>
+        <div class="package-card">
+            <span style="font-size: 3rem;">⚡</span>
+            <span class="price">200 ريال</span>
+            <p>سعة 1 جيجابايت</p>
+            <button class="btn-add" onclick="addToCart('باقة 200', 200)">إضافة للسلة 🛒</button>
         </div>
-        <div class="package-unit b300" onclick="openModal('300 ريال', '1.5GB')">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📱</span><span class="price">300 ريال</span><div class="data">1.5 جيجا</div></div></div></div>
+        <div class="package-card">
+            <span style="font-size: 3rem;">🚀</span>
+            <span class="price">500 ريال</span>
+            <p>سعة 2.5 جيجابايت</p>
+            <button class="btn-add" onclick="addToCart('باقة 500', 500)">إضافة للسلة 🛒</button>
         </div>
-        <div class="package-unit b500" onclick="openModal('500 ريال', '2.5GB')">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">🚀</span><span class="price">500 ريال</span><div class="data">2.5 جيجا</div></div></div></div>
+        <div class="package-card">
+            <span style="font-size: 3rem;">💎</span>
+            <span class="price">1000 ريال</span>
+            <p>سعة 5 جيجابايت</p>
+            <button class="btn-add" onclick="addToCart('باقة 1000', 1000)">إضافة للسلة 🛒</button>
         </div>
     </div>
 
-    <div id="orderModal" class="modal">
+    <div class="cart-float" id="cartFloat" onclick="toggleCart()">
+        🛒 السلة <span class="cart-count" id="cartCount">0</span>
+    </div>
+
+    <div id="cartModal" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" style="color: var(--gold);">تأكيد الطلب</h2>
-            <p id="modalData"></p>
-            <input type="text" id="phoneInput" placeholder="رقم الهاتف أو الحساب" />
-            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
-            <button id="submitBtn" class="btn-confirm" onclick="sendToGoogle()">إرسال الطلب</button>
-            <button onclick="closeModal()" style="background:none; border:none; color:gray; margin-top:15px; cursor:pointer;">إلغاء</button>
+            <h2 style="color: var(--gold);">سلة المشتريات 🛍️</h2>
+            <div id="cartItemsList" class="cart-items-list"></div>
+            <div style="font-weight: bold; font-size: 1.3rem; margin: 15px 0;">
+                المجموع: <span id="totalPrice" style="color: var(--gold);">0</span> ريال
+            </div>
+            
+            <input type="text" id="phoneInput" placeholder="رقم الهاتف للتواصل" />
+            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة (سري)" />
+            
+            <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب</button>
+            <button onclick="toggleCart()" style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;">إلغاء</button>
         </div>
     </div>
-
-    <footer><p style="color: var(--gold); font-size: 1.4rem;">🌙 شبكة الماجد اللاسلكية 🌙</p></footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwNtLWRFQvgpQ7Uu7sojZt8dxAf0JLLjVgAtuoumAnw4tuANIVbTyflbLGw17XAFeCI/exec';
-        let selectedPackage = '';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxUphy9NNCPmqc77b3uZbx4Y1EPcUXhqiSqaMYQbYlW7D4G_ep7zx62A8ONBXz-osNK/exec';
+        let cart = [];
 
-        function openModal(name, data) {
-            selectedPackage = name + ' (' + data + ')';
-            document.getElementById('modalTitle').innerText = name;
-            document.getElementById('modalData').innerText = 'سيتم طلب: ' + data;
-            document.getElementById('orderModal').style.display = 'flex';
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCartUI();
+            // اهتزاز خفيف للزر عند الإضافة
+            window.navigator.vibrate && window.navigator.vibrate(50);
         }
 
-        function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const list = document.getElementById('cartItemsList');
+            const total = document.getElementById('totalPrice');
+            
+            list.innerHTML = '';
+            let sum = 0;
+            
+            cart.forEach((item, index) => {
+                sum += item.price;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>${item.price} ريال</span>
+                        <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4d4d; cursor:pointer;">❌</button>
+                    </div>`;
+            });
+            total.innerText = sum;
+        }
 
-        function sendToGoogle() {
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function sendOrder() {
             const phone = document.getElementById('phoneInput').value;
             const ref = document.getElementById('refInput').value;
-            const btn = document.getElementById('submitBtn');
-            if (!phone || !ref) { alert('يرجى إدخال جميع البيانات'); return; }
-            
-            btn.disabled = true; btn.innerText = 'جاري الإرسال...';
-            
+            const btn = document.getElementById('payBtn');
+
+            if (cart.length === 0) { alert("السلة فارغة!"); return; }
+            if (!phone || !ref) { alert("يرجى إدخال رقم الهاتف ورقم المرجع"); return; }
+
+            btn.disabled = true;
+            btn.innerText = "جاري الإرسال...";
+
+            const packageList = cart.map(item => item.name).join(' + ');
+            const total = document.getElementById('totalPrice').innerText;
+
             const formData = new FormData();
-            formData.append('package', selectedPackage);
+            formData.append('packages', packageList);
+            formData.append('total', total);
             formData.append('phone', phone);
             formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
 
             fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => { alert('تم الإرسال! احتفظ برقم المرجع لاستلام كرتك.'); closeModal(); })
-            .catch(() => { alert('تم استلام طلبك بنجاح!'); closeModal(); })
-            .finally(() => { btn.disabled = false; btn.innerText = 'إرسال الطلب'; });
+            .then(() => {
+                alert("تم إرسال طلبك بنجاح! احتفظ برقم المرجع ("+ref+") للاستعلام عن الكروت.");
+                cart = []; updateCartUI(); toggleCart();
+                document.getElementById('phoneInput').value = '';
+                document.getElementById('refInput').value = '';
+            })
+            .catch(() => alert("شكراً لك، تم استلام الطلب!"))
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = "تأكيد وإرسال الطلب";
+            });
         }
 
         function checkMyCard() {
-            const ref = prompt("يرجى إدخال رقم المرجع (الذي أدخلته عند الطلب):");
+            const ref = prompt("أدخل رقم المرجع الخاص بحوالتك:");
             if (!ref) return;
+
             fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text())
             .then(text => alert(text))
-            .catch(() => alert("الطلب لا يزال تحت المراجعة."));
+            .catch(() => alert("الطلب لا يزال قيد المراجعة."));
         }
     </script>
 </body>
