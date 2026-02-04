@@ -78,7 +78,7 @@
             justify-items: center;
         }
 
-        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; cursor: pointer; }
 
         .card-wrapper {
             position: relative; width: 260px; height: 260px;
@@ -122,6 +122,13 @@
         .b5000 { --accent-color: #8b5cf6; --card-gradient: linear-gradient(135deg, #4c1d95, #8b5cf6); }
         .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
 
+        /* Modal / Popup Style */
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--primary-bg); padding: 30px; border-radius: 25px; border: 2px solid var(--gold); width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 30px rgba(249, 217, 118, 0.2); }
+        .modal input { width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; font-size: 1.2rem; outline: none; }
+        .btn-confirm { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1rem; transition: 0.3s; }
+        .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
         footer { text-align: center; padding: 40px; border-top: 1px solid var(--gold); margin-top: 50px; background: rgba(0,0,0,0.3); }
         .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
     </style>
@@ -131,9 +138,7 @@
     <div class="stars"></div>
 
     <div class="marquee">
-        <div class="marquee-content">
-            🌙 شبكة الماجد اللاسلكية تهنئكم بحلول شهر رمضان المبارك 🌙 استمتع بأقوى العروض والسرعات 🌙 رمضان كريم 🌙
-        </div>
+        <div class="marquee-content">🌙 شبكة الماجد اللاسلكية تهنئكم بحلول شهر رمضان المبارك 🌙 استمتع بأقوى العروض والسرعات 🌙 رمضان كريم 🌙</div>
     </div>
 
     <div class="lantern-header">
@@ -142,40 +147,42 @@
     </div>
 
     <div class="central-btns">
-        <a href="https://quran.ksu.edu.sa/m.php#aya=2_185" target="_blank" class="btn-style">
-            <span>📖</span> القرآن الكريم
-        </a>
-        
-        <a href="https://script.google.com/macros/s/AKfycby8HSsAHKGmg8IAKrvsHCz8s95OojwMDCnLXjPM4ZQc1E3YqF5F1nDCn_Dtb9nzv9PttQ/exec?ip=$(ip)" target="_blank" class="btn-style btn-free-card">
-            <span>🎁</span> كرت مجاني
-        </a>
-
-        <a href="http://m.com" class="btn-style">
-            <span>ℹ️</span> معلومات الكرت
-        </a>
+        <a href="https://quran.ksu.edu.sa/m.php#aya=2_185" target="_blank" class="btn-style"><span>📖</span> القرآن الكريم</a>
+        <button onclick="openModal('طلب كرت مجاني', 'تجريبي')" class="btn-style btn-free-card"><span>🎁</span> كرت مجاني</button>
+        <a href="http://m.com" class="btn-style"><span>ℹ️</span> معلومات الكرت</a>
     </div>
 
     <div class="grid-container">
-        <div class="package-unit b100">
+        <div class="package-unit b100" onclick="openModal('باقة 100 ريال', '500 ميجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📡</span><span class="price">100 ريال</span><div class="data">500 ميجا</div></div></div></div>
         </div>
-        <div class="package-unit b200">
+        <div class="package-unit b200" onclick="openModal('باقة 200 ريال', '1 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">⚡</span><span class="price">200 ريال</span><div class="data">1 جيجا</div></div></div></div>
         </div>
-        <div class="package-unit b300">
+        <div class="package-unit b300" onclick="openModal('باقة 300 ريال', '1.5 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📱</span><span class="price">300 ريال</span><div class="data">1.5 جيجا</div></div></div></div>
         </div>
-        <div class="package-unit b500">
+        <div class="package-unit b500" onclick="openModal('باقة 500 ريال', '2.5 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">🚀</span><span class="price">500 ريال</span><div class="data">2.5 جيجا</div></div></div></div>
         </div>
-        <div class="package-unit b1000">
+        <div class="package-unit b1000" onclick="openModal('باقة 1000 ريال', '5 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">💎</span><span class="price">1000 ريال</span><div class="data">5 جيجا</div></div></div></div>
         </div>
-        <div class="package-unit b5000">
+        <div class="package-unit b5000" onclick="openModal('باقة 5000 ريال', '25 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">🔥</span><span class="price">5000 ريال</span><div class="data">25 جيجا</div></div></div></div>
         </div>
-        <div class="package-unit b10000">
+        <div class="package-unit b10000" onclick="openModal('باقة 10000 ريال', '50 جيجا')">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">👑</span><span class="price">10000 ريال</span><div class="data">50 جيجا</div></div></div></div>
+        </div>
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="color: var(--gold); margin: 0;">تأكيد الطلب</h2>
+            <p id="modalData" style="opacity: 0.8;"></p>
+            <input type="text" id="phoneInput" placeholder="رقم الهاتف أو اسم الحساب" />
+            <button id="submitBtn" class="btn-confirm" onclick="sendToGoogle()">إرسال الطلب</button>
+            <button onclick="closeModal()" style="background: none; border: none; color: #aaa; margin-top: 15px; cursor: pointer;">إلغاء</button>
         </div>
     </div>
 
@@ -184,5 +191,55 @@
         <p>© 2026 جميع الحقوق محفوظة</p>
     </footer>
 
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby8HSsAHKGmg8IAKrvsHCz8s95OojwMDCnLXjPM4ZQc1E3YqF5F1nDCn_Dtb9nzv9PttQ/exec';
+        let selectedPackage = '';
+
+        function openModal(name, data) {
+            selectedPackage = name + ' (' + data + ')';
+            document.getElementById('modalTitle').innerText = name;
+            document.getElementById('modalData').innerText = 'سيتم طلب: ' + data;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function sendToGoogle() {
+            const phone = document.getElementById('phoneInput').value;
+            const btn = document.getElementById('submitBtn');
+
+            if (!phone) {
+                alert('يرجى إدخال رقم الهاتف أو الحساب');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'جاري الإرسال...';
+
+            // إرسال البيانات باستخدام FormData ليتوافق مع Apps Script
+            const formData = new FormData();
+            formData.append('package', selectedPackage);
+            formData.append('phone', phone);
+            formData.append('date', new Date().toLocaleString('ar-YE'));
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                alert('تم إرسال طلبك بنجاح يا ماجد! سيتم التواصل معك قريباً.');
+                closeModal();
+                document.getElementById('phoneInput').value = '';
+            })
+            .catch(error => {
+                // بسبب سياسة CORS قد يظهر خطأ حتى لو وصل الطلب، لذا نعتبرها نجاحاً إذا وصل الشيت
+                alert('شكراً لك! تم استلام طلبك.');
+                closeModal();
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = 'إرسال الطلب';
+            });
+        }
+    </script>
 </body>
 </html>
