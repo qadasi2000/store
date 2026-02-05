@@ -16,14 +16,18 @@
         
         .header { text-align: center; padding: 40px 20px; }
         
-        /* توحيد تصميم أزرار النظام (الاستلام والسلة) */
         .btn-check { 
-            display: inline-block; margin: 20px auto; color: var(--primary-bg); 
-            background: var(--gold); border: 2px solid white; padding: 15px 40px; 
-            border-radius: 50px; font-weight: bold; font-size: 1.2rem;
+            display: inline-block; margin: 10px; color: var(--primary-bg); 
+            background: var(--gold); border: 2px solid white; padding: 15px 30px; 
+            border-radius: 50px; font-weight: bold; font-size: 1.1rem;
             cursor: pointer; transition: 0.3s; 
             box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4);
             animation: pulse-glow 2s infinite;
+        }
+
+        .btn-help {
+            background: transparent; color: var(--gold); 
+            border: 2px solid var(--gold); animation: none;
         }
 
         .cart-float { 
@@ -83,18 +87,12 @@
         }
         .btn-add-package:hover { transform: scale(1.05); background: white; box-shadow: 0 0 20px var(--gold); }
 
-        /* تدرجات ألوان الباقات */
-        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
-        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
-        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
-        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
-        .b5000 { --accent-color: #8b5cf6; --card-gradient: linear-gradient(135deg, #4c1d95, #8b5cf6); }
-        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; text-align: center; color: white; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 30px; border-radius: 25px; width: 100%; max-width: 500px; text-align: center; color: white; overflow-y: auto; max-height: 90vh; }
         
+        .step-box { text-align: right; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--gold); }
+        .step-box b { color: var(--gold); display: block; margin-bottom: 5px; }
+
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; border: 1px solid rgba(249, 217, 118, 0.1); }
         .btn-remove { background: #ff4444; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; }
 
@@ -113,6 +111,15 @@
             margin: 15px 0;
             font-size: 1.1rem;
         }
+
+        /* تدرجات ألوان الباقات */
+        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
+        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
+        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
+        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
+        .b5000 { --accent-color: #8b5cf6; --card-gradient: linear-gradient(135deg, #4c1d95, #8b5cf6); }
+        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
     </style>
 </head>
 <body>
@@ -121,7 +128,10 @@
 
     <div class="header">
         <h1 style="color: var(--gold); font-size: 3.5rem; margin: 0;">متجر شبكة الماجد</h1>
-        <button onclick="promptCheck()" class="btn-check">🔑 استلام الكروت الجاهزة</button>
+        <div style="margin-top: 20px;">
+            <button onclick="toggleHelp()" class="btn-check btn-help">💡 كيفية الشراء؟</button>
+            <button onclick="promptCheck()" class="btn-check">🔑 استلام الكروت</button>
+        </div>
     </div>
 
     <div class="grid-container">
@@ -154,7 +164,36 @@
         </script>
     </div>
 
-    <div class="cart-float" onclick="toggleCart()">🛒 سلة المشتريات (<span id="cartCount">0</span>)</div>
+    <div class="cart-float" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
+
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: var(--gold);">آلية الشراء والاستلام 💡</h2>
+            
+            <div class="step-box">
+                <b>1. اختيار الباقة</b>
+                اختر الباقة المناسبة واضغط "شراء الآن" لتضاف إلى السلة.
+            </div>
+            
+            <div class="step-box">
+                <b>2. التحويل المالي</b>
+                افتح السلة وقم بتحويل المبلغ إلى حساب الكريمي: <br>
+                <center><strong style="color:var(--gold); font-size:1.3rem;">121127286</strong></center>
+            </div>
+
+            <div class="step-box">
+                <b>3. إرسال الطلب</b>
+                أدخل "رقم المرجع" المكتوب في سند التحويل داخل السلة واضغط "تأكيد".
+            </div>
+
+            <div class="step-box">
+                <b>4. الاستلام الفوري</b>
+                بعد دقيقتين من التحويل، اضغط زر "استلام الكروت" بالأعلى وأدخل رقم المرجع الخاص بك لتظهر أكواد الكروت فوراً.
+            </div>
+
+            <button onclick="toggleHelp()" class="btn-pay">فهمت ذلك ✅</button>
+        </div>
+    </div>
 
     <div id="cartModal" class="modal">
         <div class="modal-content">
@@ -168,14 +207,14 @@
             <div id="cartItemsList" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;"></div>
             
             <div style="font-weight: bold; font-size: 1.4rem; margin: 10px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
-                المجموع الكلي: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
+                المجموع: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
             </div>
 
-            <input type="text" id="phoneInput" placeholder="رقم الجوال كمرجع (اختياري)" />
-            <input type="text" id="refInput" placeholder="أدخل رقم المرجع المذكور في الحوالة" />
+            <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)" />
+            <input type="text" id="refInput" placeholder="أدخل رقم المرجع من الحوالة" />
             
-            <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب ✨</button>
-            <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء والعودة</button>
+            <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب للتفعيل ✨</button>
+            <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء</button>
         </div>
     </div>
 
@@ -218,7 +257,7 @@
             const list = document.getElementById('cartItemsList');
             const total = document.getElementById('totalPrice');
             list.innerHTML = ''; let sum = 0;
-            if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">السلة فارغة حالياً..</p>';
+            if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">السلة فارغة..</p>';
             cart.forEach((item) => { 
                 sum += item.price; 
                 list.innerHTML += `
@@ -238,6 +277,11 @@
             m.style.display = (m.style.display==='flex')?'none':'flex'; 
         }
 
+        function toggleHelp() {
+            const m = document.getElementById('helpModal');
+            m.style.display = (m.style.display==='flex')?'none':'flex';
+        }
+
         function sendOrder() {
             const phone = document.getElementById('phoneInput').value || "غير مسجل";
             const ref = document.getElementById('refInput').value;
@@ -251,11 +295,11 @@
             formData.append('date', new Date().toLocaleString('ar-YE'));
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => { 
-                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 يرجى تصوير الشاشة والاحتفاظ برقم المرجع (${ref}) لاستلام كرتك.`); 
+                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 يرجى الانتظار دقيقتين للتفعيل، ثم استخدم زر "استلام الكروت" برقم المرجع (${ref})`); 
                 cart = []; saveCart(); updateCartUI(); toggleCart(); 
             })
             .catch(() => alert("خطأ في الشبكة، حاول مرة أخرى"))
-            .finally(() => { btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false; });
+            .finally(() => { btn.innerText = "إرسال الطلب للتفعيل ✨"; btn.disabled = false; });
         }
 
         function promptCheck() {
@@ -287,7 +331,7 @@
             document.getElementById('resultModal').style.display = 'flex';
         }
 
-        function copyCode(code) { navigator.clipboard.writeText(code).then(() => alert("تم نسخ الكود بنجاح ✅")); }
+        function copyCode(code) { navigator.clipboard.writeText(code).then(() => alert("تم نسخ الكود ✅")); }
         function closeResult() { document.getElementById('resultModal').style.display = 'none'; }
     </script>
 </body>
