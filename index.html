@@ -28,7 +28,7 @@
         .card-content { text-align: center; color: white; }
         .price { font-size: 2.2rem; font-weight: 900; display: block; color: white; margin-bottom: 5px; }
         .data { font-size: 1.4rem; font-weight: bold; color: var(--gold); }
-        .stock-tag { font-size: 0.9rem; margin-top: 5px; color: #fff; background: rgba(0,0,0,0.3); padding: 2px 10px; border-radius: 10px; }
+        .stock-tag { font-size: 0.9rem; margin-top: 5px; color: #fff; background: rgba(0,0,0,0.3); padding: 2px 10px; border-radius: 10px; font-weight: bold;}
         .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 14px 35px; border-radius: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.3s; width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; animation: none; }
         
@@ -47,7 +47,7 @@
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 30px; border-radius: 25px; width: 100%; max-width: 500px; text-align: center; color: white; overflow-y: auto; max-height: 90vh; }
         input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-size: 1rem; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.3rem; transition: 0.3s; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #4BB543; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); font-weight: bold; }
+        #toast { visibility: hidden; min-width: 250px; background-color: #4BB543; color: #fff; text-align: center; border-radius: 10px; padding: 166x; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); font-weight: bold; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -85,8 +85,8 @@
     <div class="cart-float" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        // الرابط الخاص بـ Web App (تأكد أنه نفس الرابط في Apps Script)
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwaTL-51ajoIEPUkz__oJQl0XcNq22-GhRaGBIWDg4aw0kJKtK3P_tfckvTDnSLQtKo/exec';
+        // الرابط الجديد المدمج
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzy0Euf6D6FcWjgoSMqp9zXkDkrOyXs7ryM4BWsf2CvtZqpiVMxYhWR6-9PdSPPbxql/exec';
         
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -102,25 +102,28 @@
 
         let cart = JSON.parse(localStorage.getItem('majed_cart')) || [];
 
-        // 1. وظيفة جلب الكميات من جوجل شيت
+        // 1. وظيفة جلب الكميات (محدثة لتجنب الثقل)
         async function fetchStock() {
+            renderPackages({}, true); // إظهار حالة التحميل
             try {
-                const response = await fetch(`${scriptURL}?action=getStock`);
-                const stock = await response.json(); // يتوقع إرجاع JSON مثل { "باقة 100": 5, "باقة 200": 0 }
-                renderPackages(stock);
+                // إضافة متغير زمني لمنع التخزين المؤقت وضمان دقة الكمية
+                const response = await fetch(`${scriptURL}?action=getStock&t=${new Date().getTime()}`);
+                const stock = await response.json(); 
+                renderPackages(stock, false);
             } catch (e) {
                 console.error("خطأ في جلب الكميات", e);
-                renderPackages({}); // عرض الباقات بدون كمية في حال الخطأ
+                renderPackages({}, false);
             }
         }
 
-        // 2. وظيفة رسم الباقات في الصفحة
-        function renderPackages(stockData) {
+        // 2. وظيفة رسم الباقات مع منطق "نفدت الكمية"
+        function renderPackages(stockData, isLoading) {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = "";
             packagesData.forEach(pkg => {
-                const count = stockData[pkg.name] || 0;
-                const isOutOfStock = count <= 0;
+                const count = stockData[pkg.name];
+                let stockText = isLoading ? "جاري الفحص..." : (count > 0 ? `المتوفر: ${count}` : "نفدت الكمية ❌");
+                let isOutOfStock = !isLoading && (count === undefined || count <= 0);
                 
                 grid.innerHTML += `
                     <div class="package-unit ${pkg.id}">
@@ -129,7 +132,7 @@
                                 <div class="card-content">
                                     <span class="price">${pkg.price} ريال</span>
                                     <div class="data">${pkg.data}</div>
-                                    <div class="stock-tag">${isOutOfStock ? 'نفدت الكمية ❌' : 'المتوفر: ' + count}</div>
+                                    <div class="stock-tag">${stockText}</div>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +146,6 @@
             });
         }
 
-        // --- باقي وظائف السلة والاستلام (نفس النسخة السابقة مع تحسينات طفيفة) ---
         function showToast(msg) {
             const t = document.getElementById("toast");
             t.innerText = msg; t.className = "show";
@@ -170,10 +172,44 @@
         function handleCartClick() { if(cart.length>0) toggleCart(); else showToast("السلة فارغة"); }
         function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
         function toggleReceiveModal() { const m = document.getElementById('receiveModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+        
+        async function sendOrder() {
+            const ref = document.getElementById('refInput').value;
+            if(!ref) { showToast("⚠️ أدخل المرجع"); return; }
+            
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true; btn.innerText = "جاري الإرسال...";
+
+            const packagesNames = cart.map(i => i.name).join(', ');
+            
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams({
+                        'packages': packagesNames,
+                        'ref': ref,
+                        'date': new Date().toLocaleString('ar-YE')
+                    })
+                });
+                localStorage.setItem('last_ref', ref);
+                cart = []; updateCartUI(); toggleCart();
+                showToast("✅ تم إرسال طلبك بنجاح");
+                setTimeout(() => openReceiveModal(), 1500);
+            } catch (e) { showToast("❌ خطأ في الإرسال"); }
+            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
+        }
+
         function openReceiveModal() { 
             const saved = localStorage.getItem('last_ref');
             if(saved) document.getElementById('checkRefInput').value = saved;
             toggleReceiveModal(); 
+        }
+
+        function checkOrderNow() {
+            const ref = document.getElementById('checkRefInput').value;
+            if(!ref) return;
+            window.open(`${scriptURL}?action=check&ref=${ref}`, '_blank');
         }
 
         window.onload = () => { fetchStock(); updateCartUI(); };
