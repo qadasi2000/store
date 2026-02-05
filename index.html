@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور</title>
+    <title>متجر شبكة الماجد - المطور V5</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -17,10 +17,8 @@
 
         .header { text-align: center; padding: 40px 10px; }
         .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); }
-        
         .cart-float { position: fixed; bottom: 30px; left: 30px; z-index: 1000; padding: 18px 25px; font-size: 1.1rem; }
 
-        /* تنسيق الكروت الماسية */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
         .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
@@ -49,13 +47,10 @@
         .b5000 { --accent-color: #fb923c; --card-gradient: linear-gradient(135deg, #9a3412, #fb923c); }
         .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
 
-        /* المودالات */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; text-align: center; color: white; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; text-align: center; color: white; max-height: 85vh; overflow-y: auto; }
         
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; }
-        .qty-btn { background: var(--gold); border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-
         input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
 
@@ -68,7 +63,7 @@
 <body>
 
     <div id="toast">✅ تمت الإضافة</div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - باقات متنوعة بأسعار منافسة.. اطلب الآن واستلم كرتك فوراً 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - الكميات محدثة تلقائياً.. اطلب كرتك الآن واستلمه فوراً 🌙</div></div>
 
     <div class="header">
         <h1>متجر شبكة الماجد</h1>
@@ -76,14 +71,14 @@
     </div>
 
     <div class="grid-container" id="packagesGrid">
-        <div style="color:var(--gold)">جاري تحميل المخزون...</div>
+        <div style="color:var(--gold)">جاري فحص المخزون...</div>
     </div>
 
     <div id="receiveModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">استلام الكروت 🎫</h2>
         <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع هنا" />
-        <button class="btn-pay" onclick="checkOrderNow()">استلام الآن 🚀</button>
-        <div id="checkResult" style="margin-top:15px; font-weight:bold;"></div>
+        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()">استلام الآن 🚀</button>
+        <div id="checkResult" style="margin-top:15px; font-weight:bold; white-space: pre-wrap; font-family: monospace; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; display:none;"></div>
         <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
     </div></div>
 
@@ -93,14 +88,16 @@
         <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
             الإجمالي: <span id="cartTotalText">0</span> ريال
         </div>
+        <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)" />
         <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
         <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
         <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
     </div></div>
 
-    <div class="cart-float" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
+    <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
+        // الرابط الخاص بك
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwaTL-51ajoIEPUkz__oJQl0XcNq22-GhRaGBIWDg4aw0kJKtK3P_tfckvTDnSLQtKo/exec';
         
         const packagesData = [
@@ -117,12 +114,15 @@
 
         let cart = [];
 
+        // تحسين جلب المخزون ليتوافق مع رد السكربت JSON
         async function fetchStock() {
             try {
                 const response = await fetch(`${scriptURL}?action=getStock`);
                 const stock = await response.json();
+                console.log("الكميات الحالية:", stock);
                 renderPackages(stock);
             } catch (e) {
+                console.error("خطأ في جلب المخزون:", e);
                 renderPackages({});
             }
         }
@@ -131,7 +131,8 @@
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = "";
             packagesData.forEach(pkg => {
-                const count = stockData[pkg.name] || 0;
+                // التأكد من مطابقة الاسم تماماً كما هو في جوجل شيت
+                const count = stockData[pkg.name] || 0; 
                 const isOutOfStock = count <= 0;
                 grid.innerHTML += `
                     <div class="package-unit ${pkg.id}">
@@ -157,6 +158,7 @@
             if (item) item.qty++;
             else cart.push({ name, price: Number(price), qty: 1 });
             updateCartUI();
+            document.getElementById('floatingCartBtn').style.display = 'block';
             showToast(`✅ أضيفت ${name}`);
         }
 
@@ -168,17 +170,19 @@
             list.innerHTML = cart.map((item, index) => {
                 total += (item.price * item.qty);
                 return `<div class="cart-item">
-                    <span>${item.name} (x${item.qty})</span>
-                    <button onclick="removeFromCart(${index})" style="background:red; color:white; border:none; border-radius:5px; cursor:pointer;">حذف</button>
+                    <span>${item.name} (${item.qty})</span>
+                    <button onclick="removeFromCart(${index})" style="background:#ff4444; color:white; border:none; border-radius:5px; cursor:pointer; padding:5px 10px;">حذف</button>
                 </div>`;
             }).join('');
             document.getElementById('cartTotalText').innerText = total;
+            if(count === 0) document.getElementById('floatingCartBtn').style.display = 'none';
         }
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
             if(!ref) return showToast("⚠️ أدخل رقم المرجع");
             const btn = document.getElementById('payBtn');
             btn.disabled = true; btn.innerText = "جاري الإرسال...";
@@ -189,11 +193,15 @@
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: new URLSearchParams({ packages: packagesString, ref: ref })
+                    body: new URLSearchParams({ 
+                        packages: packagesString, 
+                        ref: ref,
+                        phone: phone || "بدون رقم"
+                    })
                 });
                 localStorage.setItem('last_ref', ref);
                 cart = []; updateCartUI(); toggleCart();
-                showToast("✅ تم إرسال الطلب!");
+                showToast("✅ تم إرسال الطلب بنجاح!");
             } catch (e) { showToast("❌ فشل الإرسال"); }
             finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
         }
@@ -201,26 +209,46 @@
         async function checkOrderNow() {
             const ref = document.getElementById('checkRefInput').value.trim();
             const resDiv = document.getElementById('checkResult');
-            if(!ref) return;
-            resDiv.innerText = "جاري الفحص...";
+            const btn = document.getElementById('receiveBtn');
+            if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+            
+            btn.disabled = true; btn.innerText = "جاري الفحص...";
+            resDiv.style.display = "block";
+            resDiv.innerText = "جاري فحص حالة الطلب...";
+            
             try {
                 const response = await fetch(`${scriptURL}?action=check&ref=${ref}`);
                 const text = await response.text();
                 resDiv.innerText = text;
-            } catch (e) { resDiv.innerText = "خطأ في الاتصال"; }
+            } catch (e) { 
+                resDiv.innerText = "خطأ في الاتصال بالسيرفر"; 
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "استلام الآن 🚀";
+            }
         }
 
         function showToast(msg) {
             const t = document.getElementById("toast");
             t.innerText = msg; t.className = "show";
-            setTimeout(() => { t.className = ""; }, 2000);
+            setTimeout(() => { t.className = ""; }, 2500);
         }
 
-        function handleCartClick() { if(cart.length > 0) toggleCart(); else showToast("السلة فارغة"); }
+        function handleCartClick() { toggleCart(); }
         function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
-        function toggleReceiveModal() { const m = document.getElementById('receiveModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+        function toggleReceiveModal() { 
+            const m = document.getElementById('receiveModal'); 
+            m.style.display = (m.style.display==='flex')?'none':'flex'; 
+            document.getElementById('checkResult').style.display = 'none';
+            const saved = localStorage.getItem('last_ref');
+            if(saved) document.getElementById('checkRefInput').value = saved;
+        }
 
-        window.onload = fetchStock;
+        // تشغيل جلب المخزون عند فتح الصفحة وتحديثه كل دقيقة
+        window.onload = () => {
+            fetchStock();
+            setInterval(fetchStock, 60000); // تحديث صامت كل دقيقة
+        };
     </script>
 </body>
 </html>
