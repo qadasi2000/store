@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V5</title>
+    <title>متجر شبكة الماجد - المطور V6</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -71,14 +71,14 @@
     </div>
 
     <div class="grid-container" id="packagesGrid">
-        <div style="color:var(--gold)">جاري فحص المخزون...</div>
+        <div style="color:var(--gold)">جاري فحص المخزون المحدث...</div>
     </div>
 
     <div id="receiveModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">استلام الكروت 🎫</h2>
         <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع هنا" />
         <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()">استلام الآن 🚀</button>
-        <div id="checkResult" style="margin-top:15px; font-weight:bold; white-space: pre-wrap; font-family: monospace; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; display:none;"></div>
+        <div id="checkResult" style="margin-top:15px; font-weight:bold; white-space: pre-wrap; font-family: 'Cairo', sans-serif; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; display:none; color: #fff;"></div>
         <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
     </div></div>
 
@@ -97,8 +97,8 @@
     <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        // الرابط الخاص بك
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwaTL-51ajoIEPUkz__oJQl0XcNq22-GhRaGBIWDg4aw0kJKtK3P_tfckvTDnSLQtKo/exec';
+        // الربط بالرابط المحدث الخاص بك
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
         
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -114,12 +114,11 @@
 
         let cart = [];
 
-        // تحسين جلب المخزون ليتوافق مع رد السكربت JSON
         async function fetchStock() {
             try {
-                const response = await fetch(`${scriptURL}?action=getStock`);
+                // إضافة timestamp لمنع المتصفح من تخزين النتيجة القديمة (Cache)
+                const response = await fetch(`${scriptURL}?action=getStock&t=${new Date().getTime()}`);
                 const stock = await response.json();
-                console.log("الكميات الحالية:", stock);
                 renderPackages(stock);
             } catch (e) {
                 console.error("خطأ في جلب المخزون:", e);
@@ -131,7 +130,6 @@
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = "";
             packagesData.forEach(pkg => {
-                // التأكد من مطابقة الاسم تماماً كما هو في جوجل شيت
                 const count = stockData[pkg.name] || 0; 
                 const isOutOfStock = count <= 0;
                 grid.innerHTML += `
@@ -184,26 +182,37 @@
             const ref = document.getElementById('refInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
             if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+            
             const btn = document.getElementById('payBtn');
-            btn.disabled = true; btn.innerText = "جاري الإرسال...";
+            btn.disabled = true; btn.innerText = "جاري الحجز...";
             
             const packagesString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
             
             try {
-                await fetch(scriptURL, {
+                // إرسال طلب POST حقيقي
+                const response = await fetch(scriptURL, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'no-cors', // لا بد من استخدام no-cors مع Google Scripts
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ 
                         packages: packagesString, 
                         ref: ref,
                         phone: phone || "بدون رقم"
                     })
                 });
+                
+                // بما أن no-cors لا تعيد استجابة، نفترض النجاح إذا لم يحدث خطأ
                 localStorage.setItem('last_ref', ref);
-                cart = []; updateCartUI(); toggleCart();
-                showToast("✅ تم إرسال الطلب بنجاح!");
-            } catch (e) { showToast("❌ فشل الإرسال"); }
-            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
+                showToast("✅ تم إرسال طلبك! استلم كودك بعد قليل.");
+                cart = []; 
+                updateCartUI(); 
+                toggleCart();
+                fetchStock(); // تحديث المخزون فوراً
+            } catch (e) { 
+                showToast("❌ حدث خطأ، تأكد من اتصالك."); 
+            } finally { 
+                btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; 
+            }
         }
 
         async function checkOrderNow() {
@@ -212,16 +221,24 @@
             const btn = document.getElementById('receiveBtn');
             if(!ref) return showToast("⚠️ أدخل رقم المرجع");
             
-            btn.disabled = true; btn.innerText = "جاري الفحص...";
+            btn.disabled = true; btn.innerText = "جاري البحث...";
             resDiv.style.display = "block";
-            resDiv.innerText = "جاري فحص حالة الطلب...";
+            resDiv.innerText = "🔍 جاري مراجعة طلبك في النظام...";
             
             try {
-                const response = await fetch(`${scriptURL}?action=check&ref=${ref}`);
+                const response = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${new Date().getTime()}`);
                 const text = await response.text();
-                resDiv.innerText = text;
+                
+                // تحسين شكل النتيجة
+                if (text.includes(":")) {
+                    resDiv.style.color = "#f9d976";
+                    resDiv.innerText = "✅ كروت الحساب المفعله:\n" + text;
+                } else {
+                    resDiv.style.color = "#fff";
+                    resDiv.innerText = text;
+                }
             } catch (e) { 
-                resDiv.innerText = "خطأ في الاتصال بالسيرفر"; 
+                resDiv.innerText = "❌ خطأ في الاتصال بالسيرفر"; 
             } finally {
                 btn.disabled = false;
                 btn.innerText = "استلام الآن 🚀";
@@ -231,7 +248,7 @@
         function showToast(msg) {
             const t = document.getElementById("toast");
             t.innerText = msg; t.className = "show";
-            setTimeout(() => { t.className = ""; }, 2500);
+            setTimeout(() => { t.className = ""; }, 3000);
         }
 
         function handleCartClick() { toggleCart(); }
@@ -244,10 +261,10 @@
             if(saved) document.getElementById('checkRefInput').value = saved;
         }
 
-        // تشغيل جلب المخزون عند فتح الصفحة وتحديثه كل دقيقة
         window.onload = () => {
             fetchStock();
-            setInterval(fetchStock, 60000); // تحديث صامت كل دقيقة
+            // تحديث المخزون كل 30 ثانية ليكون العميل على اطلاع بالكميات الحقيقية
+            setInterval(fetchStock, 30000); 
         };
     </script>
 </body>
