@@ -13,7 +13,7 @@
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         .header { text-align: center; padding: 40px 20px; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; padding: 20px; max-width: 1100px; margin: 0 auto; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
         .package-card { background: var(--card-bg); border: 1px solid var(--gold); border-radius: 20px; padding: 20px; text-align: center; transition: 0.3s; }
         .package-card:hover { transform: translateY(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
         .price { font-size: 1.8rem; color: var(--gold); font-weight: bold; display: block; margin: 10px 0; }
@@ -31,7 +31,7 @@
 </head>
 <body>
 
-    <div class="marquee"><div class="marquee-content">🌙 أهلاً بكم في متجر شبكة الماجد - عروض رمضانية خاصة 🌙 اختر باقاتك الآن واستلم كرتك فور التأكيد 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 أهلاً بكم في متجر شبكة الماجد - عروض رمضانية خاصة 🌙 اختر باقاتك الآن واستلم كرتك بعد تأكيد الإدارة 🌙</div></div>
 
     <div class="header">
         <h1 style="color: var(--gold); font-size: 2.8rem; margin: 0;">🕌 شبكة الماجد</h1>
@@ -63,6 +63,12 @@
             <p>2.5 جيجابايت</p>
             <button class="btn-add" onclick="addToCart('باقة 500', 500)">إضافة للسلة 🛒</button>
         </div>
+        <div class="package-card">
+            <h3>باقة 1000</h3>
+            <span class="price">1000 ريال</span>
+            <p>5 جيجابايت</p>
+            <button class="btn-add" onclick="addToCart('باقة 1000', 1000)">إضافة للسلة 🛒</button>
+        </div>
     </div>
 
     <div class="cart-float" onclick="toggleCart()">
@@ -82,8 +88,8 @@
     </div>
 
     <script>
-        // الرابط الجديد المحدث الخاص بك
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw9Xa4678L_L563cj8sNd7spAvQqtfu6hkmnEvv3krqKNZu9UX51ijEdmFTHou-mCwi/exec';
+        // الرابط الجديد الذي أرسلته أنت في آخر رسالة
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbDoq6ASIcIJI9pUhkPc7ix-e4BsR4GuyZJ8scYDovsDhXnCto8VHOcjSF8DseShXtX/exec';
         let cart = [];
 
         function addToCart(name, price) {
@@ -121,7 +127,7 @@
             formData.append('date', new Date().toLocaleString('ar-YE'));
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => {
-                alert("تم إرسال طلبك! الكروت سحبت آلياً، اضغط على استلام الكروت برقم المرجع: " + ref);
+                alert("تم إرسال طلبك! يرجى الانتظار حتى تأكيد الإدارة، ثم استلم كرتك برقم المرجع: " + ref);
                 cart = []; updateCartUI(); toggleCart();
             })
             .catch(() => alert("شكراً! تم استلام الطلب."))
@@ -133,7 +139,7 @@
             if (!ref) return;
             fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text()).then(text => alert(text))
-            .catch(() => alert("الطلب قيد المراجعة."));
+            .catch(() => alert("الطلب قيد المراجعة أو حدث خطأ في الاتصال."));
         }
     </script>
 </body>
