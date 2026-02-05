@@ -88,8 +88,8 @@
     </div>
 
     <script>
-        // الرابط الجديد الذي أرسلته أنت في آخر رسالة
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbDoq6ASIcIJI9pUhkPc7ix-e4BsR4GuyZJ8scYDovsDhXnCto8VHOcjSF8DseShXtX/exec';
+        // الرابط الجديد الفعال الذي أرسلته في رسالتك الأخيرة
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby1JxhK8gFwFCWyYImzKwQktGyTkBpAQd5GgVwZ-4Q7J7uie0ObnQv6uhLNGGxgqYiE/exec';
         let cart = [];
 
         function addToCart(name, price) {
@@ -125,21 +125,32 @@
             formData.append('phone', phone);
             formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
+            
+            // إرسال البيانات إلى Google Sheets
             fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => {
-                alert("تم إرسال طلبك! يرجى الانتظار حتى تأكيد الإدارة، ثم استلم كرتك برقم المرجع: " + ref);
-                cart = []; updateCartUI(); toggleCart();
+            .then(res => {
+                alert("تم إرسال طلبك بنجاح! يرجى الانتظار حتى تأكيد الإدارة، ثم استلم كرتك برقم المرجع: " + ref);
+                cart = []; 
+                updateCartUI(); 
+                toggleCart();
             })
-            .catch(() => alert("شكراً! تم استلام الطلب."))
-            .finally(() => { btn.disabled = false; btn.innerText = "إرسال الطلب"; });
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("حدث خطأ أثناء الإرسال، يرجى المحاولة مرة أخرى.");
+            })
+            .finally(() => { 
+                btn.disabled = false; 
+                btn.innerText = "إرسال الطلب"; 
+            });
         }
 
         function checkMyCard() {
             const ref = prompt("أدخل رقم المرجع لاستلام كروت الشحن:");
             if (!ref) return;
             fetch(scriptURL + "?action=check&ref=" + ref)
-            .then(res => res.text()).then(text => alert(text))
-            .catch(() => alert("الطلب قيد المراجعة أو حدث خطأ في الاتصال."));
+            .then(res => res.text())
+            .then(text => alert(text))
+            .catch(() => alert("الطلب قيد المراجعة أو غير موجود."));
         }
     </script>
 </body>
