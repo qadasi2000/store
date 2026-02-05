@@ -21,7 +21,7 @@
             background: var(--gold); border: none; padding: 15px 40px; 
             border-radius: 50px; font-weight: bold; font-size: 1.2rem;
             cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 0 0 0 rgba(249, 217, 118, 0.7);
+            box-shadow: 0 0 15px rgba(249, 217, 118, 0.3);
             animation: pulse-gold 2s infinite;
         }
         @keyframes pulse-gold {
@@ -30,16 +30,16 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 217, 118, 0); }
         }
 
-        /* تكبير حجم الحاويات */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 50px; padding: 30px; max-width: 1600px; margin: 0 auto; justify-items: center; }
         .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
-        /* تكبير قياس الكرت */
         .card-wrapper {
             position: relative; width: 280px; height: 280px;
             display: flex; align-items: center; justify-content: center;
             border-radius: 50px; overflow: hidden;
             margin-bottom: 20px;
+            /* هالة شفافة ملونة بدلاً من الظل الأسود */
+            filter: drop-shadow(0 0 20px var(--accent-color));
         }
 
         .card-wrapper::before {
@@ -53,27 +53,27 @@
         }
         @keyframes rotate-border { 100% { transform: rotate(360deg); } }
 
-        /* تثبيت الماس (بدون دوران) */
         .diamond-card {
             width: 220px; height: 220px; background: var(--card-gradient);
             border-radius: 40px; position: relative; z-index: 2;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: none; /* إزالة الظل الداكن */
         }
         .card-content { text-align: center; color: white; }
 
-        .icon { font-size: 65px; display: block; margin-bottom: 10px; }
-        .price { font-size: 2rem; font-weight: 900; display: block; color: white; }
-        .data { font-size: 1.4rem; font-weight: bold; opacity: 0.9; }
+        .icon { font-size: 65px; display: block; margin-bottom: 10px; animation: icon-bounce 3s ease-in-out infinite; }
+        @keyframes icon-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* زر الإضافة أسفل الباقة */
+        .price { font-size: 2.2rem; font-weight: 900; display: block; color: white; }
+        .data { font-size: 1.4rem; font-weight: bold; color: var(--gold); }
+
         .btn-add-package {
             background: var(--gold); color: var(--primary-bg);
-            border: none; padding: 12px 30px; border-radius: 15px;
-            font-weight: bold; font-size: 1.1rem; cursor: pointer;
-            transition: 0.3s; width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: none; padding: 14px 35px; border-radius: 15px;
+            font-weight: bold; font-size: 1.2rem; cursor: pointer;
+            transition: 0.3s; width: 220px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .btn-add-package:hover { transform: scale(1.05); background: white; }
+        .btn-add-package:hover { transform: scale(1.05); background: white; box-shadow: 0 0 20px var(--gold); }
 
         /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
@@ -87,21 +87,21 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 30px; border-radius: 25px; width: 90%; max-width: 500px; text-align: center; color: white; }
         
-        /* تنسيق عنصر الحذف في السلة */
-        .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; border: 1px solid rgba(249, 217, 118, 0.2); }
-        .btn-remove { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; border: 1px solid rgba(249, 217, 118, 0.1); }
+        .btn-remove { background: #ff4444; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; }
 
-        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; }
-        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.1rem; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-size: 1rem; }
+        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.3rem; transition: 0.3s; }
+        .btn-pay:hover { background: #fff; transform: translateY(-3px); }
 
         .footer { text-align: center; padding: 40px 20px; margin-top: 40px; border-top: 1px solid rgba(249, 217, 118, 0.2); color: #aaa; }
-        .ramadan-msg { color: var(--gold); font-family: 'Amiri', serif; font-size: 1.5rem; }
-        .cart-float { position: fixed; bottom: 25px; left: 25px; background: var(--gold); color: var(--primary-bg); padding: 15px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 25px rgba(0,0,0,0.6); z-index: 1000; font-size: 1.2rem; }
+        .ramadan-msg { color: var(--gold); font-family: 'Amiri', serif; font-size: 1.6rem; }
+        .cart-float { position: fixed; bottom: 30px; left: 30px; background: var(--gold); color: var(--primary-bg); padding: 18px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <div class="marquee"><div class="marquee-content">🌙 مبارك عليكم شهر رمضان - شبكة الماجد ترحب بكم - اختر باقتك المفضلة واستلم كرتك فوراً بعد التأكيد 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 مبارك عليكم شهر رمضان - شبكة الماجد ترحب بكم - استلم كرتك فوراً بعد تفعيل طلبك 🌙</div></div>
 
     <div class="header">
         <h1 style="color: var(--gold); font-size: 3.5rem; margin: 0;">🕌 شبكة الماجد</h1>
@@ -111,31 +111,23 @@
     <div class="grid-container">
         <div class="package-unit b100">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📡</span><span class="price">100 ريال</span><div class="data">500 ميجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 100', 100)">شراء الباقة 🛒</button>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 100', 100)">شراء الآن 🛒</button>
         </div>
         <div class="package-unit b200">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">⚡</span><span class="price">200 ريال</span><div class="data">1 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 200', 200)">شراء الباقة 🛒</button>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 200', 200)">شراء الآن 🛒</button>
         </div>
         <div class="package-unit b300">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">📱</span><span class="price">300 ريال</span><div class="data">1.5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 300', 300)">شراء الباقة 🛒</button>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 300', 300)">شراء الآن 🛒</button>
         </div>
         <div class="package-unit b500">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">🚀</span><span class="price">500 ريال</span><div class="data">2.5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 500', 500)">شراء الباقة 🛒</button>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 500', 500)">شراء الآن 🛒</button>
         </div>
         <div class="package-unit b1000">
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">💎</span><span class="price">1000 ريال</span><div class="data">5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 1000', 1000)">شراء الباقة 🛒</button>
-        </div>
-        <div class="package-unit b5000">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">🔥</span><span class="price">5000 ريال</span><div class="data">25 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 5000', 5000)">شراء الباقة 🛒</button>
-        </div>
-        <div class="package-unit b10000">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="icon">👑</span><span class="price">10000 ريال</span><div class="data">50 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 10000', 10000)">شراء الباقة 🛒</button>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 1000', 1000)">شراء الآن 🛒</button>
         </div>
     </div>
 
@@ -143,13 +135,20 @@
 
     <div id="cartModal" class="modal">
         <div class="modal-content">
-            <h2 style="color: var(--gold);">مراجعة سلة الماجد 🧾</h2>
-            <div id="cartItemsList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <div style="font-weight: bold; font-size: 1.3rem; margin: 15px 0; border-top: 1px solid var(--gold); padding-top: 10px;">المجموع النهائي: <span id="totalPrice">0</span> ريال</div>
-            <input type="text" id="phoneInput" placeholder="رقم الهاتف" />
-            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
-            <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب</button>
-            <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق السلة</button>
+            <h2 style="color: var(--gold);">مراجعة سلتك يا بطل 🧾</h2>
+            <p style="font-size: 0.9rem; margin-top: -10px; opacity: 0.8;">تأكد من طلباتك قبل الإرسال</p>
+            
+            <div id="cartItemsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+            
+            <div style="font-weight: bold; font-size: 1.4rem; margin: 15px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
+                المجموع الكلي: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
+            </div>
+
+            <input type="text" id="phoneInput" placeholder="رقم واتساب للتواصل" />
+            <input type="text" id="refInput" placeholder="رقم المرجع (من إيصال الحوالة)" />
+            
+            <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب ✨</button>
+            <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء والعودة</button>
         </div>
     </div>
 
@@ -157,13 +156,13 @@
         <div class="modal-content">
             <h2 style="color: var(--gold);">كروتك الجاهزة 🎫</h2>
             <div id="cardsResultList" style="margin: 20px 0; text-align: right;"></div>
-            <button onclick="closeResult()" class="btn-pay">إغلاق</button>
+            <button onclick="closeResult()" class="btn-pay">شكراً لك</button>
         </div>
     </div>
 
     <div class="footer">
         <div class="ramadan-msg">صوماً مقبولاً وذنباً مغفوراً إن شاء الله 🌙</div>
-        <div style="margin-top:10px;">© جميع الحقوق محفوظة لشبكة الماجد اللاسلكية 2026</div>
+        <div style="margin-top:10px; opacity: 0.6;">© شبكة الماجد اللاسلكية - المتجر الرسمي 2026</div>
     </div>
 
     <script>
@@ -171,13 +170,13 @@
         let cart = [];
 
         function confirmAndAdd(name, price) {
-            if(confirm(`هل تريد إضافة ${name} إلى سلة مشترياتك؟`)) {
+            if(confirm(`هل تود إضافة ${name} إلى السلة؟`)) {
                 addToCart(name, price);
             }
         }
 
         function addToCart(name, price) { 
-            cart.push({ id: Date.now(), name, price }); 
+            cart.push({ id: Date.now() + Math.random(), name, price }); 
             updateCartUI(); 
         }
 
@@ -192,19 +191,17 @@
             const total = document.getElementById('totalPrice');
             list.innerHTML = ''; let sum = 0;
             
-            if(cart.length === 0) {
-                list.innerHTML = '<p style="opacity:0.6;">السلة فارغة حالياً</p>';
-            }
+            if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">سلتك فارغة حالياً..</p>';
 
             cart.forEach((item) => { 
                 sum += item.price; 
                 list.innerHTML += `
                     <div class="cart-item">
                         <div style="text-align:right;">
-                            <div style="font-weight:bold;">${item.name}</div>
-                            <div style="color:var(--gold); font-size:0.9rem;">${item.price} ريال</div>
+                            <strong>${item.name}</strong><br>
+                            <small>${item.price} ريال</small>
                         </div>
-                        <button class="btn-remove" onclick="removeFromCart(${item.id})">حذف ❌</button>
+                        <button class="btn-remove" onclick="removeFromCart(${item.id})">إلغاء ❌</button>
                     </div>`; 
             });
             total.innerText = sum;
@@ -219,10 +216,10 @@
             const phone = document.getElementById('phoneInput').value;
             const ref = document.getElementById('refInput').value;
             if (cart.length === 0) { alert("السلة فارغة!"); return; }
-            if (!phone || !ref) { alert("يرجى إدخال رقم الهاتف ومرجع الحوالة"); return; }
+            if (!phone || !ref) { alert("يرجى تعبئة كافة البيانات"); return; }
             
             const btn = document.getElementById('payBtn'); 
-            btn.innerText = "جاري معالجة طلبك..."; 
+            btn.innerText = "جاري الإرسال..."; 
             btn.disabled = true;
 
             const formData = new FormData();
@@ -233,28 +230,29 @@
             
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => { 
-                alert("تم إرسال طلبك بنجاح يا ماجد! بانتظار التأكيد."); 
+                // الرسالة الجديدة التي طلبتها
+                alert(`✅ تم إرسال طلبك بنجاح يا ماجد!\n\n📌 هام جداً:\nيرجى تصوير الشاشة الآن والاحتفاظ برقم المرجع (${ref}) لضمان حقك في استلام الكروت فور التفعيل.`); 
                 cart = []; 
                 updateCartUI(); 
                 toggleCart(); 
             })
-            .catch(() => alert("حدث خطأ، يرجى المحاولة لاحقاً"))
+            .catch(() => alert("خطأ في الشبكة، حاول مرة أخرى"))
             .finally(() => { 
-                btn.innerText = "تأكيد وإرسال الطلب"; 
+                btn.innerText = "تأكيد وإرسال الطلب ✨"; 
                 btn.disabled = false; 
             });
         }
 
         function promptCheck() {
-            const ref = prompt("أدخل رقم المرجع للاستلام:");
+            const ref = prompt("أدخل رقم المرجع المسجل في حوالتك للاستلام:");
             if (!ref) return;
             fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text())
             .then(text => {
-                if(text.includes("قيد المراجعة")) { alert(text); return; }
+                if(text.includes("قيد المراجعة")) { alert("📦 طلبك تحت المراجعة حالياً، تفضل بالتحقق بعد قليل."); return; }
                 displayCards(text);
             })
-            .catch(() => alert("خطأ في الاتصال"));
+            .catch(() => alert("خطأ في الاتصال بالسيرفر"));
         }
 
         function displayCards(dataText) {
@@ -265,9 +263,9 @@
                 if(line.includes(":")) {
                     const [name, code] = line.split(":");
                     list.innerHTML += `
-                        <div class="result-item">
+                        <div class="cart-item" style="border-style:dashed;">
                             <span><b>${name}:</b> ${code}</span>
-                            <button class="copy-btn" onclick="copyCode('${code.trim()}')">نسخ</button>
+                            <button style="background:var(--gold); border:none; padding:4px 10px; border-radius:5px; cursor:pointer;" onclick="copyCode('${code.trim()}')">نسخ</button>
                         </div>`;
                 }
             });
@@ -275,9 +273,7 @@
         }
 
         function copyCode(code) {
-            navigator.clipboard.writeText(code).then(() => {
-                alert("تم نسخ الكود: " + code);
-            });
+            navigator.clipboard.writeText(code).then(() => alert("تم نسخ الكود بنجاح ✅"));
         }
 
         function closeResult() { document.getElementById('resultModal').style.display = 'none'; }
