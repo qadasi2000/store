@@ -95,7 +95,10 @@
         .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
 
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; border: 1px solid rgba(249, 217, 118, 0.1); }
-        .btn-remove { background: #ff4444; color: white; border: none; padding: 5px 12px; border-radius: 8px; cursor: pointer; }
+        
+        /* تعديل زر الإلغاء ليصبح أكثر وضوحاً */
+        .btn-remove { background: #ffffff; color: #ff4444; border: 1px solid #ff4444; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.2s; }
+        .btn-remove:hover { background: #ff4444; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -187,6 +190,7 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwaTL-51ajoIEPUkz__oJQl0XcNq22-GhRaGBIWDg4aw0kJKtK3P_tfckvTDnSLQtKo/exec';
         let cart = JSON.parse(localStorage.getItem('majed_cart')) || [];
+        const MAX_TOTAL_QTY = 50; // سقف الطلبات الإجمالي
 
         function handleCartClick() {
             if (cart.length === 0) alert("⚠️ سلة المشتريات فارغة!");
@@ -202,41 +206,61 @@
             cart.forEach((item, index) => { 
                 const qty = item.qty || 1;
                 sum += (item.price * qty); 
-                list.innerHTML += `<div class="cart-item"><span>${item.name}</span><div>الكمية: <input type="number" class="qty-input" value="${qty}" min="1" onchange="updateQty(${index}, this.value)"><button class="btn-remove" onclick="removeFromCart(${index})">❌</button></div></div>`; 
+                list.innerHTML += `<div class="cart-item"><span>${item.name}</span><div>الكمية: <input type="number" class="qty-input" value="${qty}" min="1" max="50" onchange="updateQty(${index}, this.value)"><button class="btn-remove" onclick="removeFromCart(${index})">❌</button></div></div>`; 
             });
             total.innerText = sum;
         }
 
-        function updateQty(index, val) { cart[index].qty = parseInt(val); saveCart(); updateCartUI(); }
+        function updateQty(index, val) { 
+            let newVal = parseInt(val);
+            if (newVal > MAX_TOTAL_QTY) {
+                alert(`⚠️ عذراً، الحد الأقصى للطلب هو ${MAX_TOTAL_QTY} كرت.`);
+                newVal = MAX_TOTAL_QTY;
+            }
+            cart[index].qty = newVal; 
+            saveCart(); 
+            updateCartUI(); 
+        }
+
         function confirmAndAdd(name, price) { 
+            const currentTotal = cart.reduce((acc, item) => acc + item.qty, 0);
+            if (currentTotal >= MAX_TOTAL_QTY) {
+                alert(`⚠️ لا يمكنك إضافة المزيد، لقد وصلت للحد الأقصى (${MAX_TOTAL_QTY} كرت).`);
+                return;
+            }
+
             const existing = cart.findIndex(i => i.name === name);
             if (existing > -1) cart[existing].qty++;
             else cart.push({name, price, qty: 1}); 
             saveCart(); updateCartUI(); alert(`✅ تمت إضافة ${name}`);
         }
+
         function saveCart() { localStorage.setItem('majed_cart', JSON.stringify(cart)); }
         function removeFromCart(index) { cart.splice(index, 1); saveCart(); updateCartUI(); }
         function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
         function toggleHelp() { const m = document.getElementById('helpModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
 
-        // الوظيفة المحدثة لحل مشكلة تعدد الأسطر في الشيت
         async function sendOrder() {
             const ref = document.getElementById('refInput').value;
             const phone = document.getElementById('phoneInput').value || "غير مسجل";
+            const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+
             if(!ref) { alert("أدخل رقم المرجع"); return; }
+            if(totalQty > MAX_TOTAL_QTY) {
+                alert(`⚠️ إجمالي الكروت (${totalQty}) يتجاوز الحد المسموح به (${MAX_TOTAL_QTY}). يرجى تقليل الكمية.`);
+                return;
+            }
             
             const btn = document.getElementById('payBtn');
             btn.innerText = "جاري معالجة الطلبات..."; btn.disabled = true;
 
             try {
-                // نمر على كل نوع باقة في السلة
                 for (const item of cart) {
-                    // نكرر الإرسال بناءً على "الكمية" المطلوبة لكل باقة
                     for (let n = 0; n < item.qty; n++) {
                         await fetch(scriptURL, { 
                             method: 'POST', 
                             body: new URLSearchParams({
-                                'packages': item.name, // نرسل اسم الباقة منفردة
+                                'packages': item.name,
                                 'phone': phone,
                                 'ref': ref,
                                 'date': new Date().toLocaleString('ar-YE')
@@ -244,7 +268,6 @@
                         });
                     }
                 }
-                // بعد الانتهاء من إرسال الجميع
                 document.getElementById('displayRef').innerText = ref;
                 cart=[]; saveCart(); updateCartUI(); toggleCart();
                 document.getElementById('successModal').style.display = 'flex';
