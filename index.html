@@ -9,7 +9,6 @@
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        /* خط متجر شبكة الماجد - فارسي */
         h1 { font-family: 'Lateef', serif; font-size: 5rem !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; }
         h2, .btn-style { font-family: 'Amiri', serif; }
         
@@ -19,7 +18,6 @@
         
         .header { text-align: center; padding: 40px 20px; }
         
-        /* توحيد خط أزرار الاستلام والسلة */
         .btn-check, .cart-float { 
             font-family: 'Cairo', sans-serif;
             display: inline-block; margin: 10px; color: var(--primary-bg); 
@@ -80,7 +78,7 @@
         .step-box b { color: var(--gold); display: block; margin-bottom: 5px; }
 
         input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-size: 1rem; }
-        .qty-input { width: 60px !important; padding: 5px !important; margin: 0 10px !important; display: inline-block; }
+        .qty-input { width: 70px !important; padding: 8px !important; margin: 0 10px !important; display: inline-block; border-radius: 8px; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.3rem; transition: 0.3s; }
 
         .footer { text-align: center; padding: 40px 20px; margin-top: 40px; border-top: 1px solid rgba(249, 217, 118, 0.2); color: #aaa; }
@@ -151,7 +149,7 @@
         <div class="step-box"><b>1. الطلب:</b> اختر الباقات التي تريدها وأضفها للسلة.</div>
         <div class="step-box"><b>2. الدفع:</b> حول المبلغ للكريمي: <strong>121127286</strong>.</div>
         <div class="step-box"><b>3. التفعيل:</b> أدخل رقم مرجع الحوالة في السلة واضغط إرسال.</div>
-        <div class="step-box"><b>4. الاستلام:</b> انسخ رقم المرجع، واضغط على زر "استلم كروتك" الذهبي في الأعلى للحصول على الكروت فوراً.</div>
+        <div class="step-box"><b>4. الاستلام:</b> انسخ رقم المرجع، واستلم كروتك من الزر الذهبي بالأعلى.</div>
         <button onclick="toggleHelp()" class="btn-pay">فهمت ذلك ✅</button>
     </div></div>
 
@@ -172,7 +170,6 @@
             <span id="displayRef"></span>
             <button onclick="copyOrderRef()" style="margin-right:15px; background:var(--gold); border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;">نسخ الرقم</button>
         </div>
-        <p style="font-size: 0.9rem; opacity: 0.8;">اذهب الآن لزر "استلم كروتك" بالأعلى وألصق الرقم.</p>
         <button onclick="closeSuccess()" class="btn-pay">حسناً</button>
     </div></div>
 
@@ -192,11 +189,8 @@
         let cart = JSON.parse(localStorage.getItem('majed_cart')) || [];
 
         function handleCartClick() {
-            if (cart.length === 0) {
-                alert("⚠️ سلة المشتريات فارغة! يرجى اختيار باقة أولاً.");
-            } else {
-                toggleCart();
-            }
+            if (cart.length === 0) alert("⚠️ سلة المشتريات فارغة!");
+            else toggleCart();
         }
 
         function updateCartUI() {
@@ -205,84 +199,76 @@
             const total = document.getElementById('totalPrice');
             list.innerHTML = "";
             let sum = 0;
-            
             cart.forEach((item, index) => { 
                 const qty = item.qty || 1;
                 sum += (item.price * qty); 
-                list.innerHTML += `
-                    <div class="cart-item">
-                        <span>${item.name}</span>
-                        <div>
-                            الكمية: <input type="number" class="qty-input" value="${qty}" min="1" onchange="updateQty(${index}, this.value)">
-                            <button class="btn-remove" onclick="removeFromCart(${index})">❌</button>
-                        </div>
-                    </div>`; 
+                list.innerHTML += `<div class="cart-item"><span>${item.name}</span><div>الكمية: <input type="number" class="qty-input" value="${qty}" min="1" onchange="updateQty(${index}, this.value)"><button class="btn-remove" onclick="removeFromCart(${index})">❌</button></div></div>`; 
             });
             total.innerText = sum;
         }
 
-        function updateQty(index, val) {
-            cart[index].qty = parseInt(val);
-            saveCart();
-            updateCartUI();
-        }
-
+        function updateQty(index, val) { cart[index].qty = parseInt(val); saveCart(); updateCartUI(); }
         function confirmAndAdd(name, price) { 
-            const existingIndex = cart.findIndex(item => item.name === name);
-            if (existingIndex > -1) {
-                cart[existingIndex].qty = (cart[existingIndex].qty || 1) + 1;
-            } else {
-                cart.push({name, price, qty: 1}); 
-            }
-            saveCart(); 
-            updateCartUI();
-            alert(`✅ تمت إضافة ${name} للسلة`);
+            const existing = cart.findIndex(i => i.name === name);
+            if (existing > -1) cart[existing].qty++;
+            else cart.push({name, price, qty: 1}); 
+            saveCart(); updateCartUI(); alert(`✅ تمت إضافة ${name}`);
         }
-
         function saveCart() { localStorage.setItem('majed_cart', JSON.stringify(cart)); }
         function removeFromCart(index) { cart.splice(index, 1); saveCart(); updateCartUI(); }
         function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
         function toggleHelp() { const m = document.getElementById('helpModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
 
-        function sendOrder() {
+        // الوظيفة المحدثة لحل مشكلة تعدد الأسطر في الشيت
+        async function sendOrder() {
             const ref = document.getElementById('refInput').value;
+            const phone = document.getElementById('phoneInput').value || "غير مسجل";
             if(!ref) { alert("أدخل رقم المرجع"); return; }
+            
             const btn = document.getElementById('payBtn');
-            btn.innerText = "جاري الإرسال..."; btn.disabled = true;
+            btn.innerText = "جاري معالجة الطلبات..."; btn.disabled = true;
 
-            const packagesDetail = cart.map(i => `${i.name} (عدد ${i.qty || 1})`).join(', ');
-
-            fetch(scriptURL, { method: 'POST', body: new URLSearchParams({
-                'packages': packagesDetail,
-                'phone': document.getElementById('phoneInput').value || "غير مسجل",
-                'ref': ref,
-                'date': new Date().toLocaleString('ar-YE')
-            })})
-            .then(() => { 
+            try {
+                // نمر على كل نوع باقة في السلة
+                for (const item of cart) {
+                    // نكرر الإرسال بناءً على "الكمية" المطلوبة لكل باقة
+                    for (let n = 0; n < item.qty; n++) {
+                        await fetch(scriptURL, { 
+                            method: 'POST', 
+                            body: new URLSearchParams({
+                                'packages': item.name, // نرسل اسم الباقة منفردة
+                                'phone': phone,
+                                'ref': ref,
+                                'date': new Date().toLocaleString('ar-YE')
+                            })
+                        });
+                    }
+                }
+                // بعد الانتهاء من إرسال الجميع
                 document.getElementById('displayRef').innerText = ref;
                 cart=[]; saveCart(); updateCartUI(); toggleCart();
                 document.getElementById('successModal').style.display = 'flex';
-            })
-            .catch(() => alert("خطأ في الاتصال"))
-            .finally(() => { btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false; });
+            } catch (e) {
+                alert("حدث خطأ أثناء الإرسال، يرجى المحاولة ثانية.");
+            } finally {
+                btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false;
+            }
         }
 
         function copyOrderRef() {
             const ref = document.getElementById('displayRef').innerText;
-            navigator.clipboard.writeText(ref).then(() => alert("تم نسخ رقم المرجع ✅"));
+            navigator.clipboard.writeText(ref).then(() => alert("تم نسخ المرجع ✅"));
         }
-
         function closeSuccess() { document.getElementById('successModal').style.display = 'none'; }
 
         function promptCheck() {
             const ref = prompt("أدخل رقم المرجع للاستلام:");
             if (!ref) return;
-            const checkURL = `${scriptURL}?action=check&ref=${ref}`;
             const list = document.getElementById('cardsResultList');
             list.innerHTML = "<p>جاري البحث...</p>";
             document.getElementById('resultModal').style.display = 'flex';
-            fetch(checkURL).then(res => res.text()).then(text => {
-                if(text.includes("المراجعة")) list.innerHTML = "<p>⏳ طلبك قيد المراجعة، انتظر قليلاً.</p>";
+            fetch(`${scriptURL}?action=check&ref=${ref}`).then(res => res.text()).then(text => {
+                if(text.includes("المراجعة")) list.innerHTML = "<p>⏳ طلبك قيد المراجعة.</p>";
                 else if(text.includes("لم يتم العثور")) list.innerHTML = "<p>❌ المرجع غير موجود.</p>";
                 else displayCards(text);
             }).catch(() => list.innerHTML = "<p>خطأ في الشبكة</p>");
@@ -293,14 +279,14 @@
             list.innerHTML = "";
             text.split("\n").forEach(line => {
                 if(line.trim() !== "") {
-                    list.innerHTML += `<div class="cart-item"><span>${line}</span><button onclick="copyCode('${line}')" style="background:var(--gold); border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">نسخ الكود</button></div>`;
+                    list.innerHTML += `<div class="cart-item"><span>${line}</span><button onclick="copyCode('${line}')" style="background:var(--gold); border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">نسخ</button></div>`;
                 }
             });
         }
 
         function copyCode(c) { 
             const codeOnly = c.split(':').pop().trim();
-            navigator.clipboard.writeText(codeOnly).then(() => alert("تم نسخ الكود ✅")); 
+            navigator.clipboard.writeText(codeOnly).then(() => alert("تم النسخ ✅")); 
         }
         function closeResult() { document.getElementById('resultModal').style.display = 'none'; }
         window.onload = updateCartUI;
