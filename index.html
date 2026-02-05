@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شبكة الماجد اللاسلكية - المتجر الرسمي</title>
+    <title>متجر شبكة الماجد - المتجر الرسمي</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -91,61 +91,93 @@
 
         .footer { text-align: center; padding: 40px 20px; margin-top: 40px; border-top: 1px solid rgba(249, 217, 118, 0.2); color: #aaa; }
         .ramadan-msg { color: var(--gold); font-family: 'Amiri', serif; font-size: 1.6rem; }
-        .cart-float { position: fixed; bottom: 30px; left: 30px; background: var(--gold); color: var(--primary-bg); padding: 18px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000; font-size: 1.2rem; }
+        
+        /* تصميم السلة المحدث */
+        .cart-float { 
+            position: fixed; bottom: 30px; left: 30px; 
+            background: var(--gold); color: var(--primary-bg); 
+            padding: 18px 30px; border-radius: 50px; 
+            cursor: pointer; font-weight: bold; 
+            box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); 
+            z-index: 1000; font-size: 1.2rem;
+            animation: cart-pulse 2s infinite;
+            border: 2px solid white;
+        }
+        @keyframes cart-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 40px rgba(249, 217, 118, 0.6); }
+            100% { transform: scale(1); }
+        }
+
+        .payment-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px dashed var(--gold);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
 
-    <div class="marquee"><div class="marquee-content">🌙 مبارك عليكم شهر رمضان - شبكة الماجد ترحب بكم - استلم كرتك فوراً بعد تفعيل طلبك 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 مبارك عليكم شهر رمضان - متجر شبكة الماجد يرحب بكم - استلم كرتك فوراً بعد تفعيل طلبك 🌙</div></div>
 
     <div class="header">
-        <h1 style="color: var(--gold); font-size: 3.5rem; margin: 0;">🕌 شبكة الماجد</h1>
+        <h1 style="color: var(--gold); font-size: 3.5rem; margin: 0;">🕌 متجر شبكة الماجد</h1>
         <button onclick="promptCheck()" class="btn-check">🔑 استلام الكروت الجاهزة</button>
     </div>
 
     <div class="grid-container">
-        <div class="package-unit b100">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">100 ريال</span><div class="data">500 ميجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 100', 100)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b200">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">200 ريال</span><div class="data">1 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 200', 200)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b300">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">300 ريال</span><div class="data">1.5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 300', 300)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b500">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">500 ريال</span><div class="data">2.5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 500', 500)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b1000">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">1000 ريال</span><div class="data">5 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 1000', 1000)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b5000">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">5000 ريال</span><div class="data">25 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 5000', 5000)">شراء الآن 🛒</button>
-        </div>
-        <div class="package-unit b10000">
-            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">10000 ريال</span><div class="data">50 جيجا</div></div></div></div>
-            <button class="btn-add-package" onclick="confirmAndAdd('باقة 10000', 10000)">شراء الآن 🛒</button>
-        </div>
+        <script>
+            const packagesData = [
+                { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
+                { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
+                { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
+                { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
+                { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' },
+                { id: 'b5000', name: 'باقة 5000', price: 5000, data: '25 جيجا' },
+                { id: 'b10000', name: 'باقة 10000', price: 10000, data: '50 جيجا' }
+            ];
+
+            packagesData.forEach(pkg => {
+                document.write(`
+                    <div class="package-unit ${pkg.id}">
+                        <div class="card-wrapper">
+                            <div class="diamond-card">
+                                <div class="card-content">
+                                    <span class="price">${pkg.price} ريال</span>
+                                    <div class="data">${pkg.data}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-add-package" onclick="confirmAndAdd('${pkg.name}', ${pkg.price})">شراء الآن 🛒</button>
+                    </div>
+                `);
+            });
+        </script>
     </div>
 
-    <div class="cart-float" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
+    <div class="cart-float" onclick="toggleCart()">🛒 سلة المشتريات (<span id="cartCount">0</span>)</div>
 
     <div id="cartModal" class="modal">
         <div class="modal-content">
-            <h2 style="color: var(--gold);">مراجعة سلتك 🧾</h2>
-            <p style="font-size: 0.9rem; margin-top: -10px; opacity: 0.8;">تأكد من طلباتك قبل الإرسال</p>
-            <div id="cartItemsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
-            <div style="font-weight: bold; font-size: 1.4rem; margin: 15px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
+            <h2 style="color: var(--gold);">سلة المشتريات 🧾</h2>
+            
+            <div class="payment-box">
+                💳 حساب الدفع (كريمي):<br>
+                <strong style="color: var(--gold); font-size: 1.4rem;">121127286</strong>
+            </div>
+
+            <div id="cartItemsList" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;"></div>
+            
+            <div style="font-weight: bold; font-size: 1.4rem; margin: 10px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
                 المجموع الكلي: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
             </div>
-            <input type="text" id="phoneInput" placeholder="رقم واتساب للتواصل" />
-            <input type="text" id="refInput" placeholder="رقم المرجع (من إيصال الحوالة)" />
+
+            <input type="text" id="phoneInput" placeholder="رقم الجوال كمرجع (اختياري)" />
+            <input type="text" id="refInput" placeholder="أدخل رقم المرجع المذكور في الحوالة" />
+            
             <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب ✨</button>
             <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء والعودة</button>
         </div>
@@ -161,26 +193,37 @@
 
     <div class="footer">
         <div class="ramadan-msg">صوماً مقبولاً وذنباً مغفوراً إن شاء الله 🌙</div>
-        <div style="margin-top:10px; opacity: 0.6;">© شبكة الماجد اللاسلكية - المتجر الرسمي 2026</div>
+        <div style="margin-top:10px; opacity: 0.6;">© متجر شبكة الماجد اللاسلكية 2026</div>
     </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzcFohLat1jV7vWfRjlJJGxae2MzpsWakltHPI_DfiyENQcFkjnBlvmQ48xl3ZaxGgb/exec';
-        let cart = [];
+        
+        // تحميل السلة من ذاكرة المتصفح عند الفتح
+        let cart = JSON.parse(localStorage.getItem('majed_cart')) || [];
+
+        // تحديث السلة فور تحميل الصفحة
+        window.onload = () => { updateCartUI(); };
+
+        function saveCart() {
+            localStorage.setItem('majed_cart', JSON.stringify(cart));
+        }
 
         function confirmAndAdd(name, price) {
-            if(confirm(`هل تود إضافة ${name} إلى السلة؟`)) {
+            if(confirm(`هل تود إضافة ${name} إلى سلة المشتريات؟`)) {
                 addToCart(name, price);
             }
         }
 
         function addToCart(name, price) { 
             cart.push({ id: Date.now() + Math.random(), name, price }); 
+            saveCart();
             updateCartUI(); 
         }
 
         function removeFromCart(id) {
             cart = cart.filter(item => item.id !== id);
+            saveCart();
             updateCartUI();
         }
 
@@ -189,7 +232,9 @@
             const list = document.getElementById('cartItemsList');
             const total = document.getElementById('totalPrice');
             list.innerHTML = ''; let sum = 0;
-            if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">سلتك فارغة حالياً..</p>';
+            
+            if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">السلة فارغة حالياً..</p>';
+
             cart.forEach((item) => { 
                 sum += item.price; 
                 list.innerHTML += `
@@ -210,26 +255,33 @@
         }
 
         function sendOrder() {
-            const phone = document.getElementById('phoneInput').value;
+            const phone = document.getElementById('phoneInput').value || "غير مسجل";
             const ref = document.getElementById('refInput').value;
             if (cart.length === 0) { alert("السلة فارغة!"); return; }
-            if (!phone || !ref) { alert("يرجى تعبئة كافة البيانات"); return; }
+            if (!ref) { alert("يرجى إدخال رقم مرجع الحوالة"); return; }
+            
             const btn = document.getElementById('payBtn'); 
             btn.innerText = "جاري الإرسال..."; 
             btn.disabled = true;
+
             const formData = new FormData();
             formData.append('packages', cart.map(i => i.name).join(' + '));
             formData.append('phone', phone); 
             formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
+            
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => { 
-                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 هام جداً:\nيرجى تصوير الشاشة الآن والاحتفاظ برقم المرجع (${ref}) لضمان حقك في استلام الكروت فور التفعيل.`); 
-                cart = []; updateCartUI(); toggleCart(); 
+                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 يرجى تصوير الشاشة والاحتفاظ برقم المرجع (${ref}) لاستلام كرتك.`); 
+                cart = []; 
+                saveCart();
+                updateCartUI(); 
+                toggleCart(); 
             })
             .catch(() => alert("خطأ في الشبكة، حاول مرة أخرى"))
             .finally(() => { 
-                btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false; 
+                btn.innerText = "تأكيد وإرسال الطلب ✨"; 
+                btn.disabled = false; 
             });
         }
 
@@ -239,7 +291,7 @@
             fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text())
             .then(text => {
-                if(text.includes("قيد المراجعة")) { alert("📦 الطلب تحت المراجعة حالياً، تفضل بالتحقق بعد قليل."); return; }
+                if(text.includes("قيد المراجعة")) { alert("📦 طلبك تحت المراجعة حالياً، تفضل بالتحقق بعد قليل."); return; }
                 displayCards(text);
             })
             .catch(() => alert("خطأ في الاتصال بالسيرفر"));
