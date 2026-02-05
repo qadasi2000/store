@@ -88,8 +88,8 @@
     </div>
 
     <script>
-        // الرابط الجديد الفعال الذي أرسلته في رسالتك الأخيرة
-        const scriptURL = 'https://script.google.com/macros/s/AKfycby1JxhK8gFwFCWyYImzKwQktGyTkBpAQd5GgVwZ-4Q7J7uie0ObnQv6uhLNGGxgqYiE/exec';
+        // تم تحديث الرابط الجديد هنا بنجاح
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzcFohLat1jV7vWfRjlJJGxae2MzpsWakltHPI_DfiyENQcFkjnBlvmQ48xl3ZaxGgb/exec';
         let cart = [];
 
         function addToCart(name, price) {
@@ -126,10 +126,9 @@
             formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
             
-            // إرسال البيانات إلى Google Sheets
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(res => {
-                alert("تم إرسال طلبك بنجاح! يرجى الانتظار حتى تأكيد الإدارة، ثم استلم كرتك برقم المرجع: " + ref);
+                alert("تم إرسال طلبك بنجاح! يرجى الانتظار حتى تأكيد الإدارة بوضع رقم (1) في الجدول، ثم استلم كرتك برقم المرجع: " + ref);
                 cart = []; 
                 updateCartUI(); 
                 toggleCart();
@@ -147,10 +146,11 @@
         function checkMyCard() {
             const ref = prompt("أدخل رقم المرجع لاستلام كروت الشحن:");
             if (!ref) return;
+            // يتم استخدام الرابط المحدث تلقائياً هنا
             fetch(scriptURL + "?action=check&ref=" + ref)
             .then(res => res.text())
             .then(text => alert(text))
-            .catch(() => alert("الطلب قيد المراجعة أو غير موجود."));
+            .catch(() => alert("الطلب قيد المراجعة أو الرقم غير صحيح."));
         }
     </script>
 </body>
