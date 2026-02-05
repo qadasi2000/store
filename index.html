@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجر شبكة الماجد - المتجر الرسمي</title>
-    <link href="https://script.google.com/macros/s/AKfycbygzc5FYklb4wReDMM8-cg77rSEgglkQu9sMKBZ4ZRkJWfG0NAWo9qLdacw0L0sbdIf/exec" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
@@ -169,28 +169,10 @@
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <h2 style="color: var(--gold);">آلية الشراء والاستلام 💡</h2>
-            
-            <div class="step-box">
-                <b>1. اختيار الباقة</b>
-                اختر الباقة المناسبة واضغط "شراء الآن" لتضاف إلى السلة.
-            </div>
-            
-            <div class="step-box">
-                <b>2. التحويل المالي</b>
-                افتح السلة وقم بتحويل المبلغ إلى حساب الكريمي: <br>
-                <center><strong style="color:var(--gold); font-size:1.3rem;">121127286</strong></center>
-            </div>
-
-            <div class="step-box">
-                <b>3. إرسال الطلب</b>
-                أدخل "رقم المرجع" المكتوب في سند التحويل داخل السلة واضغط "تأكيد".
-            </div>
-
-            <div class="step-box">
-                <b>4. الاستلام الفوري</b>
-                بعد دقيقتين من التحويل، اضغط زر "استلام الكروت" بالأعلى وأدخل رقم المرجع الخاص بك لتظهر أكواد الكروت فوراً.
-            </div>
-
+            <div class="step-box"><b>1. اختيار الباقة:</b> اضغط "شراء الآن" للباقة المطلوبة.</div>
+            <div class="step-box"><b>2. التحويل المالي:</b> حول المبلغ لحساب الكريمي: <br><center><strong>121127286</strong></center></div>
+            <div class="step-box"><b>3. إرسال الطلب:</b> أدخل رقم المرجع من سند التحويل في السلة واضغط تأكيد.</div>
+            <div class="step-box"><b>4. الاستلام الفوري:</b> بعد دقيقتين، اضغط "استلام الكروت" وأدخل رقم المرجع لتظهر أكوادك.</div>
             <button onclick="toggleHelp()" class="btn-pay">فهمت ذلك ✅</button>
         </div>
     </div>
@@ -198,21 +180,13 @@
     <div id="cartModal" class="modal">
         <div class="modal-content">
             <h2 style="color: var(--gold);">سلة المشتريات 🧾</h2>
-            
-            <div class="payment-box">
-                💳 حساب الدفع (كريمي):<br>
-                <strong style="color: var(--gold); font-size: 1.4rem;">121127286</strong>
-            </div>
-
-            <div id="cartItemsList" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;"></div>
-            
+            <div class="payment-box">💳 حساب الدفع (كريمي):<br><strong>121127286</strong></div>
+            <div id="cartItemsList" style="max-height: 180px; overflow-y: auto;"></div>
             <div style="font-weight: bold; font-size: 1.4rem; margin: 10px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
                 المجموع: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
             </div>
-
             <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)" />
             <input type="text" id="refInput" placeholder="أدخل رقم المرجع من الحوالة" />
-            
             <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب للتفعيل ✨</button>
             <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء</button>
         </div>
@@ -232,7 +206,9 @@
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzcFohLat1jV7vWfRjlJJGxae2MzpsWakltHPI_DfiyENQcFkjnBlvmQ48xl3ZaxGgb/exec';
+        // الرابط الجديد الذي يربط السكربت بالموقع
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbygzc5FYklb4wReDMM8-cg77rSEgglkQu9sMKBZ4ZRkJWfG0NAWo9qLdacw0L0sbdIf/exec';
+        
         let cart = JSON.parse(localStorage.getItem('majed_cart')) || [];
         window.onload = () => { updateCartUI(); };
 
@@ -260,42 +236,32 @@
             if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">السلة فارغة..</p>';
             cart.forEach((item) => { 
                 sum += item.price; 
-                list.innerHTML += `
-                    <div class="cart-item">
-                        <div style="text-align:right;">
-                            <strong>${item.name}</strong><br>
-                            <small>${item.price} ريال</small>
-                        </div>
-                        <button class="btn-remove" onclick="removeFromCart(${item.id})">إلغاء ❌</button>
-                    </div>`; 
+                list.innerHTML += `<div class="cart-item"><div style="text-align:right;"><strong>${item.name}</strong><br><small>${item.price} ريال</small></div><button class="btn-remove" onclick="removeFromCart(${item.id})">إلغاء ❌</button></div>`; 
             });
             total.innerText = sum;
         }
 
-        function toggleCart() { 
-            const m = document.getElementById('cartModal'); 
-            m.style.display = (m.style.display==='flex')?'none':'flex'; 
-        }
-
-        function toggleHelp() {
-            const m = document.getElementById('helpModal');
-            m.style.display = (m.style.display==='flex')?'none':'flex';
-        }
+        function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+        function toggleHelp() { const m = document.getElementById('helpModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
 
         function sendOrder() {
             const phone = document.getElementById('phoneInput').value || "غير مسجل";
             const ref = document.getElementById('refInput').value;
             if (cart.length === 0) { alert("السلة فارغة!"); return; }
             if (!ref) { alert("يرجى إدخال رقم مرجع الحوالة"); return; }
+            
             const btn = document.getElementById('payBtn'); 
             btn.innerText = "جاري الإرسال..."; btn.disabled = true;
+            
             const formData = new FormData();
             formData.append('packages', cart.map(i => i.name).join(' + '));
-            formData.append('phone', phone); formData.append('ref', ref);
+            formData.append('phone', phone); 
+            formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
+            
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => { 
-                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 يرجى الانتظار دقيقتين للتفعيل، ثم استخدم زر "استلام الكروت" برقم المرجع (${ref})`); 
+                alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 رقم المرجع: ${ref}\n\nسيتم مراجعة طلبك وتفعيله خلال دقيقتين. بعد ذلك، اضغط زر "استلام الكروت" في أعلى الموقع واستخدم نفس رقم المرجع.`); 
                 cart = []; saveCart(); updateCartUI(); toggleCart(); 
             })
             .catch(() => alert("خطأ في الشبكة، حاول مرة أخرى"))
@@ -321,11 +287,7 @@
             lines.forEach(line => {
                 if(line.includes(":")) {
                     const [name, code] = line.split(":");
-                    list.innerHTML += `
-                        <div class="cart-item" style="border-style:dashed;">
-                            <span><b>${name}:</b> ${code}</span>
-                            <button style="background:var(--gold); border:none; padding:4px 10px; border-radius:5px; cursor:pointer;" onclick="copyCode('${code.trim()}')">نسخ</button>
-                        </div>`;
+                    list.innerHTML += `<div class="cart-item" style="border-style:dashed;"><span><b>${name}:</b> ${code}</span><button style="background:var(--gold); border:none; padding:4px 10px; border-radius:5px; cursor:pointer;" onclick="copyCode('${code.trim()}')">نسخ</button></div>`;
                 }
             });
             document.getElementById('resultModal').style.display = 'flex';
