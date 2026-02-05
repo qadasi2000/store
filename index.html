@@ -38,7 +38,6 @@
             display: flex; align-items: center; justify-content: center;
             border-radius: 50px; overflow: hidden;
             margin-bottom: 20px;
-            /* هالة شفافة ملونة تندمج مع الخلفية العنابية */
             filter: drop-shadow(0 0 25px var(--accent-color));
         }
 
@@ -71,7 +70,7 @@
         }
         .btn-add-package:hover { transform: scale(1.05); background: white; box-shadow: 0 0 20px var(--gold); }
 
-        /* ألوان الباقات المتناسقة مع الهالة الشفافة */
+        /* تدرجات ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -125,6 +124,14 @@
             <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">1000 ريال</span><div class="data">5 جيجا</div></div></div></div>
             <button class="btn-add-package" onclick="confirmAndAdd('باقة 1000', 1000)">شراء الآن 🛒</button>
         </div>
+        <div class="package-unit b5000">
+            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">5000 ريال</span><div class="data">25 جيجا</div></div></div></div>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 5000', 5000)">شراء الآن 🛒</button>
+        </div>
+        <div class="package-unit b10000">
+            <div class="card-wrapper"><div class="diamond-card"><div class="card-content"><span class="price">10000 ريال</span><div class="data">50 جيجا</div></div></div></div>
+            <button class="btn-add-package" onclick="confirmAndAdd('باقة 10000', 10000)">شراء الآن 🛒</button>
+        </div>
     </div>
 
     <div class="cart-float" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
@@ -133,16 +140,12 @@
         <div class="modal-content">
             <h2 style="color: var(--gold);">مراجعة سلتك 🧾</h2>
             <p style="font-size: 0.9rem; margin-top: -10px; opacity: 0.8;">تأكد من طلباتك قبل الإرسال</p>
-            
             <div id="cartItemsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
-            
             <div style="font-weight: bold; font-size: 1.4rem; margin: 15px 0; border-top: 2px solid var(--gold); padding-top: 10px;">
                 المجموع الكلي: <span id="totalPrice" style="color:var(--gold)">0</span> ريال
             </div>
-
             <input type="text" id="phoneInput" placeholder="رقم واتساب للتواصل" />
             <input type="text" id="refInput" placeholder="رقم المرجع (من إيصال الحوالة)" />
-            
             <button class="btn-pay" id="payBtn" onclick="sendOrder()">تأكيد وإرسال الطلب ✨</button>
             <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إلغاء والعودة</button>
         </div>
@@ -186,9 +189,7 @@
             const list = document.getElementById('cartItemsList');
             const total = document.getElementById('totalPrice');
             list.innerHTML = ''; let sum = 0;
-            
             if(cart.length === 0) list.innerHTML = '<p style="opacity:0.5;">سلتك فارغة حالياً..</p>';
-
             cart.forEach((item) => { 
                 sum += item.price; 
                 list.innerHTML += `
@@ -213,28 +214,22 @@
             const ref = document.getElementById('refInput').value;
             if (cart.length === 0) { alert("السلة فارغة!"); return; }
             if (!phone || !ref) { alert("يرجى تعبئة كافة البيانات"); return; }
-            
             const btn = document.getElementById('payBtn'); 
             btn.innerText = "جاري الإرسال..."; 
             btn.disabled = true;
-
             const formData = new FormData();
             formData.append('packages', cart.map(i => i.name).join(' + '));
             formData.append('phone', phone); 
             formData.append('ref', ref);
             formData.append('date', new Date().toLocaleString('ar-YE'));
-            
             fetch(scriptURL, { method: 'POST', body: formData })
             .then(() => { 
                 alert(`✅ تم إرسال طلبك بنجاح!\n\n📌 هام جداً:\nيرجى تصوير الشاشة الآن والاحتفاظ برقم المرجع (${ref}) لضمان حقك في استلام الكروت فور التفعيل.`); 
-                cart = []; 
-                updateCartUI(); 
-                toggleCart(); 
+                cart = []; updateCartUI(); toggleCart(); 
             })
             .catch(() => alert("خطأ في الشبكة، حاول مرة أخرى"))
             .finally(() => { 
-                btn.innerText = "تأكيد وإرسال الطلب ✨"; 
-                btn.disabled = false; 
+                btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false; 
             });
         }
 
