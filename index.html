@@ -9,7 +9,6 @@
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        /* تصغير الخط ليناسب الجوال باستخدام وحدة viewport width */
         h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; white-space: nowrap; }
         h2, .btn-style { font-family: 'Amiri', serif; }
         
@@ -100,7 +99,6 @@
         .btn-remove { background: #ffffff; color: #ff4444; border: 1px solid #ff4444; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.2s; }
         .btn-remove:hover { background: #ff4444; color: #ffffff; }
 
-        /* تصميم رسالة التأكيد (Toast) بدل الـ Alert */
         #toast { 
             visibility: hidden; min-width: 250px; background-color: #4BB543; color: #fff; text-align: center; 
             border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; 
@@ -121,7 +119,7 @@
         <h1>متجر شبكة الماجد</h1>
         <div>
             <button onclick="toggleHelp()" class="btn-check btn-help">💡 كيفية الشراء والاستلام؟</button>
-            <button onclick="promptCheck()" class="btn-check">🎫 استلام الكروت الجاهزة بعد الشراء</button>
+            <button onclick="openReceiveModal()" class="btn-check">🎫 استلام الكروت الجاهزة بعد الشراء</button>
         </div>
     </div>
 
@@ -159,12 +157,20 @@
 
     <div class="cart-float" onclick="handleCartClick()">🛒 سلة المشتريات (<span id="cartCount">0</span>)</div>
 
+    <div id="receiveModal" class="modal"><div class="modal-content">
+        <h2 style="color: var(--gold);">استلام الكروت 🎫</h2>
+        <p>أدخل رقم المرجع الخاص بحوالتك:</p>
+        <input type="text" id="checkRefInput" placeholder="رقم المرجع هنا..." />
+        <button class="btn-pay" onclick="checkOrderNow()">استلام الآن 🚀</button>
+        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغلاق</button>
+    </div></div>
+
     <div id="helpModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">دليل الاستخدام 💡</h2>
         <div class="step-box"><b>1. الطلب:</b> اختر الباقات التي تريدها وأضفها للسلة.</div>
         <div class="step-box"><b>2. الدفع:</b> حول المبلغ للكريمي: <strong>121127286</strong>.</div>
         <div class="step-box"><b>3. التفعيل:</b> أدخل رقم مرجع الحوالة في السلة واضغط إرسال.</div>
-        <div class="step-box"><b>4. الاستلام:</b> انسخ رقم المرجع، واستلم كروتك من الزر الذهبي بالأعلى.</div>
+        <div class="step-box"><b>4. الاستلام:</b> يتم حفظ المرجع آلياً، اضغط زر الاستلام الذهبي مباشرة.</div>
         <button onclick="toggleHelp()" class="btn-pay">فهمت ذلك ✅</button>
     </div></div>
 
@@ -180,12 +186,11 @@
 
     <div id="successModal" class="modal"><div class="modal-content">
         <h2 style="color: #00ffcc;">تم إرسال طلبك بنجاح! 🚀</h2>
-        <p>يرجى استخدام رقم المرجع التالي لاستلام كروتك بعد قليل:</p>
+        <p>تم حفظ المرجع تلقائياً، يمكنك الاستلام الآن:</p>
         <div style="background: #1a000a; padding: 15px; border-radius: 10px; font-size: 1.5rem; color: var(--gold); border: 1px solid var(--gold); margin: 15px 0;">
             <span id="displayRef"></span>
-            <button onclick="copyOrderRef()" style="margin-right:15px; background:var(--gold); border:none; padding:5px 10px; border-radius:5px; cursor:pointer; font-weight:bold;">نسخ الرقم</button>
         </div>
-        <button onclick="closeSuccess()" class="btn-pay">حسناً</button>
+        <button onclick="closeSuccessAndGoReceive()" class="btn-pay">الذهاب لصفحة الاستلام 🎫</button>
     </div></div>
 
     <div id="resultModal" class="modal"><div class="modal-content">
@@ -239,19 +244,18 @@
         function confirmAndAdd(name, price) { 
             const currentTotal = cart.reduce((acc, item) => acc + item.qty, 0);
             if (currentTotal >= MAX_TOTAL_QTY) { showToast("⚠️ وصلت للحد الأقصى (50)"); return; }
-
             const existing = cart.findIndex(i => i.name === name);
             if (existing > -1) cart[existing].qty++;
             else cart.push({name, price, qty: 1}); 
-            
             saveCart(); updateCartUI();
-            showToast(`✅ تمت إضافة ${name}`); // استبدال الـ Alert بالـ Toast
+            showToast(`✅ تمت إضافة ${name}`);
         }
 
         function saveCart() { localStorage.setItem('majed_cart', JSON.stringify(cart)); }
         function removeFromCart(index) { cart.splice(index, 1); saveCart(); updateCartUI(); }
         function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
         function toggleHelp() { const m = document.getElementById('helpModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+        function toggleReceiveModal() { const m = document.getElementById('receiveModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
 
         async function sendOrder() {
             const ref = document.getElementById('refInput').value;
@@ -275,6 +279,8 @@
                         });
                     }
                 }
+                // السحر هنا: حفظ الرقم للاستخدام اللاحق
+                localStorage.setItem('last_ref', ref);
                 document.getElementById('displayRef').innerText = ref;
                 cart=[]; saveCart(); updateCartUI(); toggleCart();
                 document.getElementById('successModal').style.display = 'flex';
@@ -282,23 +288,33 @@
             finally { btn.innerText = "تأكيد وإرسال الطلب ✨"; btn.disabled = false; }
         }
 
-        function copyOrderRef() {
-            const ref = document.getElementById('displayRef').innerText;
-            navigator.clipboard.writeText(ref).then(() => showToast("✅ تم النسخ"));
+        function openReceiveModal() {
+            const savedRef = localStorage.getItem('last_ref');
+            if(savedRef) {
+                document.getElementById('checkRefInput').value = savedRef;
+            }
+            toggleReceiveModal();
         }
-        function closeSuccess() { document.getElementById('successModal').style.display = 'none'; }
 
-        function promptCheck() {
-            const ref = prompt("أدخل رقم المرجع للاستلام:");
-            if (!ref) return;
+        function closeSuccessAndGoReceive() {
+            document.getElementById('successModal').style.display = 'none';
+            openReceiveModal();
+        }
+
+        function checkOrderNow() {
+            const ref = document.getElementById('checkRefInput').value;
+            if (!ref) { showToast("⚠️ يرجى إدخال المرجع"); return; }
+            
+            toggleReceiveModal();
             const list = document.getElementById('cardsResultList');
-            list.innerHTML = "<p>جاري البحث...</p>";
+            list.innerHTML = "<p>جاري البحث عن كروتك...</p>";
             document.getElementById('resultModal').style.display = 'flex';
+            
             fetch(`${scriptURL}?action=check&ref=${ref}`).then(res => res.text()).then(text => {
-                if(text.includes("المراجعة")) list.innerHTML = "<p>⏳ قيد المراجعة.</p>";
-                else if(text.includes("لم يتم العثور")) list.innerHTML = "<p>❌ غير موجود.</p>";
+                if(text.includes("المراجعة")) list.innerHTML = "<p>⏳ طلبك قيد المراجعة، يرجى المحاولة بعد قليل.</p>";
+                else if(text.includes("لم يتم العثور")) list.innerHTML = "<p>❌ المرجع غير صحيح أو لم يتم تفعيله بعد.</p>";
                 else displayCards(text);
-            }).catch(() => list.innerHTML = "<p>خطأ في الشبكة</p>");
+            }).catch(() => list.innerHTML = "<p>⚠️ عذراً، تعذر الوصول للسيرفر.</p>");
         }
 
         function displayCards(text) {
