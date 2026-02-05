@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - النسخة المعتمدة</title>
+    <title>متجر شبكة الماجد - الإصدار المستقر</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        /* الهيدر والعنوان */
         .header { text-align: center; padding: 30px 10px; }
         h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 8vw, 4.5rem); color: var(--gold); margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         
@@ -17,38 +16,29 @@
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        /* الأزرار العامة */
         .btn-main { background: var(--gold); color: var(--primary-bg); border: 2px solid white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .btn-main:hover { transform: scale(1.05); background: white; }
         .cart-float { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
 
-        /* شبكة المنتجات */
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .package-card { background: var(--card-bg); border: 1px solid rgba(249, 217, 118, 0.2); border-radius: 25px; padding: 20px; text-align: center; transition: 0.3s; backdrop-filter: blur(5px); }
-        .package-card:hover { border-color: var(--gold); transform: translateY(-5px); }
-        .price { font-size: 2rem; font-weight: bold; color: white; display: block; }
-        .data-info { color: var(--gold); font-size: 1.1rem; margin-bottom: 10px; }
-        .stock-info { font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 3px 10px; border-radius: 10px; color: #eee; }
+        .package-card { background: var(--card-bg); border: 1px solid rgba(249, 217, 118, 0.2); border-radius: 25px; padding: 20px; text-align: center; transition: 0.3s; backdrop-filter: blur(5px); position: relative;}
+        .price { font-size: 2.2rem; font-weight: bold; color: white; display: block; margin-bottom: 5px;}
+        .data-info { color: var(--gold); font-size: 1.3rem; margin-bottom: 10px; font-weight: bold;}
+        .stock-tag { font-size: 0.85rem; background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 10px; color: #fff; display: inline-block; margin-bottom: 15px;}
 
-        /* المودال (النوافذ المنبثقة) */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; text-align: center; position: relative; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; text-align: center; color: white; box-shadow: 0 0 30px rgba(0,0,0,0.5);}
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(249, 217, 118, 0.1); background: rgba(255,255,255,0.05); margin-bottom: 5px; border-radius: 10px; }
-        .qty-box { display: flex; align-items: center; gap: 10px; }
-        .qty-btn { background: var(--gold); border: none; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; font-weight: bold; color: var(--primary-bg); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.07); margin-bottom: 10px; border-radius: 15px; border: 1px solid rgba(249,217,118,0.1); }
+        .qty-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-btn { background: var(--gold); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem; color: #000; display: flex; align-items: center; justify-content: center;}
 
-        input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: white; text-align: center; font-size: 1rem; box-sizing: border-box; }
-        input:focus { outline: none; border-color: white; }
-        .btn-pay { background: var(--gold); color: var(--primary-bg); width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-pay:active { transform: scale(0.98); }
+        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 1rem; box-sizing: border-box; }
+        .btn-pay { background: var(--gold); color: var(--primary-bg); width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 10px; }
 
-        /* عرض النتائج والنسخ */
-        .result-item { background: white; color: #2b0010; margin: 8px 0; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .copy-btn { background: #2b0010; color: white; border: none; padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; }
-        .copy-all { background: #28a745; color: white; width: 100%; padding: 12px; border: none; border-radius: 12px; margin-bottom: 15px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .result-row { background: #fff; color: #2b0010; margin: 8px 0; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-weight: bold; }
+        .copy-btn { background: #2b0010; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-size: 0.8rem;}
 
-        #toast { visibility: hidden; min-width: 250px; background: #28a745; color: white; text-align: center; border-radius: 12px; padding: 16px; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #toast { visibility: hidden; min-width: 250px; background: #28a745; color: white; text-align: center; border-radius: 12px; padding: 16px; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 3000; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -57,7 +47,7 @@
 <body>
 
 <div id="toast"></div>
-<div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد يرحب بكم.. جميع الباقات متوفرة الآن.. استلام فوري للكروت بعد تأكيد الطلب 🌙</div></div>
+<div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد يرحب بكم.. الكميات محدثة الآن.. اطلب كرتك واستلمه فوراً 🌙</div></div>
 
 <div class="header">
     <h1>متجر شبكة الماجد</h1>
@@ -65,7 +55,7 @@
 </div>
 
 <div class="grid-container" id="packagesGrid">
-    <p style="grid-column: 1/-1; text-align: center;">جاري تحميل الباقات والمخزون...</p>
+    <div style="grid-column: 1/-1; text-align: center;">جاري تحميل الباقات...</div>
 </div>
 
 <div id="cartModal" class="modal"><div class="modal-content">
@@ -75,26 +65,24 @@
         <strong style="font-size: 1.4rem;">الإجمالي: <span id="cartTotal" style="color: var(--gold);">0</span> ريال</strong>
     </div>
     <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)">
-    <input type="text" id="refInput" placeholder="رقم المرجع (رقم الحوالة)">
-    <button class="btn-pay" id="sendBtn" onclick="sendOrder()">إرسال الطلب الآن ✨</button>
-    <button onclick="closeModal('cartModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer; font-size: 0.9rem;">إغلاق السلة</button>
+    <input type="text" id="refInput" placeholder="أدخل رقم المرجع">
+    <button class="btn-pay" id="sendBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
+    <button onclick="closeModal('cartModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق السلة</button>
 </div></div>
 
 <div id="receiveModal" class="modal"><div class="modal-content">
     <h2 style="color: var(--gold); margin-top: 0;">استلام الكروت 🎫</h2>
     <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع">
     <button class="btn-pay" id="checkBtn" onclick="checkOrder()">تحقق واستلام 🔍</button>
-    <div id="receiveResults" style="margin-top:20px; display:none; text-align: right;">
-        <button class="copy-all" onclick="copyAll()">📋 نسخ جميع الكروت (عمودياً)</button>
+    <div id="receiveResults" style="margin-top:20px; display:none;">
         <div id="cardsList"></div>
     </div>
-    <button onclick="closeModal('receiveModal')" style="background:none; border:none; color:#bbb; margin-top:20px; cursor:pointer;">إغلاق النافذة</button>
+    <button onclick="closeModal('receiveModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
 </div></div>
 
 <button class="btn-main cart-float" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</button>
 
 <script>
-    // الرابط الذي زودتني به
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
 
     const packages = [
@@ -109,167 +97,154 @@
         { name: 'باقة 10000', price: 10000, data: '50 جيجا' }
     ];
 
-    let cart = JSON.parse(localStorage.getItem('majed_cart_v3')) || [];
+    let cart = [];
 
-    // وظيفة جلب المخزون
     async function fetchStock() {
         try {
             const response = await fetch(`${scriptURL}?action=getStock`);
             const stock = await response.json();
             renderPackages(stock);
-        } catch (e) { 
-            console.error("Stock fetch error", e);
-            renderPackages({}); 
-        }
+        } catch (e) { renderPackages({}); }
     }
 
     function renderPackages(stockData) {
         const grid = document.getElementById('packagesGrid');
         grid.innerHTML = packages.map(pkg => {
             const count = stockData[pkg.name] || 0;
-            const outOfStock = count <= 0;
+            const isOut = count <= 0;
             return `
                 <div class="package-card">
                     <span class="price">${pkg.price} ريال</span>
                     <div class="data-info">${pkg.data}</div>
-                    <div class="stock-info">${outOfStock ? '❌ نفدت الكمية' : 'المتوفر حالياً: ' + count}</div>
-                    <button class="btn-pay" style="margin-top:15px; font-size:1rem; padding:12px;" 
-                            onclick="addToCart('${pkg.name}', ${pkg.price})" ${outOfStock ? 'disabled style="background:#666"' : ''}>
-                        ${outOfStock ? 'غير متوفر' : 'إضافة للسلة 🛒'}
+                    <div class="stock-tag">${isOut ? '❌ نفدت الكمية' : 'المتوفر: ' + count}</div>
+                    <button class="btn-pay" style="margin-top:0" onclick="addToCart('${pkg.name}', ${pkg.price})" ${isOut ? 'disabled style="background:#666"' : ''}>
+                        ${isOut ? 'غير متوفر' : 'إضافة للسلة 🛒'}
                     </button>
                 </div>`;
         }).join('');
     }
 
     function addToCart(name, price) {
-        const item = cart.find(i => i.name === name);
-        if (item) item.qty++; else cart.push({name, price, qty: 1});
-        updateCart();
-        showToast("✅ تمت الإضافة إلى السلة");
+        const existing = cart.find(item => item.name === name);
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ name, price: Number(price), qty: 1 });
+        }
+        updateCartUI();
+        showToast("✅ تمت الإضافة");
     }
 
-    function updateCart() {
-        localStorage.setItem('majed_cart_v3', JSON.stringify(cart));
+    function updateCartUI() {
         const count = cart.reduce((sum, item) => sum + item.qty, 0);
         document.getElementById('cartCount').innerText = count;
         
         const list = document.getElementById('cartItemsList');
         let total = 0;
+        
         list.innerHTML = cart.map((item, index) => {
-            total += (item.price * item.qty);
+            const itemTotal = item.price * item.qty;
+            total += itemTotal;
             return `
                 <div class="cart-item">
-                    <div style="text-align:right"><b>${item.name}</b><br><small>${item.price} ريال</small></div>
-                    <div class="qty-box">
+                    <div style="text-align:right">
+                        <b>${item.name}</b><br>
+                        <small>${item.price} ريال</small>
+                    </div>
+                    <div class="qty-controls">
                         <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                        <span style="min-width:20px">${item.qty}</span>
-                        <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                        <span style="font-weight:bold; font-size:1.2rem;">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${index}, +1)">+</button>
                     </div>
                 </div>`;
         }).join('');
+        
         document.getElementById('cartTotal').innerText = total;
     }
 
     function changeQty(index, delta) {
         cart[index].qty += delta;
         if (cart[index].qty <= 0) cart.splice(index, 1);
-        updateCart();
+        updateCartUI();
     }
 
     async function sendOrder() {
         const ref = document.getElementById('refInput').value.trim();
-        if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع");
-        
+        if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+        if(cart.length === 0) return showToast("⚠️ السلة فارغة");
+
         const btn = document.getElementById('sendBtn');
         btn.disabled = true; btn.innerText = "جاري الإرسال...";
-        
-        // تحويل محتوى السلة لنص متكرر حسب العدد (باقة 100, باقة 100)
-        const packagesString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
-        
+
+        const packagesNames = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
+
         try {
             await fetch(scriptURL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: new URLSearchParams({ 
-                    packages: packagesString, 
+                    packages: packagesNames, 
                     ref: ref, 
                     phone: document.getElementById('phoneInput').value 
                 })
             });
             localStorage.setItem('last_ref', ref);
-            cart = []; updateCart(); closeModal('cartModal');
-            showToast("✅ تم إرسال الطلب بنجاح");
-        } catch (e) { showToast("❌ فشل في الإرسال"); }
-        finally { btn.disabled = false; btn.innerText = "إرسال الطلب الآن ✨"; }
+            cart = []; updateCartUI(); closeModal('cartModal');
+            showToast("✅ تم إرسال طلبك بنجاح");
+        } catch (e) { showToast("❌ فشل الاتصال"); }
+        finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
     }
 
     async function checkOrder() {
         const ref = document.getElementById('checkRefInput').value.trim();
-        const btn = document.getElementById('checkBtn');
         if(!ref) return showToast("⚠️ أدخل رقم المرجع");
         
+        const btn = document.getElementById('checkBtn');
         btn.disabled = true; btn.innerText = "جاري البحث...";
+
         try {
             const response = await fetch(`${scriptURL}?action=check&ref=${ref}`);
             const text = await response.text();
             if (text.includes(":")) {
-                showToast("✅ كروتك جاهزة للاستلام");
                 showResults(text);
             } else {
                 showToast("📦 " + text);
-                document.getElementById('receiveResults').style.display = 'none';
             }
-        } catch (e) { showToast("⚠️ خطأ في الاتصال بالسيرفر"); }
+        } catch (e) { showToast("⚠️ خطأ في الاتصال"); }
         finally { btn.disabled = false; btn.innerText = "تحقق واستلام 🔍"; }
     }
 
     function showResults(text) {
-        const container = document.getElementById('receiveResults');
         const list = document.getElementById('cardsList');
-        const cards = text.split('\n').filter(line => line.trim() !== "");
-        
-        list.innerHTML = cards.map(card => `
-            <div class="result-item">
-                <span class="card-val">${card}</span>
-                <button class="copy-btn" onclick="copyText('${card}')">نسخ</button>
-            </div>
-        `).join('');
-        container.style.display = 'block';
+        const cards = text.split('\n').filter(c => c.trim());
+        list.innerHTML = cards.map(c => `
+            <div class="result-row">
+                <span>${c}</span>
+                <button class="copy-btn" onclick="copyText('${c}')">نسخ</button>
+            </div>`).join('');
+        document.getElementById('receiveResults').style.display = 'block';
     }
 
     function copyText(val) {
         navigator.clipboard.writeText(val);
-        showToast("📋 تم نسخ الكود");
+        showToast("📋 تم النسخ");
     }
 
-    function copyAll() {
-        const all = Array.from(document.querySelectorAll('.card-val')).map(el => el.innerText).join('\n');
-        navigator.clipboard.writeText(all);
-        showToast("📋 تم نسخ جميع الكروت عمودياً");
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerText = msg; t.className = "show";
+        setTimeout(() => t.className = "", 2500);
     }
 
-    function handleCartClick() { 
-        if(cart.length > 0) document.getElementById('cartModal').style.display='flex'; 
-        else showToast("🛒 السلة فارغة حالياً"); 
-    }
-    
+    function handleCartClick() { if(cart.length > 0) document.getElementById('cartModal').style.display='flex'; else showToast("🛒 السلة فارغة"); }
     function openReceiveModal() { 
         document.getElementById('checkRefInput').value = localStorage.getItem('last_ref') || "";
         document.getElementById('receiveModal').style.display='flex'; 
     }
-    
     function closeModal(id) { document.getElementById(id).style.display='none'; }
-    
-    function showToast(m) { 
-        const t = document.getElementById('toast'); 
-        t.innerText = m; t.className = 'show'; 
-        setTimeout(() => t.className = '', 2500); 
-    }
 
-    window.onload = () => { 
-        fetchStock(); 
-        updateCart(); 
-    };
+    window.onload = fetchStock;
 </script>
+
 </body>
 </html>
