@@ -3,248 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - الإصدار المستقر</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
+    <title>متجر شبكة الماجد - المطور</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        .header { text-align: center; padding: 30px 10px; }
-        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 8vw, 4.5rem); color: var(--gold); margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; white-space: nowrap; }
         
-        .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 10px 0; overflow: hidden; font-size: 0.9rem; }
+        .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; overflow: hidden; }
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        .btn-main { background: var(--gold); color: var(--primary-bg); border: 2px solid white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .cart-float { position: fixed; bottom: 20px; left: 20px; z-index: 1000; }
-
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .package-card { background: var(--card-bg); border: 1px solid rgba(249, 217, 118, 0.2); border-radius: 25px; padding: 20px; text-align: center; transition: 0.3s; backdrop-filter: blur(5px); position: relative;}
-        .price { font-size: 2.2rem; font-weight: bold; color: white; display: block; margin-bottom: 5px;}
-        .data-info { color: var(--gold); font-size: 1.3rem; margin-bottom: 10px; font-weight: bold;}
-        .stock-tag { font-size: 0.85rem; background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 10px; color: #fff; display: inline-block; margin-bottom: 15px;}
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; text-align: center; color: white; box-shadow: 0 0 30px rgba(0,0,0,0.5);}
+        .header { text-align: center; padding: 40px 10px; }
+        .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); }
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(255,255,255,0.07); margin-bottom: 10px; border-radius: 15px; border: 1px solid rgba(249,217,118,0.1); }
-        .qty-controls { display: flex; align-items: center; gap: 12px; }
-        .qty-btn { background: var(--gold); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem; color: #000; display: flex; align-items: center; justify-content: center;}
+        .cart-float { position: fixed; bottom: 30px; left: 30px; z-index: 1000; padding: 18px 25px; font-size: 1.1rem; }
 
-        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; font-size: 1rem; box-sizing: border-box; }
-        .btn-pay { background: var(--gold); color: var(--primary-bg); width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 10px; }
+        /* تنسيق الكروت الماسية */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
+        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
+        .card-wrapper { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; border-radius: 50px; overflow: hidden; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--accent-color)); }
+        .card-wrapper::before { content: ""; position: absolute; width: 180%; height: 180%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
+        .card-wrapper::after { content: ""; position: absolute; inset: 7px; background: var(--primary-bg); border-radius: 45px; z-index: 1; }
+        @keyframes rotate-border { 100% { transform: rotate(360deg); } }
+        
+        .diamond-card { width: 180px; height: 180px; background: var(--card-gradient); border-radius: 40px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
+        .card-content { text-align: center; color: white; }
+        .price { font-size: 2rem; font-weight: 900; display: block; color: white; }
+        .data { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .stock-tag { font-size: 0.8rem; margin-top: 5px; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 10px; }
 
-        .result-row { background: #fff; color: #2b0010; margin: 8px 0; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-weight: bold; }
-        .copy-btn { background: #2b0010; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-size: 0.8rem;}
+        .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 180px; }
+        .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; }
+        
+        /* ألوان الباقات */
+        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
+        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
+        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
+        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
+        .b2000 { --accent-color: #a855f7; --card-gradient: linear-gradient(135deg, #581c87, #a855f7); }
+        .b3000 { --accent-color: #00ffcc; --card-gradient: linear-gradient(135deg, #004d40, #00ffcc); }
+        .b5000 { --accent-color: #fb923c; --card-gradient: linear-gradient(135deg, #9a3412, #fb923c); }
+        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
 
-        #toast { visibility: hidden; min-width: 250px; background: #28a745; color: white; text-align: center; border-radius: 12px; padding: 16px; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 3000; }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2s; }
+        /* المودالات */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 450px; text-align: center; color: white; }
+        
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px; margin: 8px 0; }
+        .qty-btn { background: var(--gold); border: none; width: 25px; height: 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; }
+        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #28a745; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
 
-<div id="toast"></div>
-<div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد يرحب بكم.. الكميات محدثة الآن.. اطلب كرتك واستلمه فوراً 🌙</div></div>
+    <div id="toast">✅ تمت الإضافة</div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - باقات متنوعة بأسعار منافسة.. اطلب الآن واستلم كرتك فوراً 🌙</div></div>
 
-<div class="header">
-    <h1>متجر شبكة الماجد</h1>
-    <button class="btn-main" onclick="openReceiveModal()">🎫 استلام الكروت الجاهزة</button>
-</div>
-
-<div class="grid-container" id="packagesGrid">
-    <div style="grid-column: 1/-1; text-align: center;">جاري تحميل الباقات...</div>
-</div>
-
-<div id="cartModal" class="modal"><div class="modal-content">
-    <h2 style="color: var(--gold); margin-top: 0;">سلة المشتريات 🧾</h2>
-    <div id="cartItemsList"></div>
-    <div style="margin: 20px 0; border-top: 2px dashed var(--gold); padding-top: 15px;">
-        <strong style="font-size: 1.4rem;">الإجمالي: <span id="cartTotal" style="color: var(--gold);">0</span> ريال</strong>
+    <div class="header">
+        <h1>متجر شبكة الماجد</h1>
+        <button onclick="toggleReceiveModal()" class="btn-check">🎫 استلام الكروت الجاهزة</button>
     </div>
-    <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)">
-    <input type="text" id="refInput" placeholder="أدخل رقم المرجع">
-    <button class="btn-pay" id="sendBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
-    <button onclick="closeModal('cartModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق السلة</button>
-</div></div>
 
-<div id="receiveModal" class="modal"><div class="modal-content">
-    <h2 style="color: var(--gold); margin-top: 0;">استلام الكروت 🎫</h2>
-    <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع">
-    <button class="btn-pay" id="checkBtn" onclick="checkOrder()">تحقق واستلام 🔍</button>
-    <div id="receiveResults" style="margin-top:20px; display:none;">
-        <div id="cardsList"></div>
+    <div class="grid-container" id="packagesGrid">
+        <div style="color:var(--gold)">جاري تحميل المخزون...</div>
     </div>
-    <button onclick="closeModal('receiveModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
-</div></div>
 
-<button class="btn-main cart-float" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</button>
+    <div id="receiveModal" class="modal"><div class="modal-content">
+        <h2 style="color: var(--gold);">استلام الكروت 🎫</h2>
+        <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع هنا" />
+        <button class="btn-pay" onclick="checkOrderNow()">استلام الآن 🚀</button>
+        <div id="checkResult" style="margin-top:15px; font-weight:bold;"></div>
+        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
+    </div></div>
 
-<script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
+    <div id="cartModal" class="modal"><div class="modal-content">
+        <h2 style="color: var(--gold);">سلة المشتريات 🧾</h2>
+        <div id="cartItemsList"></div>
+        <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
+            الإجمالي: <span id="cartTotalText">0</span> ريال
+        </div>
+        <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
+        <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
+        <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
+    </div></div>
 
-    const packages = [
-        { name: 'باقة 100', price: 100, data: '500 ميجا' },
-        { name: 'باقة 200', price: 200, data: '1 جيجا' },
-        { name: 'باقة 300', price: 300, data: '1.5 جيجا' },
-        { name: 'باقة 500', price: 500, data: '2.5 جيجا' },
-        { name: 'باقة 1000', price: 1000, data: '5 جيجا' },
-        { name: 'باقة 2000', price: 2000, data: '12 جيجا' },
-        { name: 'باقة 3000', price: 3000, data: '18 جيجا' },
-        { name: 'باقة 5000', price: 5000, data: '25 جيجا' },
-        { name: 'باقة 10000', price: 10000, data: '50 جيجا' }
-    ];
+    <div class="cart-float" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
-    let cart = [];
-
-    async function fetchStock() {
-        try {
-            const response = await fetch(`${scriptURL}?action=getStock`);
-            const stock = await response.json();
-            renderPackages(stock);
-        } catch (e) { renderPackages({}); }
-    }
-
-    function renderPackages(stockData) {
-        const grid = document.getElementById('packagesGrid');
-        grid.innerHTML = packages.map(pkg => {
-            const count = stockData[pkg.name] || 0;
-            const isOut = count <= 0;
-            return `
-                <div class="package-card">
-                    <span class="price">${pkg.price} ريال</span>
-                    <div class="data-info">${pkg.data}</div>
-                    <div class="stock-tag">${isOut ? '❌ نفدت الكمية' : 'المتوفر: ' + count}</div>
-                    <button class="btn-pay" style="margin-top:0" onclick="addToCart('${pkg.name}', ${pkg.price})" ${isOut ? 'disabled style="background:#666"' : ''}>
-                        ${isOut ? 'غير متوفر' : 'إضافة للسلة 🛒'}
-                    </button>
-                </div>`;
-        }).join('');
-    }
-
-    function addToCart(name, price) {
-        const existing = cart.find(item => item.name === name);
-        if (existing) {
-            existing.qty++;
-        } else {
-            cart.push({ name, price: Number(price), qty: 1 });
-        }
-        updateCartUI();
-        showToast("✅ تمت الإضافة");
-    }
-
-    function updateCartUI() {
-        const count = cart.reduce((sum, item) => sum + item.qty, 0);
-        document.getElementById('cartCount').innerText = count;
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwaTL-51ajoIEPUkz__oJQl0XcNq22-GhRaGBIWDg4aw0kJKtK3P_tfckvTDnSLQtKo/exec';
         
-        const list = document.getElementById('cartItemsList');
-        let total = 0;
-        
-        list.innerHTML = cart.map((item, index) => {
-            const itemTotal = item.price * item.qty;
-            total += itemTotal;
-            return `
-                <div class="cart-item">
-                    <div style="text-align:right">
-                        <b>${item.name}</b><br>
-                        <small>${item.price} ريال</small>
-                    </div>
-                    <div class="qty-controls">
-                        <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                        <span style="font-weight:bold; font-size:1.2rem;">${item.qty}</span>
-                        <button class="qty-btn" onclick="changeQty(${index}, +1)">+</button>
-                    </div>
-                </div>`;
-        }).join('');
-        
-        document.getElementById('cartTotal').innerText = total;
-    }
+        const packagesData = [
+            { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
+            { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
+            { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
+            { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
+            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' },
+            { id: 'b2000', name: 'باقة 2000', price: 2000, data: '12 جيجا' },
+            { id: 'b3000', name: 'باقة 3000', price: 3000, data: '18 جيجا' },
+            { id: 'b5000', name: 'باقة 5000', price: 5000, data: '25 جيجا' },
+            { id: 'b10000', name: 'باقة 10000', price: 10000, data: '50 جيجا' }
+        ];
 
-    function changeQty(index, delta) {
-        cart[index].qty += delta;
-        if (cart[index].qty <= 0) cart.splice(index, 1);
-        updateCartUI();
-    }
+        let cart = [];
 
-    async function sendOrder() {
-        const ref = document.getElementById('refInput').value.trim();
-        if(!ref) return showToast("⚠️ أدخل رقم المرجع");
-        if(cart.length === 0) return showToast("⚠️ السلة فارغة");
-
-        const btn = document.getElementById('sendBtn');
-        btn.disabled = true; btn.innerText = "جاري الإرسال...";
-
-        const packagesNames = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
-
-        try {
-            await fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: new URLSearchParams({ 
-                    packages: packagesNames, 
-                    ref: ref, 
-                    phone: document.getElementById('phoneInput').value 
-                })
-            });
-            localStorage.setItem('last_ref', ref);
-            cart = []; updateCartUI(); closeModal('cartModal');
-            showToast("✅ تم إرسال طلبك بنجاح");
-        } catch (e) { showToast("❌ فشل الاتصال"); }
-        finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
-    }
-
-    async function checkOrder() {
-        const ref = document.getElementById('checkRefInput').value.trim();
-        if(!ref) return showToast("⚠️ أدخل رقم المرجع");
-        
-        const btn = document.getElementById('checkBtn');
-        btn.disabled = true; btn.innerText = "جاري البحث...";
-
-        try {
-            const response = await fetch(`${scriptURL}?action=check&ref=${ref}`);
-            const text = await response.text();
-            if (text.includes(":")) {
-                showResults(text);
-            } else {
-                showToast("📦 " + text);
+        async function fetchStock() {
+            try {
+                const response = await fetch(`${scriptURL}?action=getStock`);
+                const stock = await response.json();
+                renderPackages(stock);
+            } catch (e) {
+                renderPackages({});
             }
-        } catch (e) { showToast("⚠️ خطأ في الاتصال"); }
-        finally { btn.disabled = false; btn.innerText = "تحقق واستلام 🔍"; }
-    }
+        }
 
-    function showResults(text) {
-        const list = document.getElementById('cardsList');
-        const cards = text.split('\n').filter(c => c.trim());
-        list.innerHTML = cards.map(c => `
-            <div class="result-row">
-                <span>${c}</span>
-                <button class="copy-btn" onclick="copyText('${c}')">نسخ</button>
-            </div>`).join('');
-        document.getElementById('receiveResults').style.display = 'block';
-    }
+        function renderPackages(stockData) {
+            const grid = document.getElementById('packagesGrid');
+            grid.innerHTML = "";
+            packagesData.forEach(pkg => {
+                const count = stockData[pkg.name] || 0;
+                const isOutOfStock = count <= 0;
+                grid.innerHTML += `
+                    <div class="package-unit ${pkg.id}">
+                        <div class="card-wrapper">
+                            <div class="diamond-card">
+                                <div class="card-content">
+                                    <span class="price">${pkg.price} ريال</span>
+                                    <div class="data">${pkg.data}</div>
+                                    <div class="stock-tag">${isOutOfStock ? 'نفدت الكمية ❌' : 'المتوفر: ' + count}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-add-package" ${isOutOfStock ? 'disabled' : ''} 
+                                onclick="addToCart('${pkg.name}', ${pkg.price})">
+                            ${isOutOfStock ? 'غير متوفر' : 'إضافة للسلة 🛒'}
+                        </button>
+                    </div>`;
+            });
+        }
 
-    function copyText(val) {
-        navigator.clipboard.writeText(val);
-        showToast("📋 تم النسخ");
-    }
+        function addToCart(name, price) {
+            const item = cart.find(i => i.name === name);
+            if (item) item.qty++;
+            else cart.push({ name, price: Number(price), qty: 1 });
+            updateCartUI();
+            showToast(`✅ أضيفت ${name}`);
+        }
 
-    function showToast(msg) {
-        const t = document.getElementById("toast");
-        t.innerText = msg; t.className = "show";
-        setTimeout(() => t.className = "", 2500);
-    }
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').innerText = count;
+            const list = document.getElementById('cartItemsList');
+            let total = 0;
+            list.innerHTML = cart.map((item, index) => {
+                total += (item.price * item.qty);
+                return `<div class="cart-item">
+                    <span>${item.name} (x${item.qty})</span>
+                    <button onclick="removeFromCart(${index})" style="background:red; color:white; border:none; border-radius:5px; cursor:pointer;">حذف</button>
+                </div>`;
+            }).join('');
+            document.getElementById('cartTotalText').innerText = total;
+        }
 
-    function handleCartClick() { if(cart.length > 0) document.getElementById('cartModal').style.display='flex'; else showToast("🛒 السلة فارغة"); }
-    function openReceiveModal() { 
-        document.getElementById('checkRefInput').value = localStorage.getItem('last_ref') || "";
-        document.getElementById('receiveModal').style.display='flex'; 
-    }
-    function closeModal(id) { document.getElementById(id).style.display='none'; }
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
-    window.onload = fetchStock;
-</script>
+        async function sendOrder() {
+            const ref = document.getElementById('refInput').value.trim();
+            if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true; btn.innerText = "جاري الإرسال...";
+            
+            const packagesString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
+            
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams({ packages: packagesString, ref: ref })
+                });
+                localStorage.setItem('last_ref', ref);
+                cart = []; updateCartUI(); toggleCart();
+                showToast("✅ تم إرسال الطلب!");
+            } catch (e) { showToast("❌ فشل الإرسال"); }
+            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
+        }
 
+        async function checkOrderNow() {
+            const ref = document.getElementById('checkRefInput').value.trim();
+            const resDiv = document.getElementById('checkResult');
+            if(!ref) return;
+            resDiv.innerText = "جاري الفحص...";
+            try {
+                const response = await fetch(`${scriptURL}?action=check&ref=${ref}`);
+                const text = await response.text();
+                resDiv.innerText = text;
+            } catch (e) { resDiv.innerText = "خطأ في الاتصال"; }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg; t.className = "show";
+            setTimeout(() => { t.className = ""; }, 2000);
+        }
+
+        function handleCartClick() { if(cart.length > 0) toggleCart(); else showToast("السلة فارغة"); }
+        function toggleCart() { const m = document.getElementById('cartModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+        function toggleReceiveModal() { const m = document.getElementById('receiveModal'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
+
+        window.onload = fetchStock;
+    </script>
 </body>
 </html>
