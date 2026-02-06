@@ -3,59 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V9.8</title>
+    <title>متجر شبكة الماجد - المطور V9.2 المعدل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        /* شريط التبويبات العلوي */
-        .tab-bar { display: flex; justify-content: center; background: rgba(0,0,0,0.5); position: sticky; top: 0; z-index: 1500; backdrop-filter: blur(10px); border-bottom: 1px solid var(--gold); }
-        .tab-item { padding: 15px 30px; cursor: pointer; font-weight: bold; color: #ccc; transition: 0.3s; border-bottom: 3px solid transparent; }
-        .tab-item.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(249, 217, 118, 0.1); }
-
-        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 4.5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; }
+        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; white-space: nowrap; }
         
         .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; overflow: hidden; }
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        .header { text-align: center; padding: 30px 10px; }
+        .header { text-align: center; padding: 40px 10px; }
         .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); }
         .cart-float { position: fixed; bottom: 30px; left: 30px; z-index: 1000; padding: 18px 25px; font-size: 1.1rem; }
 
-        /* الأقسام (التبويبات) */
-        .page-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
-        .page-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* واجهة المحفظة */
-        .wallet-card { max-width: 450px; margin: 20px auto; background: rgba(0,0,0,0.3); border: 1px solid var(--gold); border-radius: 25px; padding: 30px; text-align: center; }
-        .balance-display { font-size: 3rem; color: var(--gold); font-weight: 900; margin: 15px 0; text-shadow: 0 0 15px rgba(249, 217, 118, 0.3); }
-
-        /* شبكة البطاقات */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; justify-items: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
+        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
         .card-wrapper { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; border-radius: 50px; overflow: hidden; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--accent-color)); }
         .card-wrapper::before { content: ""; position: absolute; width: 180%; height: 180%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
         .card-wrapper::after { content: ""; position: absolute; inset: 7px; background: var(--primary-bg); border-radius: 45px; z-index: 1; }
         @keyframes rotate-border { 100% { transform: rotate(360deg); } }
         
         .diamond-card { width: 180px; height: 180px; background: var(--card-gradient); border-radius: 40px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
-        .price { font-size: 2rem; font-weight: 900; display: block; }
+        .card-content { text-align: center; color: white; }
+        .price { font-size: 2rem; font-weight: 900; display: block; color: white; }
         .data { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .stock-tag { font-size: 0.8rem; margin-top: 5px; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 10px; }
 
-        .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 180px; }
+        .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 180px; }
+        .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; opacity: 0.7; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
         
-        input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; font-family: 'Cairo'; }
-        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        .receive-theme { background: var(--success-bg) !important; border-color: #4caf50 !important; }
+
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; box-sizing: border-box; font-family: 'Cairo'; }
+        .qty-input { width: 70px !important; margin: 0 !important; padding: 5px !important; display: inline-block; background: var(--gold); color: black; font-weight: bold; }
+        
+        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
+        .btn-contact { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
+
+        #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; }
+        .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid #333; }
+        .copy-btn { background: var(--gold); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: black; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
 
-        /* ألوان الباقات */
+        /* الألوان المحدثة للباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -68,72 +67,44 @@
 <body>
 
     <div id="toast"></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - تابع حالة طلبك واستلم كروتك فوراً عبر المرجع 🌙</div></div>
 
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="showTab('store-tab', this)">🛒 المتجر السريع</div>
-        <div class="tab-item" onclick="showTab('wallet-tab', this)">💰 محفظتي</div>
+    <div class="header">
+        <h1>متجر شبكة الماجد</h1>
+        <button onclick="toggleReceiveModal()" class="btn-check">🎫 استلام الكروت الجاهزة</button>
     </div>
 
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - ادفع عبر المحفظة أو الحوالة واستلم كرتك فوراً 🌙</div></div>
+    <div class="grid-container" id="packagesGrid"></div>
 
-    <div id="store-tab" class="page-content active">
-        <div class="header">
-            <h1>متجر شبكة الماجد</h1>
-            <button onclick="toggleModal('receiveModal')" class="btn-check">🎫 استلام الكروت الجاهزة</button>
-        </div>
-        <div class="grid-container" id="packagesGrid"></div>
-    </div>
-
-    <div id="wallet-tab" class="page-content">
-        <div class="header">
-            <h1>إدارة المحفظة</h1>
-            <p>رصيد إلكتروني للدفع الفوري دون الحاجة لإرسال حوالة كل مرة</p>
-        </div>
-        
-        <div class="wallet-card">
-            <div id="walletLoggedOut">
-                <h3 style="color:var(--gold)">تسجيل الدخول</h3>
-                <input type="tel" id="walletPhone" placeholder="رقم الهاتف المرتبط بالمحفظة">
-                <button class="btn-pay" onclick="loginWallet()">دخول</button>
-            </div>
-            <div id="walletLoggedIn" style="display:none;">
-                <p>مرحباً بك، رصيدك الحالي:</p>
-                <div class="balance-display" id="balanceVal">0 ريال</div>
-                <button class="btn-pay" style="background:#ff4444; color:white;" onclick="logoutWallet()">تسجيل الخروج</button>
-            </div>
-        </div>
-    </div>
+    <div id="receiveModal" class="modal"><div class="modal-content receive-theme">
+        <h2 style="color: #4caf50;">تحقق من حالة الطلب 🎫</h2>
+        <p style="font-size: 0.9rem;">طلباتك الأخيرة:</p>
+        <select id="refCombo" onchange="document.getElementById('checkRefInput').value = this.value">
+            <option value="">-- اختر مرجعاً سابقاً --</option>
+        </select>
+        <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع يدوياً" />
+        <button class="btn-pay" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحديث الحالة 🚀</button>
+        <div id="checkResult"></div>
+        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
+    </div></div>
 
     <div id="cartModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">تأكيد الطلب 🧾</h2>
         <div id="cartItemsList"></div>
         <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
-            الإجمالي: <span id="cartTotalText">0</span> ريال
+            إجمالي المبلغ: <span id="cartTotalText">0</span> ريال
         </div>
-        
-        <div id="payNormal">
-            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
-            <button class="btn-pay" onclick="processOrder('normal')">إرسال عبر الحوالة</button>
-        </div>
-        
-        <div id="payWallet" style="display:none; margin-top:10px; border-top:1px dashed var(--gold); padding-top:10px;">
-            <button class="btn-pay" style="background:#4caf50; color:white;" onclick="processOrder('wallet')">دفع فوري من المحفظة ⚡</button>
-        </div>
-        <button onclick="toggleModal('cartModal')" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إغلاق</button>
+        <input type="text" id="refInput" placeholder="أدخل رقم مرجع الحوالة هنا" />
+        <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
+        <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
     </div></div>
 
-    <div id="receiveModal" class="modal"><div class="modal-content" style="background:var(--success-bg)">
-        <h2 style="color: #4caf50;">تحقق من الكروت 🎫</h2>
-        <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع" />
-        <button class="btn-pay" style="background:#4caf50; color:white;" onclick="checkOrderNow()">استلام 🚀</button>
-        <div id="checkResult"></div>
-        <button onclick="toggleModal('receiveModal')" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
-    </div></div>
-
-    <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleModal('cartModal')">🛒 (<span id="cartCount">0</span>)</div>
+    <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        // بيانات الباقات المطلوبة
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
+        
+        // القائمة النهائية للباقات كما طلبت
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
@@ -145,85 +116,90 @@
         ];
 
         let cart = [];
-        let currentUser = JSON.parse(localStorage.getItem('user')) || null;
+        let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
+        let currentStock = {};
 
-        // تبديل التبويبات
-        function showTab(tabId, el) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
-        }
-
-        function renderPackages() {
+        function renderInitialPackages() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = packagesData.map(pkg => `
                 <div class="package-unit ${pkg.id}">
-                    <div class="card-wrapper"><div class="diamond-card">
-                        <div style="text-align:center">
-                            <span class="price">${pkg.price} ريال</span><div class="data">${pkg.data}</div>
-                        </div>
-                    </div></div>
-                    <button class="btn-add-package" onclick="addToCart('${pkg.name}', ${pkg.price})">إضافة للسلة 🛒</button>
+                    <div class="card-wrapper"><div class="diamond-card"><div class="card-content">
+                        <span class="price">${pkg.price} ريال</span><div class="data">${pkg.data}</div>
+                        <div class="stock-tag" id="stock-${pkg.id}">...</div>
+                    </div></div></div>
+                    <button class="btn-add-package" id="btn-${pkg.id}" onclick="addToCart('${pkg.name}', ${pkg.price}, '${pkg.id}')">إضافة للسلة 🛒</button>
                 </div>
             `).join('');
         }
 
-        function addToCart(name, price) {
-            cart = [{name, price, qty: 1}]; // كرت واحد لكل عملية للتبسيط
-            document.getElementById('cartCount').innerText = "1";
+        async function fetchStock() {
+            try {
+                const res = await fetch(`${scriptURL}?action=getStock&t=${Date.now()}`);
+                currentStock = await res.json();
+                packagesData.forEach(pkg => {
+                    const count = currentStock[pkg.name] || 0;
+                    const tag = document.getElementById(`stock-${pkg.id}`);
+                    if(tag) tag.innerText = count > 0 ? `متاح: ${count}` : '❌ نفد';
+                });
+            } catch (e) {}
+        }
+
+        function addToCart(name, price, id) {
+            let item = cart.find(i => i.name === name);
+            if (!item) cart.push({ name, price, qty: 1, id });
+            updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
             showToast("✅ تمت الإضافة", "#28a745");
         }
 
-        function toggleModal(id) {
-            const m = document.getElementById(id);
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-            if(id === 'cartModal' && m.style.display === 'flex') {
-                const total = cart[0].price;
-                document.getElementById('cartItemsList').innerHTML = `${cart[0].name} - ${total} ريال`;
-                document.getElementById('cartTotalText').innerText = total;
-                document.getElementById('payWallet').style.display = (currentUser && currentUser.balance >= total) ? 'block' : 'none';
-            }
+        function updateCartUI() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            document.getElementById('cartCount').innerText = count;
+            let total = 0;
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = cart.map((item, i) => {
+                total += (item.price * item.qty);
+                return `<div style="display:flex; justify-content:space-between; margin-bottom:5px"><span>${item.name}</span><span>${item.price} ر.ي</span></div>`;
+            }).join('');
+            document.getElementById('cartTotalText').innerText = total;
+            if(cart.length === 0) document.getElementById('floatingCartBtn').style.display = 'none';
         }
 
-        function loginWallet() {
-            const phone = document.getElementById('walletPhone').value;
-            if(phone.length < 9) return showToast("⚠️ رقم غير صحيح", "orange");
-            currentUser = { phone: phone, balance: 7500 }; // محاكاة بيانات
-            localStorage.setItem('user', JSON.stringify(currentUser));
-            updateWalletUI();
+        async function sendOrder() {
+            const ref = document.getElementById('refInput').value.trim();
+            if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "orange");
+            const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
+            try {
+                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ packages: pkgsString, ref: ref }) });
+                orderHistory.push({ ref: ref, timestamp: new Date().toLocaleString('ar-YE') });
+                localStorage.setItem('my_orders', JSON.stringify(orderHistory));
+                showToast("🚀 تم الإرسال", "#28a745");
+                cart = []; updateCartUI(); toggleCart();
+            } catch (e) { showToast("❌ خطأ", "red"); }
         }
 
-        function logoutWallet() {
-            currentUser = null; localStorage.removeItem('user'); updateWalletUI();
+        async function checkOrderNow() {
+            const ref = document.getElementById('checkRefInput').value.trim();
+            const resDiv = document.getElementById('checkResult');
+            if(!ref) return;
+            resDiv.style.display = "block";
+            resDiv.innerHTML = "⏳ جاري التحقق...";
+            try {
+                const res = await fetch(`${scriptURL}?action=check&ref=${ref}`);
+                const txt = await res.text();
+                resDiv.innerHTML = txt.includes(":") ? txt.split('\n').map(c => `<div class="code-row">${c}</div>`).join('') : txt;
+            } catch (e) { resDiv.innerHTML = "خطأ في الاتصال"; }
         }
 
-        function updateWalletUI() {
-            if(currentUser) {
-                document.getElementById('walletLoggedOut').style.display = 'none';
-                document.getElementById('walletLoggedIn').style.display = 'block';
-                document.getElementById('balanceVal').innerText = currentUser.balance + " ريال";
-            } else {
-                document.getElementById('walletLoggedOut').style.display = 'block';
-                document.getElementById('walletLoggedIn').style.display = 'none';
-            }
+        function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display === 'flex') ? 'none' : 'flex'; }
+        function toggleReceiveModal() {
+            const combo = document.getElementById('refCombo');
+            combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + orderHistory.reverse().map(o => `<option value="${o.ref}">${o.ref}</option>`).join('');
+            document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display === 'flex') ? 'none' : 'flex';
         }
+        function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.backgroundColor = c; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
 
-        function processOrder(type) {
-            const ref = type === 'wallet' ? `W-${currentUser.phone}` : document.getElementById('refInput').value;
-            if(!ref) return showToast("⚠️ أدخل المرجع", "orange");
-            showToast("🚀 جاري تنفيذ طلبك...", "#28a745");
-            setTimeout(() => { toggleModal('cartModal'); cart=[]; document.getElementById('floatingCartBtn').style.display='none'; }, 2000);
-        }
-
-        function showToast(m, c) {
-            const t = document.getElementById("toast");
-            t.innerText = m; t.style.backgroundColor = c; t.className = "show";
-            setTimeout(() => t.className = "", 3000);
-        }
-
-        window.onload = () => { renderPackages(); updateWalletUI(); };
+        window.onload = () => { renderInitialPackages(); fetchStock(); };
     </script>
 </body>
 </html>
