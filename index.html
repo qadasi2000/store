@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد برو | التجيل الذكي</title>
+    <title>إعداد محفظة الماجد الذكية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -35,28 +35,27 @@
             box-sizing: border-box;
         }
 
-        /* شاشة الترحيب (الوهلة الأولى) */
+        /* شاشة الوهلة الأولى المعدلة للمستخدم الجديد */
         .welcome-screen {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
             animation: fadeIn 0.8s ease-out;
         }
 
         .logo-circle {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             background: var(--gold);
             border-radius: 50%;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: var(--primary);
-            box-shadow: 0 0 30px rgba(249, 217, 118, 0.3);
+            box-shadow: 0 0 30px rgba(249, 217, 118, 0.2);
         }
 
-        /* البطاقات الاحترافية */
         .glass-card {
             background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
             border: 1px solid rgba(249,217,118,0.2);
@@ -67,19 +66,9 @@
             margin-bottom: 20px;
         }
 
-        .balance-display {
-            text-align: center;
-            padding: 10px 0;
-        }
+        .balance-display { text-align: center; padding: 10px 0; }
+        .balance-amount { font-size: 3.5rem; font-weight: 700; display: block; color: var(--gold); }
 
-        .balance-amount {
-            font-size: 3.5rem;
-            font-weight: 700;
-            display: block;
-            color: var(--gold);
-        }
-
-        /* المدخلات والأزرار */
         input {
             width: 100%;
             padding: 15px;
@@ -91,10 +80,9 @@
             text-align: center;
             font-size: 1.1rem;
             box-sizing: border-box;
-            transition: 0.3s;
         }
 
-        input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 15px rgba(249,217,118,0.2); }
+        input:focus { border-color: var(--gold); outline: none; }
 
         .btn {
             width: 100%;
@@ -112,48 +100,18 @@
         }
 
         .btn-gold { background: var(--gold); color: var(--primary); }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(249, 217, 118, 0.3); }
+        .history-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
+        .history-code { background: rgba(249,217,118,0.1); color: var(--gold); padding: 2px 8px; border-radius: 5px; }
 
-        /* سجل العمليات (اللمسة الاحترافية) */
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.85rem;
-        }
-
-        .history-code {
-            background: rgba(249,217,118,0.1);
-            color: var(--gold);
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-family: monospace;
-        }
-
-        /* نظام التبويبات السفلي */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 450px;
-            background: rgba(26, 0, 10, 0.95);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 450px; background: rgba(26, 0, 10, 0.95);
+            display: flex; justify-content: space-around; padding: 15px 0;
             border-top: 1px solid rgba(249,217,118,0.2);
-            backdrop-filter: blur(10px);
         }
 
         .nav-item { color: #888; cursor: pointer; font-size: 0.75rem; text-align: center; }
         .nav-item.active { color: var(--gold); }
-
-        /* الأنيميشن */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         .hidden { display: none; }
     </style>
 </head>
@@ -162,15 +120,16 @@
     <div class="app-container">
         
         <div id="view-login" class="welcome-screen">
-            <div class="logo-circle">M</div>
-            <h2 style="color: var(--gold); margin-bottom: 5px;">شبكة الماجد الذكية</h2>
-            <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 30px;">مرحباً بك في جيل المحافظ الرقمية</p>
+            <div class="logo-circle">⚡</div>
+            <h2 style="color: var(--gold); margin-bottom: 10px;">إعداد المحفظة</h2>
+            <p style="opacity: 0.8; font-size: 0.95rem; margin-bottom: 25px; padding: 0 10px;">أدخل رقم هاتفك لربطه بهذا الجهاز بشكل دائم</p>
             
             <div class="glass-card">
-                <input type="number" id="phone-input" placeholder="رقم الهاتف المرتبط">
+                <input type="number" id="phone-input" placeholder="777XXXXXX">
                 <button class="btn btn-gold" onclick="actionLogin()">
-                    <span>دخول آمن</span>
+                    <span>تفعيل المحفظة على هذا الجهاز</span>
                 </button>
+                <p style="font-size: 0.75rem; opacity: 0.5; margin-top: 15px;">بمجرد التفعيل، سيصبح هذا الرقم هويتك في الشبكة</p>
             </div>
         </div>
 
@@ -182,35 +141,34 @@
             </div>
 
             <div id="tab-buy" class="tab-content">
-                <h4 style="margin: 20px 0 10px 5px; color: var(--gold);">الكروت المتاحة</h4>
-                <div id="packages-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    </div>
+                <h4 style="margin: 20px 0 10px 5px; color: var(--gold);">🛒 كروت الشبكة</h4>
+                <div id="packages-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
             </div>
 
             <div id="tab-transfer" class="tab-content hidden">
                 <div class="glass-card">
-                    <h4>تحويل رصيد فوري</h4>
+                    <h4>إرسال رصيد</h4>
                     <input type="number" id="tr-phone" placeholder="رقم المستلم">
                     <input type="number" id="tr-amount" placeholder="المبلغ">
-                    <button class="btn btn-gold" onclick="actionTransfer()">تحويل الآن</button>
+                    <button class="btn btn-gold" onclick="actionTransfer()">تأكيد الإرسال</button>
                 </div>
             </div>
 
             <div id="tab-history" class="tab-content hidden">
                 <div class="glass-card">
-                    <h4 style="margin-top:0">آخر العمليات</h4>
-                    <div id="history-list">
-                        </div>
+                    <h4 style="margin-top:0">📑 كروتي المشتراة</h4>
+                    <div id="history-list"></div>
                 </div>
             </div>
 
-            <div style="height: 100px;"></div> </div>
+            <div style="height: 80px;"></div>
+        </div>
 
         <div id="nav-bar" class="bottom-nav hidden">
-            <div class="nav-item active" onclick="switchTab('buy', this)">🛒 الكروت</div>
-            <div class="nav-item" onclick="switchTab('transfer', this)">💸 تحويل</div>
-            <div class="nav-item" onclick="switchTab('history', this)">📜 السجل</div>
-            <div class="nav-item" onclick="logout()" style="color: #e74c3c;">🚪 خروج</div>
+            <div class="nav-item active" onclick="switchTab('buy', this)">كروت</div>
+            <div class="nav-item" onclick="switchTab('transfer', this)">تحويل</div>
+            <div class="nav-item" onclick="switchTab('history', this)">سجلّي</div>
+            <div class="nav-item" onclick="logout()" style="color: #e74c3c;">خروج</div>
         </div>
 
     </div>
@@ -218,12 +176,10 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbxV3X1u3aeP5Cm2q85qAguqX1ypfh5bfEi2yd858X0KdJM9z9w8w277HjyqdEed3OGL/exec';
 
-        // 1. منطق الوهلة الأولى
         async function actionLogin() {
             const phone = document.getElementById('phone-input').value;
-            if(!phone) return alert("يرجى إدخال الرقم");
+            if(!phone || phone.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
 
-            // جلب بصمة الجهاز أو إنشاؤها
             let deviceId = localStorage.getItem('MAJ_DEVICE_ID');
             if(!deviceId) {
                 deviceId = 'MAJ-' + Math.random().toString(36).substr(2, 9).toUpperCase();
@@ -231,29 +187,27 @@
             }
 
             try {
+                // السكربت في الخلفية سيقوم بإنشاء محفظة جديدة تلقائياً إذا لم يكن الرقم موجوداً
                 const res = await fetch(`${API_URL}?action=getWallet&id=${phone}&deviceId=${deviceId}`);
                 const data = await res.json();
                 
                 if(data.error) {
-                    alert("⚠️ عذراً، هذا الرقم مفعل على جهاز آخر مسبقاً.");
+                    alert("⚠️ هذا الرقم مرتبط بجهاز آخر. يرجى التواصل مع الإدارة.");
                 } else {
                     localStorage.setItem('LOGGED_PHONE', phone);
                     renderMainUI(data);
                 }
-            } catch(e) { alert("فشل الاتصال بالشبكة"); }
+            } catch(e) { alert("خطأ في الاتصال بالسيرفر. تأكد من الإنترنت."); }
         }
 
-        // 2. بناء الواجهة الاحترافية
         function renderMainUI(data) {
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('view-main').classList.remove('hidden');
             document.getElementById('nav-bar').classList.remove('hidden');
-            
             document.getElementById('main-balance').innerText = data.balance;
             
-            // تعبئة سجل العمليات (الاحترافية)
+            const list = document.getElementById('history-list');
             if(data.history && data.history.length > 0) {
-                const list = document.getElementById('history-list');
                 list.innerHTML = data.history.map(item => `
                     <div class="history-item">
                         <span>${item.packageName}</span>
@@ -261,25 +215,22 @@
                     </div>
                 `).join('');
             } else {
-                document.getElementById('history-list').innerHTML = "<p style='opacity:0.5; font-size:0.8rem;'>لا توجد عمليات سابقة</p>";
+                list.innerHTML = "<p style='opacity:0.4; font-size:0.8rem;'>لم تقم بشراء أي كروت بعد.</p>";
             }
-
             initPackages();
         }
 
         async function initPackages() {
             const grid = document.getElementById('packages-grid');
             const packs = [100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000];
-            
             grid.innerHTML = packs.map(p => `
                 <div class="glass-card" style="padding: 15px; margin-bottom:0; text-align:center;">
-                    <span style="font-size:0.7rem; color:var(--green);" id="stk-${p}">فحص...</span>
+                    <span style="font-size:0.7rem; color:var(--green);" id="stk-${p}">...</span>
                     <h3 style="margin:5px 0; color:var(--gold);">${p}</h3>
                     <button class="btn btn-gold" style="padding:8px; font-size:0.8rem;" onclick="buyTicket('باقة ${p}', ${p})">شراء</button>
                 </div>
             `).join('');
 
-            // تحديث كميات المخزون
             const res = await fetch(`${API_URL}?action=getStock`);
             const stock = await res.json();
             packs.forEach(p => {
@@ -290,11 +241,9 @@
             });
         }
 
-        // 3. التنقل بين المهام
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             el.classList.add('active');
         }
@@ -302,12 +251,12 @@
         async function buyTicket(name, price) {
             const phone = localStorage.getItem('LOGGED_PHONE');
             const devId = localStorage.getItem('MAJ_DEVICE_ID');
-            if(!confirm(`شراء ${name}؟`)) return;
+            if(!confirm(`هل تريد تأكيد شراء ${name}؟`)) return;
 
             const res = await fetch(`${API_URL}?action=buyFromWallet&walletId=${phone}&deviceId=${devId}&packageName=${name}&qty=1`);
             const data = await res.json();
             if(data.success) {
-                alert(`✅ تم الشراء!\nالكود: ${data.code}`);
+                alert(`✅ تم الشراء بنجاح!\nكود الكرت: ${data.code}`);
                 location.reload();
             } else {
                 alert("❌ " + data.msg);
