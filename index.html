@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شبكة الماجد برو - V22.0</title>
+    <title>شبكة الماجد برو - V23.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2b0010; --gold: #f9d976; --card: rgba(255, 255, 255, 0.1); --green: #28a745; }
@@ -23,6 +23,7 @@
         #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d32f2f; padding: 16px; border-radius: 10px; z-index: 1000; transition: 0.3s; }
         #toast.show { visibility: visible; }
         .status-msg { font-size: 0.8rem; color: var(--gold); margin-bottom: 10px; }
+        .logout-btn { font-size: 0.7rem; color: #aaa; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -55,6 +56,7 @@
                     <input type="number" id="topupAmt" placeholder="المبلغ المطلوب">
                     <button class="btn-gold" style="background:var(--green); color:white" onclick="topup()">إرسال الطلب</button>
                 </div>
+                <span class="logout-btn" onclick="logout()">تبديل الحساب (للمسؤول فقط)</span>
             </div>
 
             <div class="grid" id="packagesGrid"></div>
@@ -62,11 +64,10 @@
     </div>
 
     <script>
-        // استبدل الرابط برابط السكربت الخاص بك
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbAyAh5BAnc2WLbkpozpnxn6Ih5eTv3H53mrsx3v0wl5GUnuVd7z5dfTrFTvlVkpTyJ/exec';
+        // الرابط الجديد الذي قمت بتزويدي به
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzl_V2JDMSAEQP3T3QiiKPCpFzxy3SsWbbgmiYQqkBe6Ge75IM8FqPlunjLHpXAeL7l/exec';
         let stock = {};
 
-        // الحصول على بصمة الجهاز
         function getDevId() {
             let id = localStorage.getItem('maj_dev');
             if(!id) {
@@ -76,37 +77,31 @@
             return id;
         }
 
-        // إعداد المحفظة لأول مرة
         async function setupWallet() {
             const id = document.getElementById('walletInput').value.trim();
             if(id.length < 7) return showToast("⚠️ يرجى إدخال رقم هاتف صحيح");
-            
             showToast("جاري ربط المحفظة بالجهاز...", "#f59e0b");
-            
             try {
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${id}&deviceId=${getDevId()}`);
                 const data = await res.json();
-                
                 if(data.error) {
-                    alert("❌ هذا الرقم مرتبط بجهاز آخر بالفعل. يرجى مراجعة الإدارة.");
+                    alert("❌ هذا الرقم مرتبط بجهاز آخر بالفعل.");
                     return;
                 }
-                
                 localStorage.setItem('maj_wal', id);
                 renderUI(data);
-            } catch(e) { showToast("❌ خطأ في الاتصال بالسيرفر"); }
+            } catch(e) { showToast("❌ خطأ في الاتصال: تأكد من نشر السكربت كـ Anyone"); }
         }
 
-        // تسجيل الدخول التلقائي
         async function autoLogin() {
             const savedId = localStorage.getItem('maj_wal');
             if(!savedId) return;
-
             document.getElementById('setupSection').style.display = 'none';
             try {
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${savedId}&deviceId=${getDevId()}`);
                 const data = await res.json();
                 if(!data.error) renderUI(data);
+                else { localStorage.removeItem('maj_wal'); location.reload(); }
             } catch(e) { console.log("AutoLogin Failed"); }
         }
 
@@ -155,7 +150,7 @@
             const data = await res.json();
             
             if(data.success) {
-                alert(`✅ مبروك! تم الشراء.\nالأكواد المستخرجة:\n${data.code}`);
+                alert(`✅ تم الشراء بنجاح!\nالأكواد المستخرجة:\n${data.code}`);
                 location.reload();
             } else { alert("❌ " + data.msg); }
         }
@@ -164,7 +159,7 @@
             const to = document.getElementById('targetId').value.trim();
             const amt = document.getElementById('transferAmt').value;
             if(!to || !amt) return showToast("⚠️ أكمل البيانات");
-            if(!confirm(`سيتم تحويل ${amt} ريال إلى ${to}. هل أنت متأكد؟`)) return;
+            if(!confirm(`تأكيد تحويل ${amt} ريال إلى ${to}؟`)) return;
 
             showToast("جاري التحويل...", "#f59e0b");
             const res = await fetch(`${scriptURL}?action=transfer&from=${localStorage.getItem('maj_wal')}&to=${to}&amount=${amt}&deviceId=${getDevId()}`);
@@ -181,9 +176,9 @@
             document.getElementById('topupAmt').value = "";
         }
 
+        function logout() { if(confirm("هل تريد تسجيل الخروج؟")) { localStorage.removeItem('maj_wal'); location.reload(); } }
         function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.background = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
         
-        // عند التحميل: إذا كان هناك رقم مسجل، ادخل مباشرة
         window.onload = () => { autoLogin(); };
     </script>
 </body>
