@@ -10,7 +10,6 @@
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
-        /* التنبيه التحفيزي في صفحة الدخول */
         .promo-banner { background: linear-gradient(45deg, #d35400, #f39c12); color: #fff; padding: 10px; border-radius: 15px; font-size: 0.9rem; margin-bottom: 20px; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
@@ -22,12 +21,12 @@
         .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); }
         .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
         
-        /* تنسيق خانة الكمية */
         .qty-input { width: 60px !important; padding: 5px !important; margin: 5px auto !important; border-radius: 10px !important; height: auto !important; font-size: 0.9rem !important; }
 
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
-        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; }
+        .btn:active { transform: scale(0.98); }
         
         .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); }
         .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 2px; }
@@ -44,8 +43,8 @@
 
 <div id="code-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;">
     <div style="background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 30px; width: 100%; text-align: center;">
-        <h3 id="modal-title">تم الشراء! 🎉</h3>
-        <div id="codes-container" style="max-height: 200px; overflow-y: auto; margin: 15px 0;"></div>
+        <h3 id="modal-title">تم الشراء بنجاح! 🎉</h3>
+        <div id="codes-container" style="max-height: 250px; overflow-y: auto; margin: 15px 0;"></div>
         <button class="btn" onclick="closeModal()">إغلاق</button>
     </div>
 </div>
@@ -59,20 +58,21 @@
     </nav>
 
     <div id="page-login">
-        <div style="text-align:center; padding: 40px 0;">
+        <div style="text-align:center; padding: 30px 0;">
             <div style="background:var(--gold); width:80px; height:80px; border-radius:50%; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:bold;">M</div>
-            <h2 style="margin-top:20px; color:var(--gold);">أهلاً بك في الماجد الذكية</h2>
-            <p style="color:#ccc; font-size:0.9rem;">أسرع وسيلة للحصول على كروت الإنترنت</p>
+            <h2 style="margin-top:20px; color:var(--gold);">محفظة الماجد الذكية</h2>
+            <p style="color:#ccc; font-size:0.9rem;">بوابتك الأسرع لكروت الإنترنت</p>
         </div>
         
         <div class="promo-banner" style="text-align:center;">
-            📢 <strong>عرض محدود:</strong> سجل الآن واحصل على <b>1000 ريال يمني</b> رصيد مجاني فوراً في محفظتك!
+            📢 <strong>هدية ترحيبية:</strong> سجل الآن واحصل على <b>1000 ريال يمني</b> رصيد مجاني فوراً!
         </div>
 
         <div class="card">
-            <label style="display:block; margin-bottom:10px; text-align:center; font-size:0.8rem; color:var(--gold);">ابدأ بإدخال رقم هاتفك للتسجيل أو الدخول</label>
-            <input type="number" id="login-phone" placeholder="7xxxxxxxx">
-            <button class="btn" onclick="handleLogin()">ابدأ الآن واحصل على الهدية 🎁</button>
+            <input type="text" id="login-user" placeholder="اسم المستخدم أو الهاتف">
+            <input type="password" id="login-pass" placeholder="كلمة المرور">
+            <button class="btn" onclick="handleLogin()">دخول / تسجيل جديد 🎁</button>
+            <p style="text-align:center; font-size:0.75rem; color:#888; margin-top:15px;">إذا كنت جديداً، سيتم إنشاء حسابك تلقائياً بالبيانات المدخلة.</p>
         </div>
     </div>
 
@@ -109,8 +109,9 @@
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbwp7c0VcKjywKrr1-njFypxFBSIVYRIpPaZOM6ycF1xo59qqcB8cii_T-y0rEb4Rzc6/exec';
-    let myPhone = "";
+    const URL = 'https://script.google.com/macros/s/AKfycbwg_VxcIHtbav2LR3pmrvnIjubyI0V2n_fALy2YHGGnmHC0mWHxAdqGKTieGosnIVI/exec';
+    let myUser = "";
+    let myPass = "";
     let balanceTimer = null;
 
     function getDeviceId() {
@@ -123,43 +124,48 @@
     }
 
     window.onload = function() {
-        const savedPhone = localStorage.getItem('majed_wallet_phone');
-        if (savedPhone) {
-            document.getElementById('login-phone').value = savedPhone;
-            handleLogin(savedPhone);
+        const savedUser = localStorage.getItem('majed_user');
+        const savedPass = localStorage.getItem('majed_pass');
+        if (savedUser && savedPass) {
+            document.getElementById('login-user').value = savedUser;
+            document.getElementById('login-pass').value = savedPass;
+            handleLogin(savedUser, savedPass);
         }
     };
 
-    async function handleLogin(directPhone = null) {
-        const p = directPhone || document.getElementById('login-phone').value;
-        if(p.length < 9) return alert("أدخل رقم هاتف صحيح");
+    async function handleLogin(directUser = null, directPass = null) {
+        const u = directUser || document.getElementById('login-user').value;
+        const p = directPass || document.getElementById('login-pass').value;
+        
+        if(!u || !p) return alert("الرجاء إدخال البيانات كاملة");
         
         const deviceId = getDeviceId();
         showLoading(true);
         
         try {
-            const res = await fetch(`${URL}?action=getWallet&id=${p}&deviceId=${deviceId}`);
+            const res = await fetch(`${URL}?action=getWallet&id=${u}&password=${p}&deviceId=${deviceId}`);
             const data = await res.json();
             
-            if (data.error === "SECURITY_BLOCK") {
-                alert("❌ حماية: " + data.msg);
-                localStorage.removeItem('majed_wallet_phone');
+            if (data.error) {
+                alert("❌ فشل: " + data.msg);
+                if(data.error === "SECURITY_BLOCK") localStorage.clear();
                 showLoading(false);
                 return;
             }
 
-            myPhone = p;
-            localStorage.setItem('majed_wallet_phone', p);
+            myUser = u;
+            myPass = p;
+            localStorage.setItem('majed_user', u);
+            localStorage.setItem('majed_pass', p);
             
             if(data.isNew) alert("🎁 مبروك! حصلت على 1000 ريال رصيد إفتتاحي.");
 
-            updateUI(data.balance);
+            document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('top-nav').classList.remove('hidden');
             loadCards();
             
-            // بدء التحديث التلقائي للرصيد كل 30 ثانية
             if(balanceTimer) clearInterval(balanceTimer);
             balanceTimer = setInterval(refreshBalance, 30000);
 
@@ -168,16 +174,14 @@
     }
 
     async function refreshBalance() {
-        if(!myPhone) return;
+        if(!myUser) return;
         try {
-            const res = await fetch(`${URL}?action=getWallet&id=${myPhone}&deviceId=${getDeviceId()}`);
+            const res = await fetch(`${URL}?action=getWallet&id=${myUser}&password=${myPass}&deviceId=${getDeviceId()}`);
             const data = await res.json();
-            document.getElementById('display-bal').innerText = data.balance;
-        } catch(e) { console.log("Balance refresh failed"); }
-    }
-
-    function updateUI(bal) {
-        document.getElementById('display-bal').innerText = bal;
+            if(data.balance !== undefined) {
+                document.getElementById('display-bal').innerText = data.balance;
+            }
+        } catch(e) { console.log("تحديث الرصيد فشل"); }
     }
 
     async function loadCards() {
@@ -195,17 +199,18 @@
                         <h4 style="margin:5px 0">${key}</h4>
                         <div style="font-size:0.7rem;">الكمية:</div>
                         <input type="number" id="qty-${key}" class="qty-input" value="1" min="1" max="${stock[key]}">
-                        <button class="btn" style="padding:5px; font-size:0.8rem" 
+                        <button class="btn" style="padding:8px; font-size:0.8rem; height: auto;" 
                             onclick="handleMultiBuy('${key}')" ${isOut?'disabled':''}>شراء</button>
                     </div>`;
             });
-        } catch(e) { grid.innerHTML = "خطأ في التحميل"; }
+        } catch(e) { grid.innerHTML = "خطأ في تحميل البيانات"; }
     }
 
     async function handleMultiBuy(cardName) {
-        const qty = parseInt(document.getElementById(`qty-${cardName}`).value);
+        const qtyInput = document.getElementById(`qty-${cardName}`);
+        const qty = parseInt(qtyInput.value);
         if(qty <= 0) return;
-        if(!confirm(`هل تريد شراء عدد (${qty}) من ${cardName}؟`)) return;
+        if(!confirm(`هل تريد شراء (${qty}) كروت من ${cardName}؟`)) return;
 
         showLoading(true);
         let successCodes = [];
@@ -213,14 +218,15 @@
 
         try {
             for(let i=0; i < qty; i++) {
-                const res = await fetch(`${URL}?action=buyCard&id=${myPhone}&cardType=${cardName}`);
+                const res = await fetch(`${URL}?action=buyCard&id=${myUser}&password=${myPass}&cardType=${cardName}`);
                 const data = await res.json();
                 if(data.success) {
                     successCodes.push(data.code);
                     lastBalance = data.newBalance;
                     saveCardLocally(cardName, data.code);
                 } else {
-                    alert(`تم شراء ${i} كروت فقط. فشل الباقي: ${data.msg}`);
+                    if(i > 0) alert(`تم شراء ${i} كروت فقط. فشل الباقي: ${data.msg}`);
+                    else alert(`فشل الشراء: ${data.msg}`);
                     break;
                 }
             }
@@ -230,15 +236,16 @@
                 showCodesModal(successCodes);
                 loadCards();
             }
-        } catch(e) { alert("خطأ تقني أثناء الشراء المتعدد"); }
+        } catch(e) { alert("حدث خطأ تقني"); }
         showLoading(false);
     }
 
     function showCodesModal(codes) {
         const container = document.getElementById('codes-container');
         container.innerHTML = codes.map(c => `
-            <div style="background:#fff; color:#000; margin:5px; padding:10px; border-radius:10px; font-weight:bold;">
-                ${c} <button onclick="copyAnyCode('${c}')" style="float:left; background:var(--gold); border:none; border-radius:5px; cursor:pointer;">نسخ</button>
+            <div style="background:#fff; color:#000; margin:8px 0; padding:12px; border-radius:12px; font-weight:bold; position:relative;">
+                <span style="display:block; text-align:center; font-size:1.2rem; letter-spacing:1px;">${c}</span>
+                <button onclick="copyAnyCode('${c}')" style="margin-top:8px; width:100%; background:#3d0016; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer; font-size:0.8rem;">نسخ الكود</button>
             </div>
         `).join('');
         document.getElementById('code-modal').style.display = 'flex';
@@ -253,13 +260,20 @@
     function displaySavedCards() {
         const container = document.getElementById('purchased-list');
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
-        container.innerHTML = cards.length === 0 ? "<p style='text-align:center;'>لا يوجد كروت.</p>" : 
-            cards.map(c => `<div class="my-card-item"><small>${c.date}</small><div>${c.type}</div><span class="my-card-code">${c.code}</span><button class="btn" style="padding:5px; font-size:0.7rem; width:80px" onclick="copyAnyCode('${c.code}')">نسخ</button></div>`).join('');
+        container.innerHTML = cards.length === 0 ? "<p style='text-align:center; color:#888;'>لا يوجد كروت مشتراة بعد.</p>" : 
+            cards.map(c => `
+                <div class="my-card-item">
+                    <small style="color:#777">${c.date}</small>
+                    <div style="font-weight:bold">${c.type}</div>
+                    <span class="my-card-code">${c.code}</span>
+                    <button class="btn" style="padding:5px; font-size:0.7rem; width:100px; margin: 0 auto; display: block;" onclick="copyAnyCode('${c.code}')">نسخ الكود</button>
+                </div>
+            `).join('');
     }
 
     function handleLogout() {
-        if(confirm("خروج؟")) {
-            localStorage.removeItem('majed_wallet_phone');
+        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            localStorage.clear();
             if(balanceTimer) clearInterval(balanceTimer);
             location.reload();
         }
@@ -268,12 +282,14 @@
     async function handleTopup() {
         const a = document.getElementById('top-amt').value;
         const r = document.getElementById('top-ref').value;
-        if(!a || !r) return alert("أكمل البيانات");
+        if(!a || !r) return alert("أكمل البيانات المطلوبة");
         showLoading(true);
         try {
-            await fetch(`${URL}?action=requestTopup&walletId=${myPhone}&amount=${a}&ref=${r}`);
-            alert("✅ تم الإرسال");
-        } catch(e) { alert("خطأ"); }
+            await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
+            alert("✅ تم إرسال طلب الشحن بنجاح، سيتم مراجعته.");
+            document.getElementById('top-amt').value = '';
+            document.getElementById('top-ref').value = '';
+        } catch(e) { alert("حدث خطأ في الاتصال"); }
         showLoading(false);
     }
 
@@ -282,11 +298,25 @@
         document.getElementById('sec-'+id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
+        window.scrollTo(0,0);
     }
 
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
     function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
-    function copyAnyCode(code) { navigator.clipboard.writeText(code).then(() => alert("تم النسخ!")); }
+    function copyAnyCode(code) { 
+        navigator.clipboard.writeText(code).then(() => {
+            alert("تم نسخ الكود بنجاح!");
+        }).catch(() => {
+            // fallback لبعض المتصفحات القديمة
+            const el = document.createElement('textarea');
+            el.value = code;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("تم النسخ!");
+        });
+    }
 </script>
 </body>
 </html>
