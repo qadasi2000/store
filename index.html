@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V5 Pro</title>
+    <title>محفظة الماجد الذكية | V6.0 Discount Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; }
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
-        .promo-banner { background: linear-gradient(45deg, #d35400, #f39c12); color: #fff; padding: 10px; border-radius: 15px; font-size: 0.9rem; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .promo-banner { background: linear-gradient(45deg, #d35400, #c0392b); color: #fff; padding: 10px; border-radius: 15px; font-size: 0.9rem; margin-bottom: 20px; animation: pulse 2s infinite; border: 1px solid var(--gold); }
+        @keyframes pulse { 0% { opacity: 0.9; transform: scale(1); } 50% { opacity: 1; transform: scale(1.02); } 100% { opacity: 0.9; transform: scale(1); } }
 
         .nav { position: sticky; top: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 15px 0; border-bottom: 2px solid var(--gold); z-index: 1000; margin: 0 auto 20px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .nav-btn { flex: 1; text-align: center; font-size: 0.85rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
@@ -21,9 +21,13 @@
         .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); }
         .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
         
-        .qty-input { width: 60px !important; padding: 5px !important; margin: 5px auto !important; border-radius: 10px !important; height: auto !important; font-size: 0.9rem !important; }
+        .qty-input { width: 60px !important; padding: 5px !important; margin: 5px auto !important; border-radius: 10px !important; height: auto !important; font-size: 0.9rem !important; background: #000 !important; }
 
-        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .price-tag { margin: 8px 0; }
+        .old-price { text-decoration: line-through; color: #ff6b6b; font-size: 0.75rem; margin-left: 5px; }
+        .new-price { color: var(--gold); font-weight: 700; font-size: 1rem; }
+
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; }
         .btn:active { transform: scale(0.98); }
@@ -65,26 +69,26 @@
         </div>
         
         <div class="promo-banner" style="text-align:center;">
-            📢 <strong>هدية ترحيبية:</strong> سجل الآن واحصل على <b>1000 ريال يمني</b> رصيد مجاني فوراً!
+            🔥 <strong>عرض الحصم الكبير:</strong> احصل على خصم <b>20%</b> فوراً على كل كرت تشتريه من التطبيق!
         </div>
 
         <div class="card">
             <input type="text" id="login-user" placeholder="اسم المستخدم أو الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn" onclick="handleLogin()">دخول / تسجيل جديد 🎁</button>
-            <p style="text-align:center; font-size:0.75rem; color:#888; margin-top:15px;">إذا كنت جديداً، سيتم إنشاء حسابك تلقائياً بالبيانات المدخلة.</p>
+            <button class="btn" onclick="handleLogin()">دخول / تسجيل مجاني ✨</button>
+            <p style="text-align:center; font-size:0.75rem; color:#888; margin-top:15px;">بمجرد الدخول، ستحصل على ميزة الخصم تلقائياً.</p>
         </div>
     </div>
 
     <div id="page-main" class="hidden">
         <div class="bal-box">
-            <small>الرصيد المتاح (تحديث تلقائي)</small>
+            <small>الرصيد المتاح (خصم 20% مفعل)</small>
             <span class="bal-val" id="display-bal">0</span>
             <small>ريال يمني</small>
         </div>
 
         <div id="sec-cards">
-            <h3 style="color:var(--gold); margin-bottom:15px">🛒 شراء باقة انترنت</h3>
+            <h3 style="color:var(--gold); margin-bottom:15px">🛒 المتجر (الأسعار بعد الخصم)</h3>
             <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
         </div>
 
@@ -109,6 +113,7 @@
 </div>
 
 <script>
+    // الرابط المحدث الذي يحتوي على الإصدار 6.0
     const URL = 'https://script.google.com/macros/s/AKfycbwg_VxcIHtbav2LR3pmrvnIjubyI0V2n_fALy2YHGGnmHC0mWHxAdqGKTieGosnIVI/exec';
     let myUser = "";
     let myPass = "";
@@ -158,7 +163,7 @@
             localStorage.setItem('majed_user', u);
             localStorage.setItem('majed_pass', p);
             
-            if(data.isNew) alert("🎁 مبروك! حصلت على 1000 ريال رصيد إفتتاحي.");
+            if(data.isNew) alert("🎊 أهلاً بك! تم تفعيل خصم 20% على جميع مشترياتك فورياً.");
 
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('page-login').classList.add('hidden');
@@ -186,21 +191,28 @@
 
     async function loadCards() {
         const grid = document.getElementById('cards-grid');
-        grid.innerHTML = "جاري التحميل...";
+        grid.innerHTML = "<div style='grid-column: 1/3'>جاري تحميل المتجر...</div>";
         try {
             const res = await fetch(`${URL}?action=getStock`);
             const stock = await res.json();
             grid.innerHTML = "";
             Object.keys(stock).forEach(key => {
                 const isOut = stock[key] <= 0;
+                // استخراج السعر وحساب الخصم للعرض
+                const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
+                const discountedPrice = Math.floor(originalPrice * 0.80);
+
                 grid.innerHTML += `
                     <div class="item">
-                        <div style="font-size:0.7rem; color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</div>
-                        <h4 style="margin:5px 0">${key}</h4>
-                        <div style="font-size:0.7rem;">الكمية:</div>
+                        <div style="font-size:0.65rem; color:${isOut?'#ff4d4d':'#2ecc71'}; font-weight:bold;">${isOut?'نفد من المخزن':'متوفر: '+stock[key]}</div>
+                        <h4 style="margin:5px 0; font-size:0.9rem;">${key}</h4>
+                        <div class="price-tag">
+                            <span class="old-price">${originalPrice}</span>
+                            <span class="new-price">${discountedPrice} ر.ي</span>
+                        </div>
                         <input type="number" id="qty-${key}" class="qty-input" value="1" min="1" max="${stock[key]}">
-                        <button class="btn" style="padding:8px; font-size:0.8rem; height: auto;" 
-                            onclick="handleMultiBuy('${key}')" ${isOut?'disabled':''}>شراء</button>
+                        <button class="btn" style="padding:8px; font-size:0.75rem; height: auto;" 
+                            onclick="handleMultiBuy('${key}')" ${isOut?'disabled':''}>شراء بالخصم ✨</button>
                     </div>`;
             });
         } catch(e) { grid.innerHTML = "خطأ في تحميل البيانات"; }
@@ -210,7 +222,11 @@
         const qtyInput = document.getElementById(`qty-${cardName}`);
         const qty = parseInt(qtyInput.value);
         if(qty <= 0) return;
-        if(!confirm(`هل تريد شراء (${qty}) كروت من ${cardName}؟`)) return;
+        
+        const originalPrice = parseInt(cardName.replace(/[^0-9]/g, '')) || 0;
+        const totalDiscounted = Math.floor(originalPrice * 0.80) * qty;
+
+        if(!confirm(`هل تريد شراء (${qty}) من ${cardName}؟\nالتكلفة الإجمالية بعد الخصم: ${totalDiscounted} ريال.`)) return;
 
         showLoading(true);
         let successCodes = [];
@@ -225,7 +241,7 @@
                     lastBalance = data.newBalance;
                     saveCardLocally(cardName, data.code);
                 } else {
-                    if(i > 0) alert(`تم شراء ${i} كروت فقط. فشل الباقي: ${data.msg}`);
+                    if(i > 0) alert(`تم شراء ${i} كروت بنجاح. توقف الشراء بسبب: ${data.msg}`);
                     else alert(`فشل الشراء: ${data.msg}`);
                     break;
                 }
@@ -236,16 +252,16 @@
                 showCodesModal(successCodes);
                 loadCards();
             }
-        } catch(e) { alert("حدث خطأ تقني"); }
+        } catch(e) { alert("حدث خطأ تقني أثناء المعالجة"); }
         showLoading(false);
     }
 
     function showCodesModal(codes) {
         const container = document.getElementById('codes-container');
         container.innerHTML = codes.map(c => `
-            <div style="background:#fff; color:#000; margin:8px 0; padding:12px; border-radius:12px; font-weight:bold; position:relative;">
-                <span style="display:block; text-align:center; font-size:1.2rem; letter-spacing:1px;">${c}</span>
-                <button onclick="copyAnyCode('${c}')" style="margin-top:8px; width:100%; background:#3d0016; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer; font-size:0.8rem;">نسخ الكود</button>
+            <div style="background:#fff; color:#000; margin:8px 0; padding:12px; border-radius:12px; font-weight:bold; position:relative; border-bottom: 3px solid var(--gold);">
+                <span style="display:block; text-align:center; font-size:1.3rem; letter-spacing:1px; color:#d35400;">${c}</span>
+                <button onclick="copyAnyCode('${c}')" style="margin-top:8px; width:100%; background:#3d0016; color:white; border:none; padding:8px; border-radius:8px; cursor:pointer; font-size:0.85rem;">نسخ الكود 📋</button>
             </div>
         `).join('');
         document.getElementById('code-modal').style.display = 'flex';
@@ -260,19 +276,21 @@
     function displaySavedCards() {
         const container = document.getElementById('purchased-list');
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
-        container.innerHTML = cards.length === 0 ? "<p style='text-align:center; color:#888;'>لا يوجد كروت مشتراة بعد.</p>" : 
+        container.innerHTML = cards.length === 0 ? "<p style='text-align:center; color:#888; padding:20px;'>لم تقم بشراء أي كروت حتى الآن.</p>" : 
             cards.map(c => `
                 <div class="my-card-item">
-                    <small style="color:#777">${c.date}</small>
-                    <div style="font-weight:bold">${c.type}</div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <small style="color:#777">${c.date}</small>
+                        <span style="font-weight:bold; color:#3d0016">${c.type}</span>
+                    </div>
                     <span class="my-card-code">${c.code}</span>
-                    <button class="btn" style="padding:5px; font-size:0.7rem; width:100px; margin: 0 auto; display: block;" onclick="copyAnyCode('${c.code}')">نسخ الكود</button>
+                    <button class="btn" style="padding:8px; font-size:0.75rem; width:120px; margin: 10px auto 0; display: block;" onclick="copyAnyCode('${c.code}')">نسخ الكود 📋</button>
                 </div>
             `).join('');
     }
 
     function handleLogout() {
-        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+        if(confirm("هل تريد تسجيل الخروج؟")) {
             localStorage.clear();
             if(balanceTimer) clearInterval(balanceTimer);
             location.reload();
@@ -282,14 +300,14 @@
     async function handleTopup() {
         const a = document.getElementById('top-amt').value;
         const r = document.getElementById('top-ref').value;
-        if(!a || !r) return alert("أكمل البيانات المطلوبة");
+        if(!a || !r) return alert("الرجاء إدخال المبلغ ورقم المرجع");
         showLoading(true);
         try {
             await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
-            alert("✅ تم إرسال طلب الشحن بنجاح، سيتم مراجعته.");
+            alert("✅ تم إرسال طلبك بنجاح. سيتم إضافة الرصيد بعد مراجعة العملية.");
             document.getElementById('top-amt').value = '';
             document.getElementById('top-ref').value = '';
-        } catch(e) { alert("حدث خطأ في الاتصال"); }
+        } catch(e) { alert("حدث خطأ في الشبكة"); }
         showLoading(false);
     }
 
@@ -298,16 +316,15 @@
         document.getElementById('sec-'+id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
-        window.scrollTo(0,0);
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
     function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
     function copyAnyCode(code) { 
         navigator.clipboard.writeText(code).then(() => {
-            alert("تم نسخ الكود بنجاح!");
+            alert("تم النسخ!");
         }).catch(() => {
-            // fallback لبعض المتصفحات القديمة
             const el = document.createElement('textarea');
             el.value = code;
             document.body.appendChild(el);
