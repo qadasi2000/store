@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V8</title>
+    <title>متجر شبكة الماجد - المطور V8.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -47,8 +47,9 @@
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
         .history-section { margin-top: 20px; padding: 15px; border: 1px solid rgba(249, 217, 118, 0.3); border-radius: 15px; background: rgba(255,255,255,0.03); }
-        .history-item { background: rgba(0,0,0,0.2); margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 0.85rem; text-align: right; border-right: 3px solid var(--gold); position: relative; }
-        .btn-copy-ref { background: var(--gold); color: black; border: none; padding: 4px 8px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; margin-top: 5px; }
+        .history-item { background: rgba(0,0,0,0.2); margin-top: 10px; padding: 12px; border-radius: 10px; font-size: 0.85rem; text-align: right; border-right: 4px solid var(--gold); }
+        .pkg-tag { background: rgba(249, 217, 118, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 5px; margin: 2px; display: inline-block; font-size: 0.8rem; border: 1px solid rgba(249,217,118,0.3); }
+        .btn-copy-ref { background: var(--gold); color: black; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; font-weight: bold; width: 100%; }
         
         #checkResult { margin-top: 15px; font-weight: bold; white-space: pre-wrap; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; text-align: right; border: 1px solid var(--gold); color: #fff; }
 
@@ -57,7 +58,7 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* ألوان الباقات ثابتة كما في السابق */
+        /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -193,19 +194,36 @@
         function setQty(i, v) { cart[i].qty = parseInt(v)||1; updateCartUI(); }
         function removeFromCart(i) { cart.splice(i,1); updateCartUI(); }
 
+        // وظيفة تجميع الأسماء والعدد للطلبات السابقة
+        function formatPackages(pkgsArray) {
+            const counts = {};
+            pkgsArray.forEach(name => {
+                name = name.trim();
+                counts[name] = (counts[name] || 0) + 1;
+            });
+            return Object.entries(counts).map(([name, count]) => 
+                `<span class="pkg-tag">${name} <b style="color:white">(x${count})</b></span>`
+            ).join(' ');
+        }
+
         function renderHistory() {
             const histDiv = document.getElementById('ordersHistoryList');
             if(orderHistory.length === 0) {
                 histDiv.innerHTML = "<div style='color:#666; font-size:0.8rem;'>لا توجد طلبات سابقة</div>";
                 return;
             }
-            histDiv.innerHTML = orderHistory.map((h, idx) => `
+            histDiv.innerHTML = orderHistory.map((h, idx) => {
+                // تحويل النص المخزن إلى مصفوفة باقات للتجميع
+                const pkgsArray = h.pkgs.split(',');
+                const formattedPkgs = formatPackages(pkgsArray);
+                
+                return `
                 <div class="history-item">
-                    <b>باقات:</b> ${h.pkgs}<br>
-                    <b>المرجع:</b> <span id="ref_${idx}">${h.ref}</span>
+                    <div style="margin-bottom:8px;"><b>الباقات:</b><br>${formattedPkgs}</div>
+                    <div style="font-size:0.8rem; color:#aaa;">المرجع: <b style="color:var(--gold)">${h.ref}</b></div>
                     <button class="btn-copy-ref" onclick="useRef('${h.ref}')">استخدام هذا المرجع 📥</button>
                 </div>
-            `).reverse().join('');
+            `}).reverse().join('');
         }
 
         function useRef(ref) {
@@ -221,17 +239,17 @@
             const btn = document.getElementById('payBtn');
             btn.disabled = true; btn.innerText = "جاري الإرسال...";
             
-            const pkgsString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
+            // تحويل السلة الحالية إلى نص مرسل
+            const pkgsString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(',');
             
             try {
                 await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ packages: pkgsString, ref, phone: phone||"بدون رقم" }) });
                 
-                // حفظ في السجل المحلي
                 orderHistory.push({ ref, pkgs: pkgsString, date: new Date().toLocaleString() });
-                if(orderHistory.length > 10) orderHistory.shift(); // حفظ آخر 10 طلبات فقط
+                if(orderHistory.length > 10) orderHistory.shift(); 
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
                 
-                showToast("✅ تم الطلب وحفظه في السجل!");
+                showToast("✅ تم الطلب وحفظه!");
                 cart = []; updateCartUI();
                 document.getElementById('checkRefInput').value = ref;
                 fetchStock();
