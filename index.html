@@ -39,31 +39,24 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
         
-        /* ستايل السلة المحدث */
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 15px; margin: 8px 0; border: 1px solid rgba(249,217,118,0.1); }
         .qty-box { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 10px; }
         .qty-btn { background: var(--gold); color: black; border: none; width: 25px; height: 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-        .qty-input { width: 40px !important; margin: 0 !important; padding: 2px !important; background: transparent !important; border: none !important; font-weight: bold; }
+        .qty-input { width: 40px !important; margin: 0 !important; padding: 2px !important; background: transparent !important; border: none !important; font-weight: bold; color: white !important; }
 
         input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
-        /* قائمة الاستلام سكرول */
-        #historyList { max-height: 200px; overflow-y: auto; padding: 5px; margin-bottom: 10px; scrollbar-width: thin; scrollbar-color: var(--gold) transparent; }
+        #historyList { max-height: 200px; overflow-y: auto; padding: 5px; margin-bottom: 10px; }
         .history-item { background: rgba(0,0,0,0.2); margin-top: 8px; padding: 10px; border-radius: 12px; font-size: 0.85rem; text-align: right; border-right: 4px solid var(--gold); }
-        .pkg-tag { background: rgba(249, 217, 118, 0.15); color: var(--gold); padding: 2px 6px; border-radius: 5px; margin: 2px; display: inline-block; font-size: 0.8rem; border: 1px solid rgba(249,217,118,0.3); }
 
-        /* منطقة النتائج والنسخ */
         #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; }
-        .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; margin: 4px 0; border-radius: 8px; }
-        .copy-small { background: var(--gold); border: none; padding: 4px 8px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; font-weight: bold; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #28a745; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -113,7 +106,7 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
-        const MAX_TOTAL_QTY = 50; // سقف 50 كرت للطلب
+        const MAX_TOTAL_QTY = 50; 
 
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -129,11 +122,13 @@
 
         let cart = [];
         let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
+        let currentStock = {}; 
 
         async function fetchStock() {
             try {
                 const res = await fetch(`${scriptURL}?action=getStock&t=${Date.now()}`);
                 const stock = await res.json();
+                currentStock = stock; 
                 renderPackages(stock);
             } catch (e) { renderPackages({}); }
         }
@@ -161,7 +156,14 @@
             let totalInCart = cart.reduce((s, i) => s + i.qty, 0);
             if(totalInCart >= MAX_TOTAL_QTY) return showToast("⚠️ الحد الأقصى 50 كرت");
 
+            let stockAvailable = currentStock[name] || 0;
             let item = cart.find(i => i.name === name);
+            let currentQtyInCart = item ? item.qty : 0;
+
+            if (currentQtyInCart >= stockAvailable) {
+                return showToast(`⚠️ عذراً، المتاح فقط هو ${stockAvailable} كروت`);
+            }
+
             if (item) item.qty++; else cart.push({ name, price, qty: 1 });
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
@@ -190,22 +192,40 @@
         }
 
         function changeQty(i, delta) {
-            let totalInCart = cart.reduce((s, i) => s + i.qty, 0);
-            if (delta > 0 && totalInCart >= MAX_TOTAL_QTY) return showToast("⚠️ الحد الأقصى 50 كرت");
+            let item = cart[i];
+            let stockAvailable = currentStock[item.name] || 0;
+            let totalInCart = cart.reduce((s, itm) => s + itm.qty, 0);
             
-            cart[i].qty += delta;
-            if (cart[i].qty <= 0) cart.splice(i, 1);
+            if (delta > 0) {
+                if (totalInCart >= MAX_TOTAL_QTY) return showToast("⚠️ الحد الأقصى 50 كرت");
+                if (item.qty >= stockAvailable) return showToast(`⚠️ المتاح ${stockAvailable} فقط`);
+                item.qty += delta;
+            } else {
+                item.qty += delta;
+            }
+            
+            if (item.qty <= 0) cart.splice(i, 1);
             updateCartUI();
         }
 
         function setQty(i, val) {
-            let newQty = parseInt(val) || 1;
-            let otherQty = cart.reduce((s, item, idx) => idx === i ? s : s + item.qty, 0);
+            let item = cart[i];
+            let stockAvailable = currentStock[item.name] || 0;
+            let newQty = parseInt(val) || 0;
+
+            if (newQty > stockAvailable) {
+                newQty = stockAvailable;
+                showToast(`⚠️ الكمية المتاحة هي ${stockAvailable} فقط`);
+            }
+
+            let otherQty = cart.reduce((s, itm, idx) => idx === i ? s : s + itm.qty, 0);
             if (otherQty + newQty > MAX_TOTAL_QTY) {
                 newQty = MAX_TOTAL_QTY - otherQty;
                 showToast("⚠️ تم الوصول للحد الأقصى (50)");
             }
-            cart[i].qty = newQty;
+            
+            item.qty = newQty;
+            if (item.qty <= 0) cart.splice(i, 1);
             updateCartUI();
         }
 
@@ -215,6 +235,7 @@
             const ref = document.getElementById('refInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
             if(!ref) return showToast("⚠️ المرجع مطلوب");
+            if(cart.length === 0) return showToast("⚠️ السلة فارغة");
             
             const btn = document.getElementById('payBtn');
             btn.disabled = true; btn.innerText = "جاري الإرسال...";
@@ -232,7 +253,7 @@
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: phone||"بدون رقم" }) 
                 });
                 
-                orderHistory.push({ ref, pkgs: pkgsString });
+                orderHistory.push({ ref, pkgs: pkgsString, date: new Date().toLocaleString('ar-EG') });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
                 
                 showToast("✅ تم الطلب بنجاح!");
@@ -243,69 +264,23 @@
 
         function renderHistory() {
             const div = document.getElementById('historyList');
-            if(orderHistory.length === 0) return div.innerHTML = "لا توجد طلبات سابقة";
-            
-            div.innerHTML = orderHistory.map(h => {
-                const counts = {};
-                h.pkgs.split(', ').forEach(n => counts[n] = (counts[n] || 0) + 1);
-                const summary = Object.entries(counts).map(([n, c]) => `<span class="pkg-tag">${n} (x${c})</span>`).join('');
-                return `<div class="history-item">
-                    ${summary}<br>
-                    <small>المرجع: ${h.ref}</small>
-                    <button onclick="useRef('${h.ref}')" style="background:var(--gold); border:none; padding:3px 8px; border-radius:5px; cursor:pointer; font-weight:bold; margin-top:5px;">استخدام المرجع</button>
-                </div>`;
-            }).reverse().join('');
-        }
-
-        function useRef(r) { 
-            document.getElementById('checkRefInput').value = r;
-            showToast("✅ تم وضع المرجع");
-        }
-
-        async function checkOrderNow() {
-            const ref = document.getElementById('checkRefInput').value.trim();
-            const resDiv = document.getElementById('checkResult');
-            if(!ref) return showToast("⚠️ أدخل المرجع");
-            resDiv.style.display = "block"; resDiv.innerText = "🔍 جاري الفحص...";
-            
-            try {
-                const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
-                const txt = await res.text();
-                
-                if (txt.includes(":")) {
-                    let codes = txt.split('\n').filter(line => line.trim() !== "");
-                    let html = `<button class="btn-pay" style="font-size:0.9rem; margin-bottom:10px;" onclick="copyAllCodes()">📋 نسخ الكل عمودياً</button>`;
-                    codes.forEach(code => {
-                        html += `<div class="code-row">
-                                    <span>${code}</span>
-                                    <button class="copy-small" onclick="copyText('${code}')">نسخ</button>
-                                 </div>`;
-                    });
-                    resDiv.innerHTML = html;
-                } else {
-                    resDiv.innerText = txt;
-                }
-            } catch (e) { resDiv.innerText = "❌ خطأ في النظام"; }
-        }
-
-        function copyText(val) {
-            navigator.clipboard.writeText(val);
-            showToast("📋 تم نسخ الكرت");
-        }
-
-        function copyAllCodes() {
-            let codes = [];
-            document.querySelectorAll('.code-row span').forEach(el => codes.push(el.innerText));
-            navigator.clipboard.writeText(codes.join('\n'));
-            showToast("📋 تم نسخ الكل عمودياً");
+            div.innerHTML = orderHistory.length ? orderHistory.reverse().map(o => `
+                <div class="history-item">
+                    <strong>مرجع: ${o.ref}</strong><br>
+                    <small>${o.date || ''}</small><br>
+                    ${o.pkgs}
+                </div>
+            `).join('') : '<p style="text-align:center; opacity:0.5;">لا يوجد طلبات سابقة</p>';
         }
 
         function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
+        
         function toggleReceiveModal() { 
             renderHistory();
             document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex'; 
             document.getElementById('checkResult').style.display = 'none';
         }
+
         function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
         window.onload = () => { fetchStock(); setInterval(fetchStock, 30000); };
