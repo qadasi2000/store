@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إعداد محفظة الماجد الذكية</title>
+    <title>محفظة الماجد | نظام الشحن</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* تم الإبقاء على نفس الستايل الأنيق الخاص بك مع إضافة لون أخضر للشحن */
         :root {
             --primary: #1a000a;
             --gold: #f9d976;
@@ -28,91 +29,24 @@
             min-height: 100vh;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* شاشة الوهلة الأولى المعدلة للمستخدم الجديد */
-        .welcome-screen {
-            text-align: center;
-            margin-top: 40px;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .logo-circle {
-            width: 90px;
-            height: 90px;
-            background: var(--gold);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            color: var(--primary);
-            box-shadow: 0 0 30px rgba(249, 217, 118, 0.2);
-        }
-
-        .glass-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-            border: 1px solid rgba(249,217,118,0.2);
-            border-radius: 25px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            margin-bottom: 20px;
-        }
-
+        .app-container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
+        .welcome-screen { text-align: center; margin-top: 40px; animation: fadeIn 0.8s ease-out; }
+        .logo-circle { width: 90px; height: 90px; background: var(--gold); border-radius: 50%; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; color: var(--primary); box-shadow: 0 0 30px rgba(249, 217, 118, 0.2); }
+        .glass-card { background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); border: 1px solid rgba(249,217,118,0.2); border-radius: 25px; padding: 25px; backdrop-filter: blur(10px); box-shadow: 0 15px 35px rgba(0,0,0,0.4); margin-bottom: 20px; }
         .balance-display { text-align: center; padding: 10px 0; }
         .balance-amount { font-size: 3.5rem; font-weight: 700; display: block; color: var(--gold); }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 15px;
-            border: 1px solid rgba(249,217,118,0.3);
-            background: rgba(0,0,0,0.5);
-            color: #fff;
-            text-align: center;
-            font-size: 1.1rem;
-            box-sizing: border-box;
-        }
-
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px; border: 1px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.5); color: #fff; text-align: center; font-size: 1.1rem; box-sizing: border-box; }
         input:focus { border-color: var(--gold); outline: none; }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border-radius: 15px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-gold { background: var(--gold); color: var(--primary); }
+        .btn-green { background: var(--green); color: white; }
         .history-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
         .history-code { background: rgba(249,217,118,0.1); color: var(--gold); padding: 2px 8px; border-radius: 5px; }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 450px; background: rgba(26, 0, 10, 0.95);
-            display: flex; justify-content: space-around; padding: 15px 0;
-            border-top: 1px solid rgba(249,217,118,0.2);
-        }
-
-        .nav-item { color: #888; cursor: pointer; font-size: 0.75rem; text-align: center; }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: rgba(26, 0, 10, 0.95); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(249,217,118,0.2); z-index: 1000; }
+        .nav-item { color: #888; cursor: pointer; font-size: 0.7rem; text-align: center; flex: 1; }
         .nav-item.active { color: var(--gold); }
         .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -121,83 +55,101 @@
         
         <div id="view-login" class="welcome-screen">
             <div class="logo-circle">⚡</div>
-            <h2 style="color: var(--gold); margin-bottom: 10px;">إعداد المحفظة</h2>
-            <p style="opacity: 0.8; font-size: 0.95rem; margin-bottom: 25px; padding: 0 10px;">أدخل رقم هاتفك لربطه بهذا الجهاز بشكل دائم</p>
-            
+            <h2 style="color: var(--gold);">إعداد المحفظة</h2>
             <div class="glass-card">
                 <input type="number" id="phone-input" placeholder="777XXXXXX">
-                <button class="btn btn-gold" onclick="actionLogin()">
-                    <span>تفعيل المحفظة على هذا الجهاز</span>
-                </button>
-                <p style="font-size: 0.75rem; opacity: 0.5; margin-top: 15px;">بمجرد التفعيل، سيصبح هذا الرقم هويتك في الشبكة</p>
+                <button class="btn btn-gold" onclick="actionLogin()">تفعيل المحفظة</button>
             </div>
         </div>
 
         <div id="view-main" class="hidden">
             <div class="balance-display">
-                <span style="opacity: 0.6; font-size: 0.9rem;">رصيدك الحالي</span>
-                <span class="balance-amount" id="main-balance">0.00</span>
-                <span style="color: var(--gold); font-size: 0.8rem;">ريال يمني</span>
+                <span style="opacity: 0.6;">رصيدك الحالي</span>
+                <span class="balance-amount" id="main-balance">0</span>
+                <span style="color: var(--gold);">ريال يمني</span>
             </div>
 
             <div id="tab-buy" class="tab-content">
-                <h4 style="margin: 20px 0 10px 5px; color: var(--gold);">🛒 كروت الشبكة</h4>
+                <h4 style="color: var(--gold);">🛒 كروت الشبكة</h4>
                 <div id="packages-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
             </div>
 
             <div id="tab-transfer" class="tab-content hidden">
                 <div class="glass-card">
-                    <h4>إرسال رصيد</h4>
+                    <h4>إرسال رصيد لصديق</h4>
                     <input type="number" id="tr-phone" placeholder="رقم المستلم">
                     <input type="number" id="tr-amount" placeholder="المبلغ">
-                    <button class="btn btn-gold" onclick="actionTransfer()">تأكيد الإرسال</button>
+                    <button class="btn btn-gold" onclick="actionTransfer()">تأكيد التحويل</button>
+                </div>
+            </div>
+
+            <div id="tab-topup" class="tab-content hidden">
+                <div class="glass-card">
+                    <h4 style="color: var(--green);">إيداع رصيد في المحفظة</h4>
+                    <p style="font-size: 0.8rem; opacity: 0.7;">أدخل المبلغ الذي قمت بتحويله للمسؤول:</p>
+                    <input type="number" id="topup-amount" placeholder="المبلغ المراد شحنه">
+                    <button class="btn btn-green" onclick="handleTopupRequest()">إرسال طلب الشحن</button>
+                    <p style="font-size: 0.7rem; margin-top: 15px; color: var(--gold);">* سيتم مراجعة الطلب وإضافة الرصيد فوراً.</p>
                 </div>
             </div>
 
             <div id="tab-history" class="tab-content hidden">
                 <div class="glass-card">
-                    <h4 style="margin-top:0">📑 كروتي المشتراة</h4>
+                    <h4>📑 سجل كروتي</h4>
                     <div id="history-list"></div>
                 </div>
             </div>
 
-            <div style="height: 80px;"></div>
+            <div style="height: 100px;"></div>
         </div>
 
         <div id="nav-bar" class="bottom-nav hidden">
-            <div class="nav-item active" onclick="switchTab('buy', this)">كروت</div>
-            <div class="nav-item" onclick="switchTab('transfer', this)">تحويل</div>
-            <div class="nav-item" onclick="switchTab('history', this)">سجلّي</div>
-            <div class="nav-item" onclick="logout()" style="color: #e74c3c;">خروج</div>
+            <div class="nav-item active" onclick="switchTab('buy', this)">🛒 الكروت</div>
+            <div class="nav-item" onclick="switchTab('topup', this)">➕ شحن</div>
+            <div class="nav-item" onclick="switchTab('transfer', this)">💸 تحويل</div>
+            <div class="nav-item" onclick="switchTab('history', this)">📜 سجلي</div>
+            <div class="nav-item" onclick="logout()" style="color: #e74c3c;">🚪 خروج</div>
         </div>
-
     </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbxV3X1u3aeP5Cm2q85qAguqX1ypfh5bfEi2yd858X0KdJM9z9w8w277HjyqdEed3OGL/exec';
 
+        // دالة إرسال طلب شحن
+        async function handleTopupRequest() {
+            const amount = document.getElementById('topup-amount').value;
+            const phone = localStorage.getItem('LOGGED_PHONE');
+            const devId = localStorage.getItem('MAJ_DEVICE_ID');
+
+            if(!amount || amount <= 0) return alert("يرجى إدخال مبلغ صحيح");
+
+            if(!confirm(`هل تريد إرسال طلب شحن بقيمة ${amount} ريال؟`)) return;
+
+            try {
+                // نرسل الطلب للسيرفر (سجل Topups)
+                fetch(`${API_URL}?action=requestTopup&walletId=${phone}&amount=${amount}&deviceId=${devId}`, {mode: 'no-cors'});
+                
+                alert("✅ تم إرسال طلب الشحن بنجاح. سيقوم المسؤول بتفعيل رصيدك خلال لحظات.");
+                document.getElementById('topup-amount').value = "";
+                switchTab('buy', document.querySelector('.nav-item')); // العودة للرئيسية
+            } catch(e) {
+                alert("حدث خطأ، يرجى المحاولة لاحقاً");
+            }
+        }
+
+        // --- الدوال الأساسية المستقرة ---
         async function actionLogin() {
             const phone = document.getElementById('phone-input').value;
             if(!phone || phone.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
-
-            let deviceId = localStorage.getItem('MAJ_DEVICE_ID');
-            if(!deviceId) {
-                deviceId = 'MAJ-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-                localStorage.setItem('MAJ_DEVICE_ID', deviceId);
-            }
+            let deviceId = localStorage.getItem('MAJ_DEVICE_ID') || ('MAJ-' + Math.random().toString(36).substr(2, 9).toUpperCase());
+            localStorage.setItem('MAJ_DEVICE_ID', deviceId);
 
             try {
-                // السكربت في الخلفية سيقوم بإنشاء محفظة جديدة تلقائياً إذا لم يكن الرقم موجوداً
                 const res = await fetch(`${API_URL}?action=getWallet&id=${phone}&deviceId=${deviceId}`);
                 const data = await res.json();
-                
-                if(data.error) {
-                    alert("⚠️ هذا الرقم مرتبط بجهاز آخر. يرجى التواصل مع الإدارة.");
-                } else {
-                    localStorage.setItem('LOGGED_PHONE', phone);
-                    renderMainUI(data);
-                }
-            } catch(e) { alert("خطأ في الاتصال بالسيرفر. تأكد من الإنترنت."); }
+                if(data.error) alert(data.error);
+                else { localStorage.setItem('LOGGED_PHONE', phone); renderMainUI(data); }
+            } catch(e) { alert("خطأ في الاتصال"); }
         }
 
         function renderMainUI(data) {
@@ -207,25 +159,18 @@
             document.getElementById('main-balance').innerText = data.balance;
             
             const list = document.getElementById('history-list');
-            if(data.history && data.history.length > 0) {
-                list.innerHTML = data.history.map(item => `
-                    <div class="history-item">
-                        <span>${item.packageName}</span>
-                        <span class="history-code">${item.code}</span>
-                    </div>
-                `).join('');
-            } else {
-                list.innerHTML = "<p style='opacity:0.4; font-size:0.8rem;'>لم تقم بشراء أي كروت بعد.</p>";
-            }
+            list.innerHTML = (data.history && data.history.length > 0) 
+                ? data.history.map(item => `<div class="history-item"><span>${item.packageName}</span><span class="history-code">${item.code}</span></div>`).join('')
+                : "<p style='opacity:0.4;'>لا توجد عمليات سابقة</p>";
             initPackages();
         }
 
         async function initPackages() {
             const grid = document.getElementById('packages-grid');
-            const packs = [100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000];
+            const packs = [100, 200, 300, 500, 1000, 2000]; // الباقات الظاهرة
             grid.innerHTML = packs.map(p => `
                 <div class="glass-card" style="padding: 15px; margin-bottom:0; text-align:center;">
-                    <span style="font-size:0.7rem; color:var(--green);" id="stk-${p}">...</span>
+                    <span style="font-size:0.7rem;" id="stk-${p}">...</span>
                     <h3 style="margin:5px 0; color:var(--gold);">${p}</h3>
                     <button class="btn btn-gold" style="padding:8px; font-size:0.8rem;" onclick="buyTicket('باقة ${p}', ${p})">شراء</button>
                 </div>
@@ -251,26 +196,15 @@
         async function buyTicket(name, price) {
             const phone = localStorage.getItem('LOGGED_PHONE');
             const devId = localStorage.getItem('MAJ_DEVICE_ID');
-            if(!confirm(`هل تريد تأكيد شراء ${name}؟`)) return;
-
+            if(!confirm(`تأكيد شراء ${name}؟`)) return;
             const res = await fetch(`${API_URL}?action=buyFromWallet&walletId=${phone}&deviceId=${devId}&packageName=${name}&qty=1`);
             const data = await res.json();
-            if(data.success) {
-                alert(`✅ تم الشراء بنجاح!\nكود الكرت: ${data.code}`);
-                location.reload();
-            } else {
-                alert("❌ " + data.msg);
-            }
+            if(data.success) { alert(`✅ تم! الكود: ${data.code}`); location.reload(); }
+            else alert("❌ " + data.msg);
         }
 
-        function logout() {
-            localStorage.removeItem('LOGGED_PHONE');
-            location.reload();
-        }
-
-        window.onload = () => {
-            if(localStorage.getItem('LOGGED_PHONE')) actionLogin();
-        };
+        function logout() { localStorage.removeItem('LOGGED_PHONE'); location.reload(); }
+        window.onload = () => { if(localStorage.getItem('LOGGED_PHONE')) actionLogin(); };
     </script>
 </body>
 </html>
