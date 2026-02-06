@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V9.0</title>
+    <title>متجر شبكة الماجد - المطور V9.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -47,7 +47,6 @@
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         .btn-contact { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
 
-        /* تنسيق العداد وشريط الحالة */
         .status-header { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px dashed #4caf50; }
         .status-bar { height: 8px; background: #222; border-radius: 4px; margin-top: 8px; overflow: hidden; }
         .status-fill { height: 100%; background: #4caf50; width: 0%; transition: 0.5s; }
@@ -61,7 +60,6 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -95,7 +93,7 @@
         <div id="orderStatusHeader" style="display:none;" class="status-header">
             <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
                 <span>الكروت الجاهزة: <b id="readyCount">0</b></span>
-                <span>بانتظار التأكيد: <b id="pendingCount">0</b></span>
+                <span>المعلقة: <b id="pendingCount">0</b></span>
             </div>
             <div class="status-bar"><div id="statusFill" class="status-fill"></div></div>
         </div>
@@ -121,7 +119,8 @@
     <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
+        // رابط السكربت المحدث
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
         
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -226,7 +225,7 @@
                 });
                 orderHistory.push({ ref, total: totalQty });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
-                showToast("🚀 تم الإرسال.. جاري المراجعة", "#28a745");
+                showToast("🚀 تم إرسال الطلب.. جاري المراجعة", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
                 setTimeout(() => { 
                     toggleReceiveModal(); 
@@ -245,29 +244,29 @@
             if(!ref) return showToast("⚠️ أدخل المرجع", "#f57c00");
             
             resDiv.style.display = "block";
-            resDiv.innerHTML = "⏳ جاري جلب البيانات...";
-            statusHeader.style.display = "none";
-
+            resDiv.innerHTML = "⏳ جاري التحقق من حالة الكروت...";
+            
             try {
+                // استخدام t لمنع التخزين المؤقت وضمان استلام الكروت فور التفعيل في الشيت
                 const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
                 const txt = await res.text();
                 
                 if (txt.includes(":")) {
                     let codes = txt.split('\n').filter(l => l.trim() !== "");
-                    
-                    // محاولة معرفة الإجمالي من السجل المحلي
                     let orderData = orderHistory.find(o => o.ref == ref);
                     let totalNeeded = orderData ? orderData.total : codes.length;
 
-                    // تحديث شريط الحالة
                     statusHeader.style.display = "block";
                     document.getElementById('readyCount').innerText = codes.length;
-                    document.getElementById('pendingCount').innerText = Math.max(0, totalNeeded - codes.length);
+                    
+                    let pending = totalNeeded - codes.length;
+                    document.getElementById('pendingCount').innerText = pending > 0 ? pending : 0;
+                    
                     let percent = (codes.length / totalNeeded) * 100;
                     document.getElementById('statusFill').style.width = percent + "%";
 
                     let html = `<div style="text-align:center; margin-bottom:12px;">
-                        <button class="btn-pay" onclick="copyAllVertical()" style="background:#fff; color:#000; font-size:0.9rem;">📋 نسخ جميع الكروت الجاهزة</button>
+                        <button class="btn-pay" onclick="copyAllVertical()" style="background:#fff; color:#000; font-size:0.9rem;">📋 نسخ الجاهز (${codes.length})</button>
                     </div>`;
                     
                     codes.forEach(code => {
@@ -275,14 +274,20 @@
                     });
 
                     if(codes.length < totalNeeded) {
-                        html += `<p style="color:#ffcc00; font-size:0.8rem; text-align:center;">⚠️ بعض الكروت قيد التجهيز، يرجى تحديث الحالة بعد قليل.</p>`;
+                        html += `
+                        <div style="background:rgba(255,165,0,0.1); border:1px solid orange; padding:10px; border-radius:10px; margin-top:10px; text-align:center;">
+                            <p style="color:#ffcc00; font-size:0.85rem; margin:0;">⏳ يوجد ${pending} كرت معلق قيد التجهيز...</p>
+                            <p style="font-size:0.7rem; color:#ccc;">انتظر ثواني ثم اضغط "تحديث الحالة" مرة أخرى</p>
+                        </div>`;
                     }
 
                     resDiv.innerHTML = html;
                 } else { 
                     resDiv.innerHTML = `<p style="color:#ffcc00;">${txt}</p>`; 
                 }
-            } catch (e) { resDiv.innerText = "❌ تعذر الاتصال بالسيرفر"; }
+            } catch (e) { 
+                resDiv.innerHTML = `<p style="color:#ff4444;">❌ فشل الاتصال.. يرجى المحاولة مرة أخرى</p>`;
+            }
         }
 
         function copyText(v) { navigator.clipboard.writeText(v); showToast("📋 تم نسخ الكرت", "#28a745"); }
