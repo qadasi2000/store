@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | الإصدار الجديد</title>
+    <title>محفظة الماجد الذكية | التحديث الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -75,12 +75,17 @@
     <div class="app-container">
         
         <div id="view-login" class="welcome-screen">
-            <div class="logo-circle">⚡</div>
-            <h2 style="color: var(--gold);">إعداد المحفظة</h2>
-            <p style="opacity: 0.8; font-size: 0.9rem;">أدخل رقم هاتفك للبدء</p>
+            <div class="logo-circle">💸</div>
+            <h2 style="color: var(--gold); margin-bottom: 5px;">محفظة الماجد</h2>
+            <p style="opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px;">احصل على رصيد افتتاحي عند التفعيل</p>
+            
             <div class="glass-card">
-                <input type="number" id="phone-input" placeholder="777XXXXXX">
-                <button class="btn btn-gold" onclick="actionLogin()">تفعيل على هذا الجهاز</button>
+                <div style="background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; margin-bottom: 15px;">
+                    <span style="color: var(--green); font-size: 0.8rem;">🎁 الرصيد الحالي للمشتركين الجدد: </span>
+                    <strong style="color: var(--green);">0.00 ريال</strong>
+                </div>
+                <input type="number" id="phone-input" placeholder="أدخل رقم هاتفك (777...)">
+                <button class="btn btn-gold" onclick="actionLogin()">تفعيل المحفظة الآن</button>
             </div>
         </div>
 
@@ -93,148 +98,4 @@
 
             <div id="tab-buy" class="tab-content">
                 <h4 style="color: var(--gold);">🛒 كروت الشبكة</h4>
-                <div id="packages-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
-            </div>
-
-            <div id="tab-topup" class="tab-content hidden">
-                <div class="glass-card">
-                    <h4 style="color: var(--green);">إيداع رصيد</h4>
-                    <p style="font-size: 0.8rem; opacity: 0.7;">أدخل المبلغ الذي قمت بتحويله للأدمن:</p>
-                    <input type="number" id="topup-amount" placeholder="المبلغ المراد شحنه">
-                    <button id="btn-topup" class="btn btn-green" onclick="handleTopupRequest()">إرسال طلب الشحن</button>
-                </div>
-            </div>
-
-            <div id="tab-transfer" class="tab-content hidden">
-                <div class="glass-card">
-                    <h4>إرسال رصيد</h4>
-                    <input type="number" id="tr-phone" placeholder="رقم المستلم">
-                    <input type="number" id="tr-amount" placeholder="المبلغ">
-                    <button class="btn btn-gold" onclick="actionTransfer()">تأكيد التحويل</button>
-                </div>
-            </div>
-
-            <div id="tab-history" class="tab-content hidden">
-                <div class="glass-card">
-                    <h4>📜 سجل كروتي المشتراة</h4>
-                    <div id="history-list"></div>
-                </div>
-            </div>
-
-            <div style="height: 100px;"></div>
-        </div>
-
-        <div id="nav-bar" class="bottom-nav hidden">
-            <div class="nav-item active" onclick="switchTab('buy', this)">🛒 الكروت</div>
-            <div class="nav-item" onclick="switchTab('topup', this)">➕ شحن</div>
-            <div class="nav-item" onclick="switchTab('transfer', this)">💸 تحويل</div>
-            <div class="nav-item" onclick="switchTab('history', this)">📜 سجلي</div>
-            <div class="nav-item" onclick="logout()" style="color: #e74c3c;">🚪 خروج</div>
-        </div>
-    </div>
-
-    <script>
-        // الرابط الجديد الخاص بك
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzKyUGpjkz5ACtaMJfM4fLJll7uKYG2il-4B1A5CYetzw0gvHTLWJchNLKMvW-9ktE/exec';
-
-        // دالة الدخول/التفعيل
-        async function actionLogin() {
-            const phone = document.getElementById('phone-input').value;
-            if(!phone || phone.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
-            
-            let deviceId = localStorage.getItem('MAJ_DEVICE_ID') || ('MAJ-' + Math.random().toString(36).substr(2, 9).toUpperCase());
-            localStorage.setItem('MAJ_DEVICE_ID', deviceId);
-
-            try {
-                const res = await fetch(`${API_URL}?action=getWallet&id=${phone}&deviceId=${deviceId}`);
-                const data = await res.json();
-                if(data.error) alert(data.msg);
-                else { 
-                    localStorage.setItem('LOGGED_PHONE', phone); 
-                    renderMainUI(data); 
-                }
-            } catch(e) { alert("خطأ في الاتصال بالسيرفر"); }
-        }
-
-        // دالة طلب الشحن المحدثة
-        async function handleTopupRequest() {
-            const amountInput = document.getElementById('topup-amount');
-            const amount = amountInput.value;
-            const phone = localStorage.getItem('LOGGED_PHONE');
-            const devId = localStorage.getItem('MAJ_DEVICE_ID');
-            const btn = document.getElementById('btn-topup');
-
-            if(!amount || amount <= 0) return alert("يرجى إدخال مبلغ صحيح");
-            if(!confirm(`تأكيد إرسال طلب شحن بقيمة ${amount} ريال؟`)) return;
-
-            btn.innerText = "جاري الإرسال..."; btn.disabled = true;
-
-            try {
-                await fetch(`${API_URL}?action=requestTopup&walletId=${phone}&amount=${amount}&deviceId=${devId}`);
-                alert("✅ تم إرسال الطلب. سيتم تفعيل رصيدك فور مراجعة التحويل.");
-                amountInput.value = "";
-                switchTab('buy', document.querySelector('.nav-item'));
-            } catch(e) { alert("فشل الإرسال، حاول مرة أخرى"); }
-            finally { btn.innerText = "إرسال طلب الشحن"; btn.disabled = false; }
-        }
-
-        function renderMainUI(data) {
-            document.getElementById('view-login').classList.add('hidden');
-            document.getElementById('view-main').classList.remove('hidden');
-            document.getElementById('nav-bar').classList.remove('hidden');
-            document.getElementById('main-balance').innerText = data.balance;
-            
-            const list = document.getElementById('history-list');
-            list.innerHTML = (data.history && data.history.length > 0) 
-                ? data.history.map(item => `<div class="history-item"><span>${item.packageName}</span><span class="history-code">${item.code}</span></div>`).join('')
-                : "<p style='opacity:0.4; text-align:center;'>لا توجد كروت مشتراة بعد</p>";
-            initPackages();
-        }
-
-        async function initPackages() {
-            const grid = document.getElementById('packages-grid');
-            const packs = [100, 200, 300, 500, 1000, 2000];
-            grid.innerHTML = packs.map(p => `
-                <div class="glass-card" style="padding: 15px; margin-bottom:0; text-align:center;">
-                    <span style="font-size:0.7rem;" id="stk-${p}">...</span>
-                    <h3 style="margin:5px 0; color:var(--gold);">${p}</h3>
-                    <button class="btn btn-gold" style="padding:8px; font-size:0.8rem;" onclick="buyTicket('باقة ${p}', ${p})">شراء</button>
-                </div>
-            `).join('');
-
-            try {
-                const res = await fetch(`${API_URL}?action=getStock`);
-                const stock = await res.json();
-                packs.forEach(p => {
-                    const el = document.getElementById(`stk-${p}`);
-                    const count = stock[`باقة ${p}`] || 0;
-                    el.innerText = count > 0 ? `متوفر: ${count}` : "نفد";
-                    el.style.color = count > 0 ? "#2ecc71" : "#e74c3c";
-                });
-            } catch(e) {}
-        }
-
-        async function buyTicket(name, price) {
-            const phone = localStorage.getItem('LOGGED_PHONE');
-            const devId = localStorage.getItem('MAJ_DEVICE_ID');
-            if(!confirm(`هل تريد شراء ${name}؟`)) return;
-            try {
-                const res = await fetch(`${API_URL}?action=buyFromWallet&walletId=${phone}&deviceId=${devId}&packageName=${name}&qty=1`);
-                const data = await res.json();
-                if(data.success) { alert(`✅ نجاح!\nالكود: ${data.code}`); location.reload(); }
-                else alert("❌ " + data.msg);
-            } catch(e) { alert("خطأ في العملية"); }
-        }
-
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            el.classList.add('active');
-        }
-
-        function logout() { localStorage.removeItem('LOGGED_PHONE'); location.reload(); }
-        window.onload = () => { if(localStorage.getItem('LOGGED_PHONE')) actionLogin(); };
-    </script>
-</body>
-</html>
+                <div id="packages-grid" style="display: grid;
