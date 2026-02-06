@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - نظام المحفظة V11.0</title>
+    <title>متجر شبكة الماجد - نظام المحفظة V12.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -17,12 +17,14 @@
 
         .header { text-align: center; padding: 20px 10px; }
         
-        /* تصميم قسم المحفظة */
+        /* تصميم قسم المحفظة المطور */
         .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; text-align: center; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .wallet-section input { width: 85%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1.1rem; }
         
-        .btn-check { display: inline-block; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-check { display: inline-block; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 5px; }
         .btn-check:hover { transform: scale(1.05); background: white; }
+
+        .topup-btn { background: #4caf50 !important; border-color: #fff !important; color: white !important; }
 
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
         .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -46,7 +48,6 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 50px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 50px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* تدرجات ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -69,8 +70,15 @@
             <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف أو رقم المحفظة">
             <br>
             <button onclick="checkBalance()" class="btn-check">فحص الرصيد 💰</button>
-            <div id="balanceDisplay" style="margin-top: 15px; font-size: 1.3rem; font-weight: bold; color: #f9d976; display:none;">
+            <div id="balanceDisplay" style="margin-top: 15px; font-size: 1.3rem; font-weight: bold; color: #f9d976; display:none; border-bottom: 1px dashed var(--gold); padding-bottom: 10px; margin-bottom: 10px;">
                 الرصيد: <span id="currentBalance">0</span> ريال
+            </div>
+
+            <div id="topupSection" style="margin-top: 10px;">
+                <h4 style="color: var(--gold); margin-bottom: 5px;">طلب شحن رصيد ⚡</h4>
+                <input type="number" id="topupAmount" placeholder="أدخل المبلغ المراد شحنه">
+                <br>
+                <button onclick="requestTopup()" class="btn-check topup-btn">إرسال طلب شحن</button>
             </div>
         </div>
     </div>
@@ -78,8 +86,8 @@
     <div class="grid-container" id="packagesGrid"></div>
 
     <script>
-        // الرابط الجديد الخاص بك
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxo4WvCNfELSkGIi8KHK1Xpx9oaNkbr9RgmUn0tZuTOiuTcqWDFWb0dXFCyNZ2X2kyZ/exec';
+        // الرابط الجديد الذي زودتنا به
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz6D_qR9OYyNVXrUuKzL1oFJYDsNobCfiogxEUuLdrvdZ5-nERfJIam38V56MVlCLA/exec';
         
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -106,7 +114,6 @@
             `).join('');
         }
 
-        // فحص الرصيد من المحفظة
         async function checkBalance() {
             const walletId = document.getElementById('walletNumber').value.trim();
             if(!walletId) return showToast("⚠️ يرجى إدخال رقم المحفظة", "#f57c00");
@@ -126,11 +133,38 @@
             }
         }
 
-        // عملية الشراء المباشر
+        async function requestTopup() {
+            const walletId = document.getElementById('walletNumber').value.trim();
+            const amount = document.getElementById('topupAmount').value.trim();
+
+            if (!walletId || !amount) {
+                return showToast("⚠️ يرجى إدخال الرقم والمبلغ", "#f57c00");
+            }
+
+            showToast("جاري إرسال الطلب...", "#2196f3");
+
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams({
+                        action: "requestTopup",
+                        walletId: walletId,
+                        amount: amount
+                    })
+                });
+
+                showToast("✅ تم إرسال طلب الشحن! انتظر التفعيل", "#28a745");
+                document.getElementById('topupAmount').value = "";
+            } catch (e) {
+                showToast("❌ فشل إرسال الطلب", "#d32f2f");
+            }
+        }
+
         async function processPurchase(packageName, price, pkgId) {
             const walletId = document.getElementById('walletNumber').value.trim();
             if(!walletId) {
-                showToast("⚠️ أدخل رقم المحفظة أولاً في الأعلى", "#f57c00");
+                showToast("⚠️ أدخل رقم المحفظة أولاً", "#f57c00");
                 document.getElementById('walletNumber').focus();
                 return;
             }
@@ -146,20 +180,17 @@
                 const result = await res.json();
 
                 if(result.success) {
-                    // تحديث الرصيد في الواجهة
                     document.getElementById('currentBalance').innerText = result.newBalance;
                     document.getElementById('balanceDisplay').style.display = "block";
-                    
-                    // إظهار الكرت بنجاح
-                    alert(`✅ تم الشراء بنجاح!\n\nكود الكرت الخاص بك هو:\n${result.code}\n\nيرجى نسخ الكود أو تصوير الشاشة.`);
+                    alert(`✅ تم الشراء بنجاح!\n\nكود الكرت:\n${result.code}`);
                     showToast("🎉 مبروك! تم استلام الكرت", "#28a745");
-                    fetchStock(); // تحديث الكمية المتوفرة
+                    fetchStock();
                 } else {
                     alert(`❌ فشل الشراء: ${result.msg}`);
                     showToast(result.msg, "#d32f2f");
                 }
             } catch (e) {
-                showToast("❌ حدث خطأ أثناء تنفيذ العملية", "#d32f2f");
+                showToast("❌ حدث خطأ أثناء التنفيذ", "#d32f2f");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "شراء الآن ⚡";
@@ -191,7 +222,7 @@
         window.onload = () => { 
             renderInitialPackages(); 
             fetchStock(); 
-            setInterval(fetchStock, 60000); // تحديث المخزون كل دقيقة
+            setInterval(fetchStock, 60000); 
         };
     </script>
 </body>
