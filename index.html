@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | التحديث الاحترافي</title>
+    <title>محفظة الماجد الذكية | التحديث النهائي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -52,6 +52,7 @@
         }
 
         .btn-gold { background: var(--gold); color: var(--primary); }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-green { background: var(--green); color: white; }
 
         .history-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
@@ -76,26 +77,4 @@
         
         <div id="view-login" class="welcome-screen">
             <div class="logo-circle">💸</div>
-            <h2 style="color: var(--gold); margin-bottom: 5px;">محفظة الماجد</h2>
-            <p style="opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px;">احصل على رصيد افتتاحي عند التفعيل</p>
-            
-            <div class="glass-card">
-                <div style="background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 15px; margin-bottom: 15px;">
-                    <span style="color: var(--green); font-size: 0.8rem;">🎁 الرصيد الحالي للمشتركين الجدد: </span>
-                    <strong style="color: var(--green);">0.00 ريال</strong>
-                </div>
-                <input type="number" id="phone-input" placeholder="أدخل رقم هاتفك (777...)">
-                <button class="btn btn-gold" onclick="actionLogin()">تفعيل المحفظة الآن</button>
-            </div>
-        </div>
-
-        <div id="view-main" class="hidden">
-            <div class="balance-display">
-                <span style="opacity: 0.6;">رصيدك الحالي</span>
-                <span class="balance-amount" id="main-balance">0</span>
-                <span style="color: var(--gold);">ريال يمني</span>
-            </div>
-
-            <div id="tab-buy" class="tab-content">
-                <h4 style="color: var(--gold);">🛒 كروت الشبكة</h4>
-                <div id="packages-grid" style="display: grid;
+            <h2 style="color: var(--gold); margin-bottom: 5px;">مح
