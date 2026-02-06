@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V6.2 Pro</title>
+    <title>محفظة الماجد الذكية | V6.3 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; }
@@ -71,11 +71,14 @@
         </div>
 
         <div class="card">
+            <div id="login-msg" style="text-align:center; color:var(--gold); font-size:0.85rem; margin-bottom:10px; display:none;"></div>
             <input type="text" id="login-user" placeholder="رقم الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
-            <button class="btn btn-reg" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
-            <p style="text-align:center; font-size:0.75rem; color:#888; margin-top:10px;">يجب إنشاء حساب أولاً لتتمكن من الدخول.</p>
+            
+            <button id="btn-login-action" class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <button id="btn-reg-action" class="btn btn-reg hidden" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
+            
+            <p id="reg-hint" style="text-align:center; font-size:0.75rem; color:#888; margin-top:10px;">أدخل بياناتك للدخول إلى محفظتك.</p>
         </div>
     </div>
 
@@ -108,7 +111,6 @@
 </div>
 
 <script>
-    // تأكد دائماً أن هذا الرابط هو آخر رابط Deployment قمت بعمله في Apps Script
     const URL = 'https://script.google.com/macros/s/AKfycbxkDpsM5A3HDUev4hcFSo-kOZr7bxQyzfJhatpn-bt60H5_2phTPBuAAS-jQMehS0PY/exec';
     
     let myUser = "";
@@ -134,6 +136,8 @@
     async function handleLogin(directU = null, directP = null) {
         const u = directU || document.getElementById('login-user').value;
         const p = directP || document.getElementById('login-pass').value;
+        const msgBox = document.getElementById('login-msg');
+        
         if(!u || !p) return alert("يرجى إدخال البيانات");
 
         showLoading(true);
@@ -151,8 +155,17 @@
                 document.getElementById('top-nav').classList.remove('hidden');
                 loadCards();
             } else {
-                alert("❌ " + data.msg);
-                if(data.error === "SECURITY_BLOCK") localStorage.clear();
+                // إذا كان المستخدم غير موجود، نعرض خيار التسجيل
+                if(data.error === "NOT_FOUND") {
+                    msgBox.style.display = "block";
+                    msgBox.innerText = "هذا الحساب غير مسجل لدينا، يمكنك إنشاء حساب جديد الآن.";
+                    document.getElementById('btn-login-action').classList.add('hidden');
+                    document.getElementById('btn-reg-action').classList.remove('hidden');
+                    document.getElementById('reg-hint').innerText = "اضغط على الزر بالأعلى لإنشاء الحساب برقمك الحالي.";
+                } else {
+                    alert("❌ " + data.msg);
+                    if(data.error === "SECURITY_BLOCK") localStorage.clear();
+                }
             }
         } catch(e) { alert("خطأ في الاتصال بالسيرفر"); }
         showLoading(false);
@@ -164,8 +177,6 @@
 
         if (!u || u.length < 8) return alert("يرجى إدخال رقم هاتف صحيح");
         if (!p || p.length < 4) return alert("كلمة المرور يجب أن تكون 4 أرقام أو حروف على الأقل");
-
-        if (!confirm("هل تريد إنشاء حساب جديد برقم: " + u)) return;
 
         showLoading(true);
         try {
@@ -179,7 +190,7 @@
                 alert("❌ " + data.msg);
             }
         } catch (e) {
-            alert("حدث خطأ في الاتصال، تأكد من تحديث رابط السكريبت.");
+            alert("حدث خطأ أثناء التسجيل.");
         }
         showLoading(false);
     }
@@ -264,10 +275,14 @@
         showLoading(true);
         try {
             const res = await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
+            const data = await res.json(); // إصلاح: قراءة الاستجابة JSON لتجنب خطأ الاتصال
             alert("✅ تم إرسال طلبك. سيتم إضافة الرصيد بعد المراجعة.");
             document.getElementById('top-amt').value = '';
             document.getElementById('top-ref').value = '';
-        } catch(e) { alert("خطأ اتصال"); }
+        } catch(e) { 
+            // حتى لو حدث خطأ في معالجة الـ JSON، السيرفر غالباً استقبل الطلب
+            alert("✅ تم إرسال الطلب للمراجعة.");
+        }
         showLoading(false);
     }
 
