@@ -107,11 +107,11 @@
         </div>
 
         <div id="sec-topup" class="hidden">
-            <div class="card">
-                <h4 style="color:var(--gold); margin-top:0">💸 تحويل رصيد لمستخدم آخر</h4>
+            <div class="card" style="border-color: var(--success);">
+                <h4 style="color:var(--success); margin-top:0">💸 تحويل رصيد لمستخدم</h4>
                 <input type="text" id="trans-id" placeholder="رقم هاتف المستلم">
-                <input type="number" id="trans-amt" placeholder="المبلغ المراد تحويله">
-                <button class="btn" style="background:#2ecc71; color:#fff" onclick="handleTransfer()">إرسال تحويل 🚀</button>
+                <input type="number" id="trans-amt" placeholder="المبلغ">
+                <button class="btn" style="background:var(--success); color:#fff" onclick="handleTransfer()">إرسال تحويل 🚀</button>
             </div>
 
             <div class="card">
@@ -128,7 +128,8 @@
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbyxIHDofheTMDEh1b6XgvMLdqF010z6C4ITXss3Foi0X-Hfa_Nwnupn7XXIFY9SfrKR/exec'; // ضع رابطك الجديد هنا
+    // الرابط المحدث الخاص بك
+    const URL = 'https://script.google.com/macros/s/AKfycbyxIHDofheTMDEh1b6XgvMLdqF010z6C4ITXss3Foi0X-Hfa_Nwnupn7XXIFY9SfrKR/exec';
     
     let myUser = "";
     let myPass = "";
@@ -141,7 +142,7 @@
         setTimeout(() => { toast.style.display = "none"; }, 5000);
     }
 
-    // تحديث الرصيد تلقائياً كل 10 ثوانٍ
+    // التحديث التلقائي للرصيد كل 10 ثواني
     setInterval(async () => {
         if (myUser && myUser !== "") {
             try {
@@ -207,7 +208,7 @@
         const amt = document.getElementById('trans-amt').value;
         if(!tid || !amt) return showToast("أكمل بيانات التحويل", true);
         if(tid === myUser) return showToast("لا يمكنك التحويل لنفسك", true);
-        if(!confirm(`هل أنت متأكد من تحويل مبلغ ${amt} ريال إلى ${tid}؟`)) return;
+        if(!confirm(`هل أنت متأكد من تحويل ${amt} ريال إلى ${tid}؟`)) return;
 
         showLoading(true);
         try {
@@ -220,7 +221,7 @@
                 document.getElementById('trans-amt').value = "";
                 loadOrders();
             }
-        } catch(e) { showToast("فشل التحويل، حاول لاحقاً", true); }
+        } catch(e) { showToast("خطأ في عملية التحويل", true); }
         showLoading(false);
     }
 
@@ -256,7 +257,6 @@
         showLoading(false);
     }
 
-    // الدوال المساعدة (Load Cards, Orders, Logout, etc.) تبقى كما هي مع استبدال alert بـ showToast
     async function loadCards() {
         const grid = document.getElementById('cards-grid');
         grid.innerHTML = "جاري التحميل...";
