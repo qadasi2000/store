@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V7</title>
+    <title>متجر شبكة الماجد - المطور V8</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -34,17 +34,6 @@
 
         .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 180px; }
         .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; }
-        
-        /* ألوان الباقات */
-        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
-        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
-        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
-        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
-        .b2000 { --accent-color: #a855f7; --card-gradient: linear-gradient(135deg, #581c87, #a855f7); }
-        .b3000 { --accent-color: #00ffcc; --card-gradient: linear-gradient(135deg, #004d40, #00ffcc); }
-        .b5000 { --accent-color: #fb923c; --card-gradient: linear-gradient(135deg, #9a3412, #fb923c); }
-        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
@@ -57,61 +46,68 @@
         input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
-        .history-section { margin-top: 20px; padding-top: 15px; border-top: 2px dashed rgba(249, 217, 118, 0.3); }
-        .btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .history-section { margin-top: 20px; padding: 15px; border: 1px solid rgba(249, 217, 118, 0.3); border-radius: 15px; background: rgba(255,255,255,0.03); }
+        .history-item { background: rgba(0,0,0,0.2); margin-top: 10px; padding: 10px; border-radius: 10px; font-size: 0.85rem; text-align: right; border-right: 3px solid var(--gold); position: relative; }
+        .btn-copy-ref { background: var(--gold); color: black; border: none; padding: 4px 8px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; margin-top: 5px; }
         
-        #checkResult { margin-top: 15px; font-weight: bold; white-space: pre-wrap; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 15px; display: none; text-align: right; border: 1px solid var(--gold); }
+        #checkResult { margin-top: 15px; font-weight: bold; white-space: pre-wrap; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; text-align: right; border: 1px solid var(--gold); color: #fff; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #28a745; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+        /* ألوان الباقات ثابتة كما في السابق */
+        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
+        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
+        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
+        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
+        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
+        .b2000 { --accent-color: #a855f7; --card-gradient: linear-gradient(135deg, #581c87, #a855f7); }
+        .b3000 { --accent-color: #00ffcc; --card-gradient: linear-gradient(135deg, #004d40, #00ffcc); }
+        .b5000 { --accent-color: #fb923c; --card-gradient: linear-gradient(135deg, #9a3412, #fb923c); }
+        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
     </style>
 </head>
 <body>
 
     <div id="toast">✅ تمت الإضافة</div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - اطلب كرتك الآن واستلمه فوراً من داخل السلة 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - يتم حفظ طلباتك تلقائياً حتى تستلمها 🌙</div></div>
 
-    <div class="header">
-        <h1>متجر شبكة الماجد</h1>
-    </div>
+    <div class="header"><h1>متجر شبكة الماجد</h1></div>
 
-    <div class="grid-container" id="packagesGrid">
-        <div style="color:var(--gold)">جاري فحص المخزون المحدث...</div>
-    </div>
+    <div class="grid-container" id="packagesGrid"><div style="color:var(--gold)">جاري فحص المخزون...</div></div>
 
     <div id="cartModal" class="modal"><div class="modal-content">
-        <h2 style="color: var(--gold); margin-bottom: 5px;">سلة المشتريات 🧾</h2>
+        <h2 style="color: var(--gold);">سلة المشتريات 🧾</h2>
         
         <div id="newOrderSection">
             <div id="cartItemsList"></div>
-            <div id="emptyCartMsg" style="padding: 20px; color: #999; display: none;">سلتك فارغة حالياً</div>
-            
-            <div id="cartSummary" style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
+            <div id="emptyCartMsg" style="padding: 10px; color: #888;">سلتك فارغة</div>
+            <div id="cartSummary" style="display:none; margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
                 الإجمالي: <span id="cartTotalText">0</span> ريال
             </div>
-
-            <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)" />
-            <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
-            <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب الآن ✨</button>
+            <input type="text" id="phoneInput" style="display:none;" placeholder="رقم الجوال (اختياري)" />
+            <input type="text" id="refInput" style="display:none;" placeholder="رقم مرجع الحوالة" />
+            <button class="btn-pay" id="payBtn" style="display:none;" onclick="sendOrder()">إرسال الطلب ✨</button>
         </div>
 
         <div class="history-section">
-            <h3 style="color: var(--gold); font-size: 1rem;">🎫 استلام الكروت / طلب سابق</h3>
-            <input type="text" id="checkRefInput" placeholder="رقم المرجع للاستلام" />
-            <button class="btn-outline" id="receiveBtn" onclick="checkOrderNow()">فحص واستلام الكروت 🚀</button>
+            <h3 style="color: var(--gold); font-size: 1rem;">📑 طلباتك السابقة (للاستلام)</h3>
+            <div id="ordersHistoryList"></div>
+            <hr style="border:0; border-top:1px solid rgba(249,217,118,0.2); margin:15px 0;">
+            <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع يدوياً" />
+            <button class="btn-pay" style="font-size:1rem;" id="receiveBtn" onclick="checkOrderNow()">استلام الكروت 🚀</button>
             <div id="checkResult"></div>
         </div>
 
-        <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:20px; cursor:pointer;">إغلاق السلة</button>
+        <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:20px; cursor:pointer;">إغلاق</button>
     </div></div>
 
-    <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="handleCartClick()">🛒 السلة (<span id="cartCount">0</span>)</div>
+    <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
-        
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
@@ -125,182 +121,151 @@
         ];
 
         let cart = [];
+        let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
 
         async function fetchStock() {
             try {
-                const response = await fetch(`${scriptURL}?action=getStock&t=${new Date().getTime()}`);
-                const stock = await response.json();
+                const res = await fetch(`${scriptURL}?action=getStock&t=${Date.now()}`);
+                const stock = await res.json();
                 renderPackages(stock);
-            } catch (e) {
-                renderPackages({});
-            }
+            } catch (e) { renderPackages({}); }
         }
 
         function renderPackages(stockData) {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = "";
             packagesData.forEach(pkg => {
-                const count = stockData[pkg.name] || 0; 
+                const count = stockData[pkg.name] || 0;
                 const isOutOfStock = count <= 0;
                 grid.innerHTML += `
                     <div class="package-unit ${pkg.id}">
-                        <div class="card-wrapper">
-                            <div class="diamond-card">
-                                <div class="card-content">
-                                    <span class="price">${pkg.price} ريال</span>
-                                    <div class="data">${pkg.data}</div>
-                                    <div class="stock-tag">${isOutOfStock ? 'نفدت الكمية ❌' : 'المتوفر: ' + count}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn-add-package" ${isOutOfStock ? 'disabled' : ''} 
-                                onclick="addToCart('${pkg.name}', ${pkg.price})">
-                            ${isOutOfStock ? 'غير متوفر' : 'إضافة للسلة 🛒'}
+                        <div class="card-wrapper"><div class="diamond-card"><div class="card-content">
+                            <span class="price">${pkg.price} ريال</span><div class="data">${pkg.data}</div>
+                            <div class="stock-tag">${isOutOfStock ? '❌' : 'متاح: '+count}</div>
+                        </div></div></div>
+                        <button class="btn-add-package" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${pkg.name}', ${pkg.price})">
+                            ${isOutOfStock ? 'نفدت' : 'إضافة 🛒'}
                         </button>
                     </div>`;
             });
         }
 
         function addToCart(name, price) {
-            const item = cart.find(i => i.name === name);
-            if (item) item.qty++;
-            else cart.push({ name, price: Number(price), qty: 1 });
+            let item = cart.find(i => i.name === name);
+            if (item) item.qty++; else cart.push({ name, price, qty: 1 });
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
-            showToast(`✅ أضيفت ${name}`);
+            showToast("✅ تمت الإضافة");
         }
 
         function updateCartUI() {
-            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const count = cart.reduce((s, i) => s + i.qty, 0);
             document.getElementById('cartCount').innerText = count;
             const list = document.getElementById('cartItemsList');
-            const summary = document.getElementById('newOrderSection');
-            const emptyMsg = document.getElementById('emptyCartMsg');
+            const totalText = document.getElementById('cartTotalText');
             
-            if (cart.length === 0) {
+            if(cart.length === 0) {
                 list.innerHTML = "";
-                document.getElementById('cartSummary').style.display = 'none';
-                document.getElementById('phoneInput').style.display = 'none';
-                document.getElementById('refInput').style.display = 'none';
-                document.getElementById('payBtn').style.display = 'none';
-                emptyMsg.style.display = 'block';
+                ['cartSummary','phoneInput','refInput','payBtn'].forEach(id => document.getElementById(id).style.display = 'none');
+                document.getElementById('emptyCartMsg').style.display = 'block';
             } else {
-                document.getElementById('cartSummary').style.display = 'block';
-                document.getElementById('phoneInput').style.display = 'block';
-                document.getElementById('refInput').style.display = 'block';
-                document.getElementById('payBtn').style.display = 'block';
-                emptyMsg.style.display = 'none';
-                
+                document.getElementById('emptyCartMsg').style.display = 'none';
+                ['cartSummary','phoneInput','refInput','payBtn'].forEach(id => document.getElementById(id).style.display = 'block');
                 let total = 0;
-                list.innerHTML = cart.map((item, index) => {
+                list.innerHTML = cart.map((item, i) => {
                     total += (item.price * item.qty);
-                    return `
-                    <div class="cart-item">
-                        <div style="text-align:right">
-                            <div style="font-weight:bold">${item.name}</div>
-                            <div style="font-size:0.8rem; color:var(--gold)">${item.price} ريال</div>
-                        </div>
+                    return `<div class="cart-item">
+                        <span>${item.name}</span>
                         <div class="qty-controls">
-                            <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                            <input type="number" class="qty-input" value="${item.qty}" onchange="setQty(${index}, this.value)">
-                            <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ff4444; margin-right:5px; cursor:pointer">🗑️</button>
+                            <button class="qty-btn" onclick="changeQty(${i},-1)">-</button>
+                            <input type="number" class="qty-input" value="${item.qty}" onchange="setQty(${i},this.value)">
+                            <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+                            <button onclick="removeFromCart(${i})" style="border:none;background:none;cursor:pointer;">🗑️</button>
                         </div>
                     </div>`;
                 }).join('');
-                document.getElementById('cartTotalText').innerText = total;
+                totalText.innerText = total;
             }
+            renderHistory();
         }
 
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) cart.splice(index, 1);
-            updateCartUI();
+        function changeQty(i, d) { cart[i].qty += d; if(cart[i].qty <= 0) cart.splice(i,1); updateCartUI(); }
+        function setQty(i, v) { cart[i].qty = parseInt(v)||1; updateCartUI(); }
+        function removeFromCart(i) { cart.splice(i,1); updateCartUI(); }
+
+        function renderHistory() {
+            const histDiv = document.getElementById('ordersHistoryList');
+            if(orderHistory.length === 0) {
+                histDiv.innerHTML = "<div style='color:#666; font-size:0.8rem;'>لا توجد طلبات سابقة</div>";
+                return;
+            }
+            histDiv.innerHTML = orderHistory.map((h, idx) => `
+                <div class="history-item">
+                    <b>باقات:</b> ${h.pkgs}<br>
+                    <b>المرجع:</b> <span id="ref_${idx}">${h.ref}</span>
+                    <button class="btn-copy-ref" onclick="useRef('${h.ref}')">استخدام هذا المرجع 📥</button>
+                </div>
+            `).reverse().join('');
         }
 
-        function setQty(index, val) {
-            cart[index].qty = parseInt(val) || 1;
-            if (cart[index].qty <= 0) cart.splice(index, 1);
-            updateCartUI();
+        function useRef(ref) {
+            document.getElementById('checkRefInput').value = ref;
+            checkOrderNow();
         }
-
-        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
 
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
             const phone = document.getElementById('phoneInput').value.trim();
-            if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+            if(!ref) return showToast("⚠️ المرجع مطلوب");
             
             const btn = document.getElementById('payBtn');
             btn.disabled = true; btn.innerText = "جاري الإرسال...";
             
-            const packagesString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
+            const pkgsString = cart.flatMap(i => Array(i.qty).fill(i.name)).join(', ');
             
             try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: new URLSearchParams({ packages: packagesString, ref: ref, phone: phone || "بدون رقم" })
-                });
+                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ packages: pkgsString, ref, phone: phone||"بدون رقم" }) });
                 
-                localStorage.setItem('last_ref', ref);
-                showToast("✅ تم الطلب! المرجع محفوظ للاستلام.");
+                // حفظ في السجل المحلي
+                orderHistory.push({ ref, pkgs: pkgsString, date: new Date().toLocaleString() });
+                if(orderHistory.length > 10) orderHistory.shift(); // حفظ آخر 10 طلبات فقط
+                localStorage.setItem('my_orders', JSON.stringify(orderHistory));
                 
-                // حركة ذكية: تحويل الواجهة للاستلام تلقائياً
+                showToast("✅ تم الطلب وحفظه في السجل!");
+                cart = []; updateCartUI();
                 document.getElementById('checkRefInput').value = ref;
-                cart = []; 
-                updateCartUI();
                 fetchStock();
-            } catch (e) { 
-                showToast("❌ فشل الاتصال"); 
-            } finally { 
-                btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; 
-            }
+            } catch (e) { showToast("❌ فشل الاتصال"); }
+            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
         }
 
         async function checkOrderNow() {
             const ref = document.getElementById('checkRefInput').value.trim();
             const resDiv = document.getElementById('checkResult');
-            const btn = document.getElementById('receiveBtn');
-            if(!ref) return showToast("⚠️ أدخل رقم المرجع");
+            if(!ref) return showToast("⚠️ أدخل المرجع");
             
-            btn.disabled = true; btn.innerText = "جاري الفحص...";
             resDiv.style.display = "block";
-            resDiv.innerText = "🔍 جاري البحث عن كروتك...";
-            
+            resDiv.innerText = "🔍 جاري الفحص...";
             try {
-                const response = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${new Date().getTime()}`);
-                const text = await response.text();
-                resDiv.innerText = text;
-                resDiv.style.color = text.includes(":") ? "#f9d976" : "#fff";
-            } catch (e) { 
-                resDiv.innerText = "❌ خطأ في الاتصال"; 
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "فحص واستلام الكروت 🚀";
-            }
+                const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
+                const txt = await res.text();
+                resDiv.innerText = txt;
+                resDiv.style.color = txt.includes(":") ? "#f9d976" : "#fff";
+            } catch (e) { resDiv.innerText = "❌ خطأ في النظام"; }
         }
 
-        function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.innerText = msg; t.className = "show";
-            setTimeout(() => { t.className = ""; }, 3000);
-        }
-
-        function handleCartClick() { toggleCart(); }
         function toggleCart() { 
-            const m = document.getElementById('cartModal'); 
-            m.style.display = (m.style.display==='flex')?'none':'flex'; 
-            // تعبئة رقم المرجع الأخير تلقائياً عند فتح السلة
-            const saved = localStorage.getItem('last_ref');
-            if(saved) document.getElementById('checkRefInput').value = saved;
+            const m = document.getElementById('cartModal');
+            m.style.display = (m.style.display==='flex') ? 'none' : 'flex';
             updateCartUI();
         }
 
-        window.onload = () => {
-            fetchStock();
-            setInterval(fetchStock, 40000); 
-        };
+        function showToast(m) {
+            const t = document.getElementById("toast"); t.innerText = m; t.className = "show";
+            setTimeout(() => t.className = "", 3000);
+        }
+
+        window.onload = () => { fetchStock(); setInterval(fetchStock, 40000); updateCartUI(); };
     </script>
 </body>
 </html>
