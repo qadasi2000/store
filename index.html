@@ -3,56 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - V8.7</title>
+    <title>متجر شبكة الماجد - المطور V8.8</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-bg: #2b0010; --gold: #f9d976; --accent-color: #f9d976; }
+        :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
         
-        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 10px 0; }
+        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; white-space: nowrap; }
         
         .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; overflow: hidden; }
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        .header { text-align: center; padding: 20px 10px; }
-        .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 12px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(249, 217, 118, 0.3); transition: 0.3s; }
-        .cart-float { position: fixed; bottom: 20px; left: 20px; z-index: 1000; padding: 15px 20px; }
+        .header { text-align: center; padding: 40px 10px; }
+        .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); }
+        .cart-float { position: fixed; bottom: 30px; left: 30px; z-index: 1000; padding: 18px 25px; font-size: 1.1rem; }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .package-unit { display: flex; flex-direction: column; align-items: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
+        .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
-        /* تأثير البرواز المتحرك */
-        .card-wrapper { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; border-radius: 40px; overflow: hidden; margin-bottom: 15px; }
-        .card-wrapper::before { content: ""; position: absolute; width: 150%; height: 150%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 4s linear infinite; }
-        .card-wrapper::after { content: ""; position: absolute; inset: 5px; background: var(--primary-bg); border-radius: 35px; z-index: 1; }
+        .card-wrapper { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; border-radius: 50px; overflow: hidden; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--accent-color)); }
+        .card-wrapper::before { content: ""; position: absolute; width: 180%; height: 180%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
+        .card-wrapper::after { content: ""; position: absolute; inset: 7px; background: var(--primary-bg); border-radius: 45px; z-index: 1; }
         @keyframes rotate-border { 100% { transform: rotate(360deg); } }
         
-        .diamond-card { width: 170px; height: 170px; background: var(--card-gradient); border-radius: 30px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; text-align: center; }
-        .price { font-size: 1.8rem; font-weight: 900; display: block; }
-        .stock-tag { font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 2px 10px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+        .diamond-card { width: 180px; height: 180px; background: var(--card-gradient); border-radius: 40px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
+        .card-content { text-align: center; color: white; }
+        .price { font-size: 2rem; font-weight: 900; display: block; color: white; }
+        .data { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
+        .stock-tag { font-size: 0.8rem; margin-top: 5px; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 10px; }
 
-        .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 10px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 160px; }
-        .btn-add-package:disabled { background: #555; color: #888; cursor: not-allowed; }
+        .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 180px; }
+        .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; opacity: 0.7; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
-        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 20px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; max-height: 90vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
+        .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
         
-        .cart-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin: 5px 0; }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-family: 'Cairo'; }
+        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--gold); background: #3d0017; color: white; text-align: center; box-sizing: border-box; font-family: 'Cairo'; }
-        
-        .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 10px; }
+        #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; }
+        .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; margin: 4px 0; border-radius: 8px; border: 1px solid #444; }
+        .copy-btn { background: var(--gold); border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; font-weight: bold; color: black; }
 
-        #checkResult { margin-top: 15px; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px dashed var(--gold); display: none; }
-        .code-line { background: #111; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #444; color: #00ff00; font-family: monospace; }
-        
-        #toast { visibility: hidden; min-width: 200px; background: #28a745; color: white; text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 3000; bottom: 80px; left: 50%; transform: translateX(-50%); }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 80px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 80px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* تدرجات ألوان الباقات */
+        /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -62,12 +61,12 @@
 </head>
 <body>
 
-    <div id="toast">✅ تمت الإضافة</div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - باقات سريعة وخدمة فورية 🌙</div></div>
+    <div id="toast"></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - استلم كروتك فوراً بمجرد تأكيد الحوالة 🌙</div></div>
 
     <div class="header">
         <h1>متجر شبكة الماجد</h1>
-        <button onclick="toggleReceiveModal()" class="btn-check">🎫 استلام الكروت</button>
+        <button onclick="toggleReceiveModal()" class="btn-check">🎫 استلام الكروت الجاهزة</button>
     </div>
 
     <div class="grid-container" id="packagesGrid"></div>
@@ -75,28 +74,26 @@
     <div id="receiveModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">استلام الكروت 🎫</h2>
         
-        <p style="font-size: 0.9rem;">اختر من طلباتك السابقة:</p>
+        <p style="font-size: 0.9rem; margin-bottom: 5px;">اختر من طلباتك السابقة:</p>
         <select id="refCombo" onchange="document.getElementById('checkRefInput').value = this.value">
-            <option value="">-- مراجع سابقة --</option>
+            <option value="">-- اختر مرجعاً سابقاً --</option>
         </select>
-        
-        <input type="text" id="checkRefInput" placeholder="أو اكتب رقم المرجع يدوياً" />
-        
-        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()">تحقق من الحالة 🚀</button>
+
+        <input type="text" id="checkRefInput" placeholder="أو أدخل رقم المرجع هنا" />
+        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()">استلام الآن 🚀</button>
         
         <div id="checkResult"></div>
-        
-        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق النافذة</button>
+        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
     </div></div>
 
     <div id="cartModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">سلة المشتريات 🧾</h2>
         <div id="cartItemsList"></div>
-        <div style="margin: 15px 0; border-top: 1px solid var(--gold); padding-top: 10px;">
+        <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
             الإجمالي: <span id="cartTotalText">0</span> ريال
         </div>
         <input type="text" id="phoneInput" placeholder="رقم الجوال (اختياري)" />
-        <input type="text" id="refInput" placeholder="أدخل رقم مرجع الحوالة" />
+        <input type="text" id="refInput" placeholder="رقم مرجع الحوالة" />
         <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
         <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
     </div></div>
@@ -106,7 +103,6 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwKCu9zBGmjodk28VwtcVjgvmghBvFB_ty6xmbPO4MfvYRtaBFf5NgLjtRoUVNkInc/exec';
         
-        // بيانات أولية تظهر فوراً لتسريع الموقع
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
@@ -117,17 +113,18 @@
 
         let cart = [];
         let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
+        let currentStock = {};
 
-        // دالة لعرض الباقات فوراً
-        function initPackages() {
+        // وظيفة لعرض الباقات فوراً دون انتظار السيرفر
+        function renderInitialPackages() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = packagesData.map(pkg => `
                 <div class="package-unit ${pkg.id}">
                     <div class="card-wrapper"><div class="diamond-card"><div class="card-content">
-                        <span class="price">${pkg.price} ريال</span><div style="font-weight:bold;color:var(--gold)">${pkg.data}</div>
-                        <div class="stock-tag" id="stock-${pkg.name}">جاري التحديث...</div>
+                        <span class="price">${pkg.price} ريال</span><div class="data">${pkg.data}</div>
+                        <div class="stock-tag" id="stock-${pkg.id}">جاري التحميل...</div>
                     </div></div></div>
-                    <button class="btn-add-package" onclick="addToCart('${pkg.name}', ${pkg.price})">إضافة للسلة 🛒</button>
+                    <button class="btn-add-package" id="btn-${pkg.id}" onclick="addToCart('${pkg.name}', ${pkg.price}, '${pkg.id}')">إضافة للسلة 🛒</button>
                 </div>
             `).join('');
         }
@@ -135,46 +132,49 @@
         async function fetchStock() {
             try {
                 const res = await fetch(`${scriptURL}?action=getStock&t=${Date.now()}`);
-                const stock = await res.json();
+                currentStock = await res.json();
                 packagesData.forEach(pkg => {
-                    const el = document.getElementById(`stock-${pkg.name}`);
-                    const count = stock[pkg.name] || 0;
-                    if(el) el.innerText = count > 0 ? `متاح: ${count}` : '❌ نفدت';
+                    const count = currentStock[pkg.name] || 0;
+                    const tag = document.getElementById(`stock-${pkg.id}`);
+                    const btn = document.getElementById(`btn-${pkg.id}`);
+                    if(tag) tag.innerText = count > 0 ? `متاح: ${count}` : '❌ نفدت';
+                    if(btn && count <= 0) btn.disabled = true;
                 });
-            } catch (e) { console.log("Stock update failed"); }
+            } catch (e) { console.log("Stock update error"); }
         }
 
-        function addToCart(name, price) {
+        function addToCart(name, price, id) {
             let item = cart.find(i => i.name === name);
-            if (item) item.qty++; else cart.push({ name, price, qty: 1 });
+            if (item) item.qty++; else cart.push({ name, price, qty: 1, id });
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
-            showToast("✅ تمت الإضافة للسلة");
+            showToast("✅ تمت الإضافة", "#28a745");
         }
 
         function updateCartUI() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
             document.getElementById('cartCount').innerText = count;
-            const list = document.getElementById('cartItemsList');
             let total = 0;
+            const list = document.getElementById('cartItemsList');
             list.innerHTML = cart.map((item, i) => {
                 total += (item.price * item.qty);
-                return `<div class="cart-item">
-                    <span>${item.name}</span>
-                    <span>${item.qty} ×</span>
+                return `<div style="display:flex; justify-content:space-between; margin:5px 0;">
+                    <span>${item.name} (x${item.qty})</span>
+                    <button onclick="removeFromCart(${i})" style="border:none; background:none; color:red; cursor:pointer;">❌</button>
                 </div>`;
             }).join('');
             document.getElementById('cartTotalText').innerText = total;
             if(count === 0) document.getElementById('floatingCartBtn').style.display = 'none';
         }
 
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
+
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
-            if(!ref) return showToast("⚠️ المرجع مطلوب");
-            
+            if(!ref) return showToast("⚠️ المرجع مطلوب", "#f57c00");
             const btn = document.getElementById('payBtn');
             btn.disabled = true; btn.innerText = "جاري الإرسال...";
-
+            
             const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
 
             try {
@@ -183,72 +183,49 @@
                     mode: 'no-cors', 
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: document.getElementById('phoneInput').value || "بدون" }) 
                 });
-                
-                orderHistory.push({ ref, date: new Date().toLocaleString('ar-EG') });
+                orderHistory.push({ ref });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
-                
+                showToast("✅ تم الطلب بنجاح", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
-                
-                // الانتقال المباشر للاستلام
-                showToast("✅ تم الطلب بنجاح");
-                setTimeout(() => {
-                    toggleReceiveModal();
-                    document.getElementById('checkRefInput').value = ref;
-                }, 800);
-            } catch (e) { showToast("❌ فشل الاتصال"); }
+                setTimeout(() => { toggleReceiveModal(); document.getElementById('checkRefInput').value = ref; }, 800);
+            } catch (e) { showToast("❌ فشل الإرسال", "#d32f2f"); }
             finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
         }
 
         async function checkOrderNow() {
             const ref = document.getElementById('checkRefInput').value.trim();
-            if(!ref) return showToast("⚠️ أدخل المرجع");
-            
-            const btn = document.getElementById('receiveBtn');
             const resDiv = document.getElementById('checkResult');
-            btn.disabled = true; btn.innerText = "جاري البحث...";
-            resDiv.style.display = 'none';
-
+            if(!ref) return showToast("⚠️ أدخل المرجع", "#f57c00");
+            resDiv.style.display = "block"; resDiv.innerText = "🔍 جاري البحث...";
             try {
-                const response = await fetch(`${scriptURL}?action=checkOrder&ref=${ref}&t=${Date.now()}`);
-                const data = await response.json();
-                
-                if(data.status === "completed") {
-                    resDiv.innerHTML = `<div style="color:#00ff00;margin-bottom:10px">✅ كروتك جاهزة:</div>` + 
-                        data.codes.map(c => `<div class="code-line"><span>${c}</span><button class="copy-btn" onclick="copyToClipboard('${c}')" style="background:var(--gold);border:none;border-radius:4px;padding:2px 8px;cursor:pointer">نسخ</button></div>`).join('');
-                } else if(data.status === "pending") {
-                    resDiv.innerHTML = "⏳ الطلب قيد المراجعة.. انتظر دقيقة وأعد الفحص";
-                    resDiv.style.color = "#f9d976";
-                } else {
-                    resDiv.innerHTML = "❌ المرجع غير موجود حالياً";
-                    resDiv.style.color = "#ff3333";
-                }
-                resDiv.style.display = 'block';
-            } catch (e) { 
-                showToast("❌ خطأ في السيرفر"); 
-            } finally { 
-                btn.disabled = false; btn.innerText = "تحقق من الحالة 🚀"; 
-            }
+                const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
+                const txt = await res.text();
+                if (txt.includes(":")) {
+                    let html = `<p style="color:lawngreen">✅ كروتك جاهزة:</p>`;
+                    txt.split('\n').filter(l => l.trim() !== "").forEach(code => {
+                        html += `<div class="code-row"><span>${code}</span><button class="copy-btn" onclick="copyText('${code}')">نسخ</button></div>`;
+                    });
+                    resDiv.innerHTML = html;
+                } else { resDiv.innerText = txt; }
+            } catch (e) { resDiv.innerText = "❌ تعذر الاتصال بالسيرفر"; }
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => showToast("📋 تم نسخ الكرت"));
-        }
+        function copyText(v) { navigator.clipboard.writeText(v); showToast("📋 تم النسخ", "#28a745"); }
 
-        function toggleReceiveModal() { 
+        function toggleReceiveModal() {
             const combo = document.getElementById('refCombo');
+            const uniqueRefs = [...new Set(orderHistory.map(o => o.ref))].reverse();
             combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + 
-                [...new Set(orderHistory.map(o => o.ref))].reverse().map(r => `<option value="${r}">${r}</option>`).join('');
+                uniqueRefs.map(r => `<option value="${r}">${r}</option>`).join('');
             
-            document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex'; 
+            document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex';
+            document.getElementById('checkResult').style.display = 'none';
         }
 
         function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
-        function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+        function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.backgroundColor = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        window.onload = () => { 
-            initPackages(); // إظهار الباقات فوراً
-            fetchStock();   // ثم تحديث المخزون
-        };
+        window.onload = () => { renderInitialPackages(); fetchStock(); setInterval(fetchStock, 30000); };
     </script>
 </body>
 </html>
