@@ -19,6 +19,10 @@
         .status-completed { background: var(--success); color: #000; }
         .status-pending { background: var(--pending); color: #000; }
 
+        /* تنسيق قسم الكروت المشتراة */
+        .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; }
+        .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; margin: 5px 0; letter-spacing: 2px; }
+
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
@@ -77,6 +81,12 @@
             <div id="cards-grid" class="grid"></div>
         </div>
 
+        <div id="sec-mycards" class="hidden">
+            <h3 style="color:var(--gold); margin-bottom:15px">🎫 كروتي المشتراة</h3>
+            <div id="purchased-list">
+                </div>
+        </div>
+
         <div id="sec-topup" class="hidden">
             <div class="card">
                 <h3 style="color:var(--gold); margin-top:0">➕ شحن رصيد</h3>
@@ -93,18 +103,17 @@
     </div>
 
     <nav class="nav hidden" id="bottom-nav">
-        <div class="nav-btn active" onclick="switchSec('cards', this)">🏠 الرئيسة</div>
+        <div class="nav-btn active" onclick="switchSec('cards', this)">🏠 المتجر</div>
+        <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()">🎫 كروتي</div>
         <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
         <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
     </nav>
 </div>
 
 <script>
-    // الرابط المحدث الخاص بك
     const URL = 'https://script.google.com/macros/s/AKfycbwp7c0VcKjywKrr1-njFypxFBSIVYRIpPaZOM6ycF1xo59qqcB8cii_T-y0rEb4Rzc6/exec';
     let myPhone = "";
 
-    // وظيفة لتوليد بصمة جهاز فريدة (DeviceId)
     function getDeviceId() {
         let dId = localStorage.getItem('majed_device_id');
         if (!dId) {
@@ -126,11 +135,10 @@
         const p = directPhone || document.getElementById('login-phone').value;
         if(p.length < 9) return alert("أدخل رقم هاتف صحيح");
         
-        const deviceId = getDeviceId(); // الحصول على بصمة الجهاز
+        const deviceId = getDeviceId();
         showLoading(true);
         
         try {
-            // إرسال الاستعلام مع البصمة
             const res = await fetch(`${URL}?action=getWallet&id=${p}&deviceId=${deviceId}`);
             const data = await res.json();
             
@@ -144,9 +152,8 @@
             myPhone = p;
             localStorage.setItem('majed_wallet_phone', p);
             
-            // تنبيه العضو الجديد بالهدية
             if(data.isNew) {
-                alert("🎁 مبروك! لقد تم إنشاء حسابك وحصلت على 1000 ريال رصيد إفتتاحي.");
+                alert("🎁 مبروك! حصلت على 1000 ريال رصيد إفتتاحي كعضو جديد.");
             }
 
             document.getElementById('display-bal').innerText = data.balance;
@@ -156,16 +163,59 @@
             loadCards();
         } catch(e) { 
             alert("خطأ في الاتصال بالسيرفر"); 
-            localStorage.removeItem('majed_wallet_phone');
         }
         showLoading(false);
     }
 
-    function handleLogout() {
-        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
-            localStorage.removeItem('majed_wallet_phone');
-            location.reload();
+    // وظيفة حفظ الكرت في الذاكرة المحلية
+    function saveCardLocally(type, code) {
+        let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
+        cards.unshift({
+            type: type,
+            code: code,
+            date: new Date().toLocaleString('ar-YE')
+        });
+        localStorage.setItem('my_purchased_cards', JSON.stringify(cards));
+    }
+
+    // عرض الكروت المشتراة في الواجهة
+    function displaySavedCards() {
+        const container = document.getElementById('purchased-list');
+        let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
+        
+        if (cards.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color:#888'>لا توجد كروت مشتراة بعد.</p>";
+            return;
         }
+
+        container.innerHTML = cards.map(c => `
+            <div class="my-card-item">
+                <small style="color:#666">${c.date}</small>
+                <div style="font-weight:bold; font-size:1.1rem">${c.type}</div>
+                <span class="my-card-code">${c.code}</span>
+                <button class="btn" style="padding:5px; font-size:0.7rem; width:80px" onclick="copyAnyCode('${c.code}')">نسخ</button>
+            </div>
+        `).join('');
+    }
+
+    async function handleBuy(cardName) {
+        if(!confirm(`هل تريد شراء ${cardName}؟`)) return;
+        showLoading(true);
+        try {
+            const res = await fetch(`${URL}?action=buyCard&id=${myPhone}&cardType=${cardName}`);
+            const data = await res.json();
+            if(data.success) {
+                document.getElementById('display-bal').innerText = data.newBalance;
+                document.getElementById('generated-code').innerText = data.code;
+                document.getElementById('code-modal').style.display = 'flex';
+                
+                // حفظ الكرت فوراً
+                saveCardLocally(cardName, data.code);
+                
+                loadCards();
+            } else { alert("فشل: " + data.msg); }
+        } catch(e) { alert("خطأ تقني"); }
+        showLoading(false);
     }
 
     async function loadCards() {
@@ -188,20 +238,11 @@
         } catch(e) { grid.innerHTML = "خطأ في التحميل"; }
     }
 
-    async function handleBuy(cardName) {
-        if(!confirm(`هل تريد شراء ${cardName}؟`)) return;
-        showLoading(true);
-        try {
-            const res = await fetch(`${URL}?action=buyCard&id=${myPhone}&cardType=${cardName}`);
-            const data = await res.json();
-            if(data.success) {
-                document.getElementById('display-bal').innerText = data.newBalance;
-                document.getElementById('generated-code').innerText = data.code;
-                document.getElementById('code-modal').style.display = 'flex';
-                loadCards();
-            } else { alert("فشل: " + data.msg); }
-        } catch(e) { alert("خطأ تقني"); }
-        showLoading(false);
+    function handleLogout() {
+        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            localStorage.removeItem('majed_wallet_phone');
+            location.reload();
+        }
     }
 
     async function handleTopup() {
@@ -225,6 +266,7 @@
     function switchSec(id, el) {
         document.getElementById('sec-cards').classList.add('hidden');
         document.getElementById('sec-topup').classList.add('hidden');
+        document.getElementById('sec-mycards').classList.add('hidden');
         document.getElementById('sec-'+id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
@@ -235,6 +277,9 @@
     function copyCode() {
         const code = document.getElementById('generated-code').innerText;
         navigator.clipboard.writeText(code).then(() => alert("تم النسخ!"));
+    }
+    function copyAnyCode(code) {
+        navigator.clipboard.writeText(code).then(() => alert("تم نسخ الكود: " + code));
     }
 </script>
 </body>
