@@ -3,203 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | الإصدار الجديد</title>
-    <link href="https://script.google.com/macros/s/AKfycbwTVSx7TiXgD3FCF57UDmzR6kgYDVXGWm8Wbt7b-bXBvIDl14pUBULsWoqWusEWS7HC/exec">
+    <title>محفظة الماجد الذكية V29.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --p: #1a000a; --g: #f9d976; --s: #2ecc71; --w: #ffffff; }
-        body { background: var(--p); color: var(--w); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at top, #3d0016, #1a000a); overflow-x: hidden; }
+        body { background: var(--p); color: var(--w); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at top, #3d0016, #1a000a); }
         .app-container { width: 100%; max-width: 450px; padding: 20px; box-sizing: border-box; }
         .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(249,217,118,0.2); border-radius: 20px; padding: 20px; backdrop-filter: blur(10px); margin-bottom: 20px; }
-        .logo-circle { width: 80px; height: 80px; background: var(--g); border-radius: 50%; margin: 20px auto; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--p); box-shadow: 0 0 20px rgba(249,217,118,0.3); }
-        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.3); color: #fff; text-align: center; box-sizing: border-box; font-size: 1rem; }
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.3); color: #fff; text-align: center; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-g { background: var(--g); color: var(--p); }
-        .btn-g:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-s { background: var(--s); color: #fff; }
         .hidden { display: none; }
-        .nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: rgba(26, 0, 10, 0.95); display: flex; border-top: 1px solid rgba(249,217,118,0.2); padding: 10px 0; z-index: 1000; }
+        .nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; border-top: 1px solid rgba(249,217,118,0.2); padding: 10px 0; }
         .nav-i { flex: 1; text-align: center; font-size: 0.75rem; color: #888; cursor: pointer; }
         .nav-i.active { color: var(--g); }
-        .stk { font-size: 0.7rem; color: var(--s); display: block; margin-bottom: 5px; }
-        .history-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; font-size: 0.85rem; }
-        .history-code { color: var(--g); font-family: monospace; font-size: 1rem; display: block; margin-top: 4px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div id="v-login">
-        <div class="logo-circle">M</div>
-        <h2 style="text-align:center; color: var(--g); margin-bottom: 5px;">شبكة الماجد الذكية</h2>
-        <p style="text-align:center; opacity:0.7; font-size:0.9rem; margin-bottom:20px;">مرحباً بك في جيل المحافظ الرقمية</p>
-        
+        <h2 style="text-align:center; color: var(--g);">شبكة الماجد الذكية</h2>
         <div class="glass">
-            <div style="background: rgba(46, 204, 113, 0.1); padding: 10px; border-radius: 12px; margin-bottom: 15px; text-align:center;">
-                <span style="color: var(--s); font-size: 0.85rem;">🎁 رصيد افتتاحي للمشتركين: 0.00 ريال</span>
-            </div>
-            <input type="number" id="phone" placeholder="رقم الهاتف المرتبط (777XXXXXX)">
-            <button id="b-login" class="btn btn-g" onclick="login()">دخول آمن للمحفظة</button>
+            <input type="number" id="phone" placeholder="أدخل رقم الهاتف">
+            <button id="b-login" class="btn btn-g" onclick="login()">دخول للمحفظة</button>
         </div>
     </div>
 
     <div id="v-main" class="hidden">
-        <div style="text-align:center; margin-bottom:25px; padding-top:20px;">
-            <p style="opacity:0.6; margin:0; font-size:0.9rem;">رصيدك الحالي</p>
-            <h1 id="bal" style="font-size:3.8rem; margin:0; color:var(--g); font-weight:700;">0</h1>
-            <p style="color:var(--g); margin:0;">ريال يمني</p>
+        <div style="text-align:center; margin-bottom:20px;">
+            <p style="opacity:0.6;">رصيدك الحالي</p>
+            <h1 id="bal" style="font-size:3.5rem; color:var(--g); margin:0;">0</h1>
         </div>
 
         <div id="t-buy" class="tab">
-            <h4 style="color:var(--g); margin-bottom:15px;">🛒 كروت الشبكة المتوفرة</h4>
-            <div id="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                </div>
+            <div id="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
         </div>
 
         <div id="t-top" class="tab hidden">
             <div class="glass">
-                <h3 style="color:var(--s); margin-top:0;">إيداع رصيد (الكريمي)</h3>
-                <p style="font-size:0.8rem; opacity:0.7;">أدخل المبلغ ورقم المرجع بعد التحويل للمسؤول:</p>
-                <input type="number" id="t-amt" placeholder="المبلغ المراد شحنه">
-                <input type="text" id="t-ref" placeholder="رقم مرجع الكريمي المكون من 9 أرقام">
-                <button id="b-top" class="btn btn-s" onclick="topup()">إرسال طلب الشحن</button>
+                <h3 style="color:var(--s);">طلب شحن رصيد</h3>
+                <input type="number" id="t-amt" placeholder="المبلغ">
+                <input type="text" id="t-ref" placeholder="رقم المرجع">
+                <button id="b-top" class="btn btn-s" onclick="topup()">إرسال الطلب</button>
             </div>
         </div>
 
         <div id="t-his" class="tab hidden">
-            <div class="glass">
-                <h3 style="margin-top:0;">📜 سجل كروتي المشتراة</h3>
-                <div id="h-list">
-                    <p style="text-align:center; opacity:0.5;">جاري تحميل السجل...</p>
-                </div>
-            </div>
+            <div class="glass"><div id="h-list"></div></div>
         </div>
-
-        <div style="height:100px;"></div>
+        <div style="height:80px;"></div>
     </div>
 
     <div id="nb" class="nav hidden">
         <div class="nav-i active" onclick="tab('buy',this)">🛒 الكروت</div>
         <div class="nav-i" onclick="tab('top',this)">➕ شحن</div>
         <div class="nav-i" onclick="tab('his',this)">📜 سجلي</div>
-        <div class="nav-i" onclick="logout()" style="color:#ff6b6b;">🚪 خروج</div>
+        <div class="nav-i" onclick="logout()" style="color:#ff4d4d;">🚪 خروج</div>
     </div>
 </div>
 
 <script>
-    // الرابط الجديد الذي قدمته مدمج هنا
-    const API = 'https://script.google.com/macros/s/AKfycbyG8f1bJeYGOqPSgMh4yQdsk0IWQKyznpnkt-TZaH1J9Ap8ooATildcSsZg2WY5p_UQ/exec';
+    // الرابط الجديد مدمج هنا
+    const API = 'https://script.google.com/macros/s/AKfycbwxUFbsgje1a08HZSVpWeIHE6mEKchje8DyedQJxEV-RKsfS4kWX7xlOlj-FlYqWfql/exec';
 
     async function login() {
-        const phoneInput = document.getElementById('phone');
-        const phone = phoneInput.value.trim();
-        const btn = document.getElementById('b-login');
-
-        if(phone.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
-        
-        btn.innerText = "جاري التحقق...";
-        btn.disabled = true;
-
-        let dId = localStorage.getItem('MAJ_DID') || 'DID-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        localStorage.setItem('MAJ_DID', dId);
-
+        const p = document.getElementById('phone').value;
+        if(p.length < 9) return alert("الرقم خطأ");
+        let dId = localStorage.getItem('DID') || 'D-'+Math.random().toString(36).substr(2,7).toUpperCase();
+        localStorage.setItem('DID', dId);
         try {
-            const response = await fetch(`${API}?action=getWallet&id=${phone}&deviceId=${dId}`);
-            const data = await response.json();
-            
-            if(data.error) {
-                alert(data.msg);
-                btn.disabled = false;
-                btn.innerText = "دخول آمن للمحفظة";
-            } else {
-                localStorage.setItem('MAJ_PHONE', phone);
-                showUI(data);
-            }
-        } catch(e) {
-            alert("حدث خطأ في الاتصال بالسيرفر. تأكد من الإنترنت.");
-            btn.disabled = false;
-            btn.innerText = "دخول آمن للمحفظة";
-        }
-    }
-
-    function showUI(data) {
-        document.getElementById('v-login').classList.add('hidden');
-        document.getElementById('v-main').classList.remove('hidden');
-        document.getElementById('nb').classList.remove('hidden');
-        document.getElementById('bal').innerText = data.balance;
-        
-        // عرض السجل
-        const hl = document.getElementById('h-list');
-        if(data.history && data.history.length > 0) {
-            hl.innerHTML = data.history.map(h => `
-                <div class="history-item">
-                    <span>${h.packageName}</span>
-                    <span class="history-code">${h.code}</span>
-                </div>
-            `).join('');
-        } else {
-            hl.innerHTML = "<p style='text-align:center; opacity:0.4;'>لا توجد عمليات شراء سابقة</p>";
-        }
-        loadStock();
-    }
-
-    async function loadStock() {
-        const grid = document.getElementById('grid');
-        const packs = [100, 200, 300, 500, 1000, 2000];
-        
-        try {
-            const res = await fetch(`${API}?action=getStock`);
-            const stock = await res.json();
-            
-            grid.innerHTML = packs.map(p => `
-                <div class="glass" style="text-align:center; padding:15px; margin:0;">
-                    <span class="stk" style="color: ${stock['باقة '+p] > 0 ? '#2ecc71' : '#ff6b6b'}">
-                        ${stock['باقة '+p] > 0 ? 'متوفر: ' + stock['باقة '+p] : 'نفد'}
-                    </span>
-                    <h2 style="margin:5px 0;">${p} <small style="font-size:0.6rem">ريال</small></h2>
-                    <button class="btn btn-g" style="padding:8px; font-size:0.9rem" onclick="buy('باقة ${p}')">شراء</button>
-                </div>
-            `).join('');
-        } catch(e) { grid.innerHTML = "فشل تحميل المخزون"; }
-    }
-
-    async function buy(packageName) {
-        const phone = localStorage.getItem('MAJ_PHONE');
-        const dId = localStorage.getItem('MAJ_DID');
-        if(!confirm(`هل ترغب في شراء ${packageName}؟`)) return;
-
-        try {
-            const res = await fetch(`${API}?action=buyFromWallet&walletId=${phone}&deviceId=${dId}&packageName=${packageName}&qty=1`);
-            const result = await res.json();
-            if(result.success) {
-                alert("✅ تمت العملية بنجاح!\nالكود: " + result.code);
-                location.reload();
-            } else {
-                alert("❌ " + result.msg);
-            }
+            const res = await fetch(`${API}?action=getWallet&id=${p}&deviceId=${dId}`);
+            const d = await res.json();
+            if(d.error) alert(d.msg);
+            else { localStorage.setItem('PH', p); showUI(d); }
         } catch(e) { alert("خطأ في الاتصال"); }
     }
 
     async function topup() {
-        const amt = document.getElementById('t-amt').value;
-        const ref = document.getElementById('t-ref').value;
-        const phone = localStorage.getItem('MAJ_PHONE');
-        const dId = localStorage.getItem('MAJ_DID');
-        const btn = document.getElementById('b-top');
-
-        if(!amt || !ref) return alert("يرجى إكمال البيانات");
-        
-        btn.innerText = "جاري الإرسال...";
-        btn.disabled = true;
-
+        const a = document.getElementById('t-amt').value, r = document.getElementById('t-ref').value;
+        const p = localStorage.getItem('PH'), d = localStorage.getItem('DID');
+        if(!a || !r) return alert("أكمل البيانات");
+        document.getElementById('b-top').innerText = "جاري الإرسال...";
         try {
-            await fetch(`${API}?action=requestTopup&walletId=${phone}&amount=${amt}&ref=${ref}&deviceId=${dId}`);
-            alert("✅ تم إرسال طلب الشحن. سيتم التحقق من المرجع وإضافة الرصيد فوراً.");
-            location.reload();
-        } catch(e) {
-            alert("فشل الإرسال");
-            btn.disabled = false;
-            btn.innerText = "إرسال طلب الشحن";
-        }
+            const res = await fetch(`${API}?action=requestTopup&walletId=${p}&amount=${a}&ref=${r}&deviceId=${d}`);
+            const result = await res.json();
+            if(result.success) {
+                alert("✅ تم الإرسال! الطلب الآن في ورقة Topups.");
+                location.reload();
+            }
+        } catch(e) { alert("فشل الإرسال"); }
+    }
+
+    function showUI(d) {
+        document.getElementById('v-login').classList.add('hidden');
+        document.getElementById('v-main').classList.remove('hidden');
+        document.getElementById('nb').classList.remove('hidden');
+        document.getElementById('bal').innerText = d.balance;
+        loadStock();
+    }
+
+    async function loadStock() {
+        const res = await fetch(`${API}?action=getStock`);
+        const s = await res.json();
+        const packs = [100, 200, 300, 500, 1000, 2000];
+        document.getElementById('grid').innerHTML = packs.map(p => `
+            <div class="glass" style="text-align:center;">
+                <span style="font-size:0.7rem; color:var(--s);">${s['باقة '+p] || 0} متوفر</span>
+                <h3>${p}</h3>
+                <button class="btn btn-g" onclick="buy('باقة ${p}')">شراء</button>
+            </div>
+        `).join('');
+    }
+
+    async function buy(n) {
+        const p = localStorage.getItem('PH'), d = localStorage.getItem('DID');
+        if(!confirm("تأكيد شراء "+n)) return;
+        const res = await fetch(`${API}?action=buyFromWallet&walletId=${p}&deviceId=${d}&packageName=${n}&qty=1`);
+        const r = await res.json();
+        if(r.success) { alert("الكود: "+r.code); location.reload(); }
+        else alert(r.msg);
     }
 
     function tab(id, el) {
@@ -209,18 +133,8 @@
         el.classList.add('active');
     }
 
-    function logout() {
-        if(confirm("هل تريد تسجيل الخروج؟")) {
-            localStorage.removeItem('MAJ_PHONE');
-            location.reload();
-        }
-    }
-
-    // فحص الجلسة عند فتح الصفحة
-    window.onload = () => {
-        if(localStorage.getItem('MAJ_PHONE')) login();
-    };
+    function logout() { localStorage.clear(); location.reload(); }
+    window.onload = () => { if(localStorage.getItem('PH')) login(); };
 </script>
-
 </body>
 </html>
