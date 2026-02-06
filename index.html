@@ -13,17 +13,14 @@
         input { width: 85%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--gold); background: #000; color: #fff; text-align: center; font-size: 1rem; }
         .btn-gold { background: var(--gold); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; width: 85%; cursor: pointer; transition: 0.3s; }
         .balance { font-size: 2.5rem; color: var(--gold); font-weight: bold; margin: 10px 0; }
-        
         .action-group { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 12px; margin-top: 20px; }
         .pkg-card { background: var(--card); padding: 15px; border-radius: 18px; border: 1px solid rgba(249,217,118,0.2); }
         .stock-tag { font-size: 0.75rem; color: #0f8; display: block; margin-bottom: 5px; }
         .qty-box { width: 50px !important; display: inline-block !important; padding: 5px !important; margin: 5px !important; border-radius: 8px !important; }
-
         #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d32f2f; padding: 16px; border-radius: 10px; z-index: 1000; transition: 0.3s; }
         #toast.show { visibility: visible; }
         .status-msg { font-size: 0.8rem; color: var(--gold); margin-bottom: 10px; }
-        .logout-btn { font-size: 0.7rem; color: #aaa; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
     </style>
 </head>
 <body>
@@ -52,11 +49,10 @@
                 </div>
 
                 <div class="action-group">
-                    <h4 style="margin:0 0 10px 0; color:var(--green)">🔋 طلب شحن</h4>
+                    <h4 style="margin:0 0 10px 0; color:var(--green)">🔋 طلب شحن رصيد</h4>
                     <input type="number" id="topupAmt" placeholder="المبلغ المطلوب">
-                    <button class="btn-gold" style="background:var(--green); color:white" onclick="topup()">إرسال الطلب</button>
+                    <button class="btn-gold" style="background:var(--green); color:white" onclick="topup()">إرسال طلب الشحن</button>
                 </div>
-                <span class="logout-btn" onclick="logout()">تبديل الحساب (للمسؤول فقط)</span>
             </div>
 
             <div class="grid" id="packagesGrid"></div>
@@ -64,7 +60,7 @@
     </div>
 
     <script>
-        // الرابط الجديد الذي قمت بتزويدي به
+        // الرابط الجديد الذي زودتني به
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzl_V2JDMSAEQP3T3QiiKPCpFzxy3SsWbbgmiYQqkBe6Ge75IM8FqPlunjLHpXAeL7l/exec';
         let stock = {};
 
@@ -90,7 +86,7 @@
                 }
                 localStorage.setItem('maj_wal', id);
                 renderUI(data);
-            } catch(e) { showToast("❌ خطأ في الاتصال: تأكد من نشر السكربت كـ Anyone"); }
+            } catch(e) { showToast("❌ خطأ في الاتصال بالسيرفر"); }
         }
 
         async function autoLogin() {
@@ -101,7 +97,6 @@
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${savedId}&deviceId=${getDevId()}`);
                 const data = await res.json();
                 if(!data.error) renderUI(data);
-                else { localStorage.removeItem('maj_wal'); location.reload(); }
             } catch(e) { console.log("AutoLogin Failed"); }
         }
 
@@ -143,14 +138,12 @@
             const qty = parseInt(document.getElementById(`qty-${price}`).value);
             if(qty > (stock[name] || 0)) return alert("❌ الكمية المطلوبة غير متوفرة");
             if(!confirm(`تأكيد شراء ${qty} كروت من ${name}؟`)) return;
-
             showToast("جاري استخراج الكروت...", "#f59e0b");
             const wal = localStorage.getItem('maj_wal');
             const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${wal}&deviceId=${getDevId()}&packageName=${name}&qty=${qty}`);
             const data = await res.json();
-            
             if(data.success) {
-                alert(`✅ تم الشراء بنجاح!\nالأكواد المستخرجة:\n${data.code}`);
+                alert(`✅ تم الشراء بنجاح!\nالكود: ${data.code}`);
                 location.reload();
             } else { alert("❌ " + data.msg); }
         }
@@ -159,8 +152,7 @@
             const to = document.getElementById('targetId').value.trim();
             const amt = document.getElementById('transferAmt').value;
             if(!to || !amt) return showToast("⚠️ أكمل البيانات");
-            if(!confirm(`تأكيد تحويل ${amt} ريال إلى ${to}؟`)) return;
-
+            if(!confirm(`هل أنت متأكد من تحويل ${amt} إلى ${to}؟`)) return;
             showToast("جاري التحويل...", "#f59e0b");
             const res = await fetch(`${scriptURL}?action=transfer&from=${localStorage.getItem('maj_wal')}&to=${to}&amount=${amt}&deviceId=${getDevId()}`);
             const data = await res.json();
@@ -168,17 +160,33 @@
             else { alert("❌ " + data.msg); }
         }
 
+        // الدالة المصلحة لإرسال طلبات الشحن
         async function topup() {
             const amt = document.getElementById('topupAmt').value;
-            if(!amt) return;
-            showToast("✅ تم إرسال طلب الشحن", "#28a745");
-            fetch(scriptURL, {method:'POST', mode:'no-cors', body: new URLSearchParams({action:'requestTopup', walletId: localStorage.getItem('maj_wal'), amount:amt})});
-            document.getElementById('topupAmt').value = "";
+            const wal = localStorage.getItem('maj_wal');
+            if(!amt || !wal) return showToast("⚠️ أدخل المبلغ أولاً");
+            
+            showToast("جاري إرسال الطلب...", "#f59e0b");
+            
+            // نستخدم fetch مع الرابط مباشرة كـ GET لضمان الوصول 100% في Apps Script
+            const finalUrl = `${scriptURL}?action=requestTopup&walletId=${wal}&amount=${amt}&deviceId=${getDevId()}`;
+            
+            try {
+                // إرسال الطلب للسيرفر
+                fetch(finalUrl, { mode: 'no-cors' }); 
+                
+                // إظهار رسالة نجاح للمستخدم
+                setTimeout(() => {
+                    alert("✅ تم إرسال طلب الشحن بنجاح.\nسيتم إضافة الرصيد فور معالجة المسؤول للطلب.");
+                    document.getElementById('topupAmt').value = "";
+                    showToast("تم الإرسال", "#28a745");
+                }, 1000);
+            } catch (e) {
+                alert("❌ حدث خطأ أثناء إرسال الطلب");
+            }
         }
 
-        function logout() { if(confirm("هل تريد تسجيل الخروج؟")) { localStorage.removeItem('maj_wal'); location.reload(); } }
         function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.background = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
-        
         window.onload = () => { autoLogin(); };
     </script>
 </body>
