@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V6.1 Pro</title>
+    <title>محفظة الماجد الذكية | V6.2 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; }
@@ -28,7 +28,7 @@
 
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 10px; }
-        .btn-reg { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+        .btn-reg { background: #2c3e50 !important; color: #fff !important; border: 1px solid var(--gold) !important; }
         
         .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); }
         .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 2px; }
@@ -71,7 +71,7 @@
         </div>
 
         <div class="card">
-            <input type="text" id="login-user" placeholder="اسم المستخدم أو الهاتف">
+            <input type="text" id="login-user" placeholder="رقم الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
             <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
             <button class="btn btn-reg" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
@@ -108,7 +108,9 @@
 </div>
 
 <script>
+    // تأكد دائماً أن هذا الرابط هو آخر رابط Deployment قمت بعمله في Apps Script
     const URL = 'https://script.google.com/macros/s/AKfycbxkDpsM5A3HDUev4hcFSo-kOZr7bxQyzfJhatpn-bt60H5_2phTPBuAAS-jQMehS0PY/exec';
+    
     let myUser = "";
     let myPass = "";
 
@@ -150,7 +152,7 @@
                 loadCards();
             } else {
                 alert("❌ " + data.msg);
-                localStorage.clear();
+                if(data.error === "SECURITY_BLOCK") localStorage.clear();
             }
         } catch(e) { alert("خطأ في الاتصال بالسيرفر"); }
         showLoading(false);
@@ -159,21 +161,26 @@
     async function handleRegister() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
-        if(!u || p.length < 4) return alert("يرجى إدخال رقم هاتف وباسورد قوي");
 
-        if(!confirm("هل أنت متأكد من رغبتك في إنشاء حساب جديد؟")) return;
+        if (!u || u.length < 8) return alert("يرجى إدخال رقم هاتف صحيح");
+        if (!p || p.length < 4) return alert("كلمة المرور يجب أن تكون 4 أرقام أو حروف على الأقل");
+
+        if (!confirm("هل تريد إنشاء حساب جديد برقم: " + u)) return;
 
         showLoading(true);
         try {
-            const res = await fetch(`${URL}?action=register&id=${u}&password=${p}&deviceId=${getDeviceId()}`);
-            const data = await res.json();
-            if(data.success) {
-                alert("✅ تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول.");
+            const response = await fetch(`${URL}?action=register&id=${u}&password=${p}&deviceId=${getDeviceId()}`);
+            const data = await response.json();
+
+            if (data.success) {
+                alert("✨ " + data.msg);
                 handleLogin(u, p);
             } else {
                 alert("❌ " + data.msg);
             }
-        } catch(e) { alert("خطأ في الاتصال"); }
+        } catch (e) {
+            alert("حدث خطأ في الاتصال، تأكد من تحديث رابط السكريبت.");
+        }
         showLoading(false);
     }
 
@@ -211,9 +218,10 @@
             const res = await fetch(`${URL}?action=buyCard&id=${myUser}&password=${myPass}&cardType=${cardName}`);
             const data = await res.json();
             if(data.success) {
-                alert("🎉 كود الكرت: " + data.code);
+                alert("🎉 تم الشراء بنجاح!");
                 document.getElementById('display-bal').innerText = data.newBalance;
                 saveCardLocally(cardName, data.code);
+                showCodesModal([data.code]);
             } else {
                 alert("❌ " + data.msg);
             }
@@ -230,14 +238,23 @@
     function displaySavedCards() {
         const container = document.getElementById('purchased-list');
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
-        container.innerHTML = cards.length === 0 ? "<p style='text-align:center; color:#888;'>لا يوجد كروت.</p>" : 
+        container.innerHTML = cards.length === 0 ? "<p style='text-align:center; color:#888;'>لا يوجد كروت مشتراة.</p>" : 
             cards.map(c => `
                 <div class="my-card-item">
-                    <small>${c.date}</small>
-                    <div style="font-weight:bold">${c.type}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#777">
+                        <span>${c.date}</span>
+                        <span style="font-weight:bold; color:#3d0016">${c.type}</span>
+                    </div>
                     <span class="my-card-code">${c.code}</span>
+                    <button class="btn" style="padding:5px; font-size:0.7rem; width:100px; margin: 10px auto 0; display:block" onclick="copyCode('${c.code}')">نسخ الكود 📋</button>
                 </div>
             `).join('');
+    }
+
+    function showCodesModal(codes) {
+        const container = document.getElementById('codes-container');
+        container.innerHTML = codes.map(c => `<div class="my-card-code" style="background:#fff; padding:10px; border-radius:10px; margin:5px 0">${c}</div>`).join('');
+        document.getElementById('code-modal').style.display = 'flex';
     }
 
     async function handleTopup() {
@@ -246,12 +263,16 @@
         if(!a || !r) return alert("أكمل البيانات");
         showLoading(true);
         try {
-            await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
-            alert("✅ تم إرسال الطلب للمراجعة.");
+            const res = await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
+            alert("✅ تم إرسال طلبك. سيتم إضافة الرصيد بعد المراجعة.");
             document.getElementById('top-amt').value = '';
             document.getElementById('top-ref').value = '';
         } catch(e) { alert("خطأ اتصال"); }
         showLoading(false);
+    }
+
+    function copyCode(code) {
+        navigator.clipboard.writeText(code).then(() => alert("تم النسخ!"));
     }
 
     function switchSec(id, el) {
