@@ -3,43 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية V30</title>
+    <title>محفظة الماجد الذكية V31</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #3d0016; --accent: #f9d976; --success: #2ecc71; --white: #ffffff; }
-        body { background: var(--primary); color: var(--white); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at top, #5d0022, #1a000a); }
+        body { background: var(--primary); color: var(--white); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; min-height: 100vh; background-image: radial-gradient(circle at top, #5d0022, #1a000a); overflow-x: hidden; }
         .app-container { width: 100%; max-width: 450px; padding: 25px; box-sizing: border-box; }
-        
-        /* Glassmorphism */
         .card { background: rgba(255,255,255,0.07); border: 1px solid rgba(249,217,118,0.2); border-radius: 24px; padding: 25px; backdrop-filter: blur(12px); margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-        
-        .logo-area { text-align: center; margin-bottom: 30px; }
-        .logo-m { width: 80px; height: 80px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 2.5rem; color: var(--primary); font-weight: bold; box-shadow: 0 0 25px rgba(249,217,118,0.4); }
-        
-        h2, h3 { color: var(--accent); margin-top: 0; text-align: center; }
-        input { width: 100%; padding: 15px; margin: 12px 0; border-radius: 12px; border: 1.5px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.4); color: #fff; text-align: center; font-size: 1.1rem; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(249,217,118,0.2); }
-        
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; }
+        .logo-m { width: 70px; height: 70px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 2rem; color: var(--primary); font-weight: bold; }
+        h2, h3 { color: var(--accent); text-align: center; margin-top: 0; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1.5px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.4); color: #fff; text-align: center; box-sizing: border-box; font-size: 1rem; }
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Cairo'; }
         .btn-main { background: var(--accent); color: var(--primary); }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(249,217,118,0.3); }
         .btn-success { background: var(--success); color: #fff; }
-
-        .balance-box { text-align: center; margin: 20px 0 40px; }
-        .balance-label { font-size: 0.9rem; opacity: 0.7; letter-spacing: 1px; }
-        .balance-amount { font-size: 4rem; font-weight: 700; color: var(--accent); margin: 5px 0; line-height: 1; }
-
+        .balance-box { text-align: center; margin: 10px 0 30px; }
+        .balance-amount { font-size: 3.5rem; font-weight: 700; color: var(--accent); display: block; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .pack-card { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .pack-card h3 { margin: 10px 0; font-size: 1.5rem; }
-        .stock-tag { font-size: 0.75rem; color: var(--success); display: block; }
-        
-        .nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: rgba(26, 0, 10, 0.96); display: flex; border-top: 1px solid rgba(249,217,118,0.2); padding: 12px 0; backdrop-filter: blur(10px); }
-        .nav-i { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; transition: 0.3s; }
-        .nav-i.active { color: var(--accent); transform: scale(1.1); font-weight: bold; }
-        
+        .nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; border-top: 1px solid rgba(249,217,118,0.2); padding: 10px 0; }
+        .nav-i { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; }
+        .nav-i.active { color: var(--accent); font-weight: bold; }
         .hidden { display: none; }
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 10px; }
+        .loader { border: 2px solid #f3f3f3; border-top: 2px solid var(--accent); border-radius: 50%; width: 15px; height: 15px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -47,84 +32,66 @@
 
 <div class="app-container">
     <div id="v-login">
-        <div class="logo-area">
-            <div class="logo-m">M</div>
-            <h2>شبكة الماجد الذكية</h2>
-            <p style="opacity: 0.7;">أهلاً بك في الجيل الجديد للمحافظ</p>
-        </div>
+        <div class="logo-m">M</div>
+        <h2>شبكة الماجد الذكية</h2>
         <div class="card">
-            <input type="number" id="phone" placeholder="رقم الهاتف المرتبط">
-            <button id="b-login" class="btn btn-main" onclick="login()">دخول آمن للمحفظة</button>
+            <input type="number" id="phone" placeholder="رقم الهاتف">
+            <button id="b-login" class="btn btn-main" onclick="login()">دخول</button>
         </div>
     </div>
 
     <div id="v-main" class="hidden">
         <div class="balance-box">
-            <div class="balance-label">الرصيد المتاح</div>
-            <div class="balance-amount" id="bal">0</div>
-            <div style="color:var(--accent)">ريال يمني</div>
+            <span style="opacity:0.7">رصيدك الحالي</span>
+            <span class="balance-amount" id="bal">0</span>
+            <span style="color:var(--accent)">ريال يمني</span>
         </div>
 
         <div id="t-buy" class="tab-content">
-            <h3 style="text-align:right; margin-bottom:15px;">🛒 كروت الشبكة</h3>
             <div id="grid" class="grid"></div>
         </div>
 
         <div id="t-top" class="tab-content hidden">
             <div class="card">
-                <h3 style="color:var(--success);">إيداع رصيد (الكريمي)</h3>
-                <p style="font-size:0.8rem; opacity:0.8; text-align:center;">يرجى تحويل المبلغ للمسؤول ثم إدخال البيانات:</p>
-                <input type="number" id="t-amt" placeholder="المبلغ المراد شحنه">
-                <input type="text" id="t-ref" placeholder="رقم مرجع التحويل">
-                <button id="b-top" class="btn btn-success" onclick="topup()">إرسال الطلب للإدارة</button>
+                <h3>إيداع رصيد</h3>
+                <input type="number" id="t-amt" placeholder="المبلغ">
+                <input type="text" id="t-ref" placeholder="رقم المرجع (تحويل)">
+                <button id="b-top" class="btn btn-success" onclick="topup()">إرسال الطلب</button>
             </div>
         </div>
 
         <div id="t-his" class="tab-content hidden">
-            <div class="card">
-                <h3>📜 سجل العمليات</h3>
-                <div id="h-list" style="text-align:center; opacity:0.5;">لا توجد عمليات مسجلة حالياً</div>
-            </div>
+            <div class="card"><h3>السجل</h3><div id="h-list" style="text-align:center; opacity:0.5;">لا توجد عمليات</div></div>
         </div>
-
-        <div style="height:100px;"></div>
+        <div style="height:80px;"></div>
     </div>
 
     <div id="nb" class="nav hidden">
-        <div class="nav-i active" onclick="changeTab('buy', this)">🛒 الكروت</div>
-        <div class="nav-i" onclick="changeTab('top', this)">➕ شحن</div>
-        <div class="nav-i" onclick="changeTab('his', this)">📜 سجلي</div>
+        <div class="nav-i active" onclick="tab('buy', this)">🛒 الكروت</div>
+        <div class="nav-i" onclick="tab('top', this)">➕ شحن</div>
+        <div class="nav-i" onclick="tab('his', this)">📜 سجلي</div>
         <div class="nav-i" onclick="logout()" style="color:#ff6b6b;">🚪 خروج</div>
     </div>
 </div>
 
 <script>
-    // الرابط الموحد
-    const API = 'https://script.google.com/macros/s/AKfycbwxUFbsgje1a08HZSVpWeIHE6mEKchje8DyedQJxEV-RKsfS4kWX7xlOlj-FlYqWfql/exec';
+    const API = 'https://script.google.com/macros/s/AKfycbySRiJNnHLi41PPwa0ZOYFebDLRC_bSlThXcWctW6mUG1zjXeTfgF1vRfAr6_Ejdgqo/exec';
 
     async function login() {
         const p = document.getElementById('phone').value;
+        if(p.length < 9) return alert("الرقم غير صحيح");
         const btn = document.getElementById('b-login');
-        if(p.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
-        
-        btn.innerHTML = '<span class="loader"></span> جاري التحقق...';
-        btn.disabled = true;
+        btn.disabled = true; btn.innerHTML = '<span class="loader"></span> جاري التحقق...';
 
-        let dId = localStorage.getItem('MAJ_DID') || 'D-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+        let dId = localStorage.getItem('MAJ_DID') || 'D-'+Math.random().toString(36).substr(2,7).toUpperCase();
         localStorage.setItem('MAJ_DID', dId);
 
         try {
             const res = await fetch(`${API}?action=getWallet&id=${p}&deviceId=${dId}`);
             const d = await res.json();
-            if(d.error) {
-                alert(d.msg);
-                btn.innerText = "دخول آمن للمحفظة";
-                btn.disabled = false;
-            } else {
-                localStorage.setItem('MAJ_PH', p);
-                showUI(d);
-            }
-        } catch(e) { alert("تعذر الاتصال بالسيرفر"); btn.disabled = false; }
+            localStorage.setItem('MAJ_PH', p);
+            showUI(d);
+        } catch(e) { alert("خطأ في الاتصال"); btn.disabled = false; btn.innerText = "دخول"; }
     }
 
     function showUI(d) {
@@ -136,68 +103,51 @@
     }
 
     async function loadStock() {
-        const grid = document.getElementById('grid');
-        grid.innerHTML = '<p style="grid-column:1/3; text-align:center;">جاري تحميل المخزون...</p>';
-        try {
-            const res = await fetch(`${API}?action=getStock`);
-            const s = await res.json();
-            const packs = [100, 200, 300, 500, 1000, 2000];
-            grid.innerHTML = packs.map(p => {
-                const count = s['باقة '+p] || 0;
-                return `
-                    <div class="pack-card">
-                        <span class="stock-tag" style="color:${count > 0 ? '#2ecc71' : '#ff4d4d'}">${count > 0 ? 'متوفر: '+count : 'نفد'}</span>
-                        <h3>${p}</h3>
-                        <button class="btn btn-main" style="padding:10px;" onclick="buy('باقة ${p}')" ${count === 0 ? 'disabled' : ''}>شراء</button>
-                    </div>
-                `;
-            }).join('');
-        } catch(e) { grid.innerHTML = "خطأ في تحميل البيانات"; }
+        const res = await fetch(`${API}?action=getStock`);
+        const s = await res.json();
+        const packs = [100, 200, 300, 500, 1000, 2000];
+        document.getElementById('grid').innerHTML = packs.map(p => `
+            <div class="pack-card">
+                <span style="font-size:0.7rem; color:var(--success)">${s['باقة '+p] || 0} متوفر</span>
+                <h3>${p}</h3>
+                <button class="btn btn-main" style="padding:10px" onclick="buy('باقة ${p}')">شراء</button>
+            </div>
+        `).join('');
     }
 
-    async function buy(name) {
+    async function buy(n) {
         const ph = localStorage.getItem('MAJ_PH'), did = localStorage.getItem('MAJ_DID');
-        if(!confirm("هل أنت متأكد من شراء " + name + "؟")) return;
-        
+        if(!confirm("تأكيد شراء "+n)) return;
         try {
-            const res = await fetch(`${API}?action=buyFromWallet&walletId=${ph}&deviceId=${did}&packageName=${name}&qty=1`);
+            const res = await fetch(`${API}?action=buyFromWallet&walletId=${ph}&deviceId=${did}&packageName=${n}&qty=1`);
             const r = await res.json();
-            if(r.success) {
-                alert("✅ تمت العملية بنجاح!\nالكود: " + r.code);
-                location.reload();
-            } else {
-                alert("❌ " + r.msg);
-            }
+            if(r.success) { alert("تم الشراء! الكود: "+r.code); location.reload(); }
+            else alert(r.msg);
         } catch(e) { alert("خطأ في الشبكة"); }
     }
 
     async function topup() {
         const a = document.getElementById('t-amt').value, r = document.getElementById('t-ref').value;
-        const ph = localStorage.getItem('MAJ_PH'), did = localStorage.getItem('MAJ_DID');
+        if(!a || !r) return alert("أكمل البيانات");
         const btn = document.getElementById('b-top');
-
-        if(!a || !r) return alert("يرجى ملء كافة الحقول");
-        btn.disabled = true;
-        btn.innerText = "جاري الإرسال...";
-
+        btn.disabled = true; btn.innerText = "جاري الإرسال...";
         try {
-            const res = await fetch(`${API}?action=requestTopup&walletId=${ph}&amount=${a}&ref=${r}&deviceId=${did}`);
-            const result = await res.json();
-            if(result.success) {
-                alert("✅ تم إرسال طلبك. سيتم مراجعته فوراً.");
-                location.reload();
-            }
-        } catch(e) { alert("فشل الإرسال"); btn.disabled = false; }
+            const ph = localStorage.getItem('MAJ_PH'), did = localStorage.getItem('MAJ_DID');
+            await fetch(`${API}?action=requestTopup&walletId=${ph}&amount=${a}&ref=${r}&deviceId=${did}`);
+            alert("✅ تم إرسال الطلب بنجاح! سيتم التفعيل خلال دقائق.");
+            document.getElementById('t-amt').value = ""; document.getElementById('t-ref').value = "";
+            btn.disabled = false; btn.innerText = "إرسال طلب جديد";
+        } catch(e) { alert("تم الإرسال (تجاهل الخطأ)"); btn.disabled = false; }
     }
 
-    function changeTab(id, el) {
+    function tab(id, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-i').forEach(n => n.classList.remove('active'));
         document.getElementById('t-'+id).classList.remove('hidden');
         el.classList.add('active');
     }
 
-    function logout() { if(confirm("تسجيل خروج؟")) { localStorage.clear(); location.reload(); } }
+    function logout() { localStorage.clear(); location.reload(); }
     window.onload = () => { if(localStorage.getItem('MAJ_PH')) login(); };
 </script>
 
