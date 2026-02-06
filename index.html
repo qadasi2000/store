@@ -3,84 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - النظام الذكي V14.0</title>
+    <title>متجر شبكة الماجد - V15.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.1); }
-        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
-        
-        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; }
-        
-        .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; overflow: hidden; }
-        .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
-        @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
+        :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.1); }
+        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; }
         .header { text-align: center; padding: 20px 10px; }
+        h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 4rem); color: var(--gold); margin: 0; }
         
-        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; text-align: center; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .wallet-section input { width: 85%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1.1rem; }
+        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; text-align: center; border: 2px solid var(--gold); }
+        .wallet-section input { width: 85%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1.1rem; }
+        .wallet-section input:disabled { background: #333; color: var(--gold); cursor: not-allowed; border-color: #666; }
         
-        .balance-box { margin-top: 15px; font-size: 1.6rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); }
+        .change-acc { font-size: 0.8rem; color: #aaa; text-decoration: underline; cursor: pointer; display: block; margin-bottom: 10px; }
+        .balance-box { font-size: 1.6rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin: 10px 0; }
         
-        .history-section { margin-top: 20px; text-align: right; width: 90%; margin-inline: auto; font-size: 0.9rem; }
-        .history-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; }
+        .history-section { margin-top: 20px; text-align: right; width: 100%; }
+        .history-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; font-size: 0.85rem; }
         .history-table th { background: var(--gold); color: var(--primary-bg); padding: 8px; }
         .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
 
-        .btn-check { display: inline-block; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 5px; }
-        .topup-btn { background: #28a745 !important; color: white !important; border: none !important; width: 90%; }
-
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
-        .card-wrapper { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; border-radius: 50px; overflow: hidden; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--accent-color)); }
-        .card-wrapper::before { content: ""; position: absolute; width: 180%; height: 180%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
-        .card-wrapper::after { content: ""; position: absolute; inset: 5px; background: var(--primary-bg); border-radius: 45px; z-index: 1; }
-        @keyframes rotate-border { 100% { transform: rotate(360deg); } }
+        .topup-btn { background: #28a745 !important; color: white !important; border-radius: 50px; padding: 10px 20px; width: 90%; cursor: pointer; border: none; font-weight: bold; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
         
-        .diamond-card { width: 170px; height: 170px; background: var(--card-gradient); border-radius: 40px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
-        .price { font-size: 1.8rem; font-weight: 900; color: white; display: block; }
+        .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid rgba(249, 217, 118, 0.2); }
+        .package-card h3 { color: var(--gold); margin: 5px 0; }
+        .btn-buy { background: var(--gold); color: black; border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
         
-        #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 50px; left: 50%; transform: translateX(-50%); }
+        #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 30px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 50px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 50px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-        .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
-        .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
-        .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
-        .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
-        .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
 
     <div id="toast"></div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد الذكي - محفظتك محفوظة دائماً وتتحدث تلقائياً 🌙</div></div>
 
     <div class="header">
-        <h1>متجر شبكة الماجد</h1>
-        
+        <h1>شبكة الماجد</h1>
         <div class="wallet-section">
-            <h3 style="color: var(--gold); margin-top: 0;">💳 محفظتي الذكية</h3>
-            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف" oninput="saveAndFetch()">
+            <h3 style="color: var(--gold); margin:0 0 10px 0;">💳 محفظتي</h3>
+            
+            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف" oninput="handleInput(this)">
+            <span id="changeAccBtn" class="change-acc" style="display:none;" onclick="enableChange()">تغيير رقم المحفظة</span>
             
             <div id="balanceDisplay" class="balance-box" style="display:none;">
-                الرصيد: <span id="currentBalance">0</span> ريال
+                <span id="currentBalance">0</span> ريال
             </div>
 
-            <div id="topupSection" style="margin-top: 15px;">
+            <div id="topupSection">
                 <input type="number" id="topupAmount" placeholder="مبلغ الشحن">
-                <button onclick="requestTopup()" class="btn-check topup-btn">إرسال طلب شحن</button>
+                <button onclick="requestTopup()" class="topup-btn">إرسال طلب شحن</button>
             </div>
 
             <div id="historySection" class="history-section" style="display:none;">
-                <h4 style="color: var(--gold); border-bottom: 1px solid; margin-bottom: 10px;">🕒 آخر العمليات:</h4>
+                <h4 style="color: var(--gold);">🕒 سجل الكروت المستلمة:</h4>
                 <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>الباقة</th>
-                            <th>الكود</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>الباقة</th><th>الكود (اضغط مطولاً للنسخ)</th></tr></thead>
                     <tbody id="historyBody"></tbody>
                 </table>
             </div>
@@ -93,24 +73,44 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbylq7ZTT-Y_VZs-tZY_3apMfQ3FEv0wZO66gS4lWrRtGnBaJgl82QV6g_nI-SzT-J7l/exec';
         
         const packagesData = [
-            { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
-            { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
-            { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
-            { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
-            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' }
+            { name: 'باقة 100', price: 100 },
+            { name: 'باقة 200', price: 200 },
+            { name: 'باقة 300', price: 300 },
+            { name: 'باقة 500', price: 500 },
+            { name: 'باقة 1000', price: 1000 }
         ];
 
-        // 1. تثبيت الرقم وجلب البيانات تلقائياً
-        function saveAndFetch() {
-            const val = document.getElementById('walletNumber').value.trim();
-            if(val.length >= 6) {
-                localStorage.setItem('majed_wallet', val);
-                checkBalance();
+        // عند الإدخال لأول مرة
+        function handleInput(el) {
+            if(el.value.trim().length >= 9) {
+                localStorage.setItem('majed_wallet', el.value.trim());
+                lockWallet(el.value.trim());
             }
         }
 
+        // قفل الخانة
+        function lockWallet(val) {
+            const input = document.getElementById('walletNumber');
+            input.value = val;
+            input.disabled = true;
+            document.getElementById('changeAccBtn').style.display = "block";
+            checkBalance();
+        }
+
+        // السماح بالتغيير
+        function enableChange() {
+            const input = document.getElementById('walletNumber');
+            input.disabled = false;
+            input.value = "";
+            input.focus();
+            document.getElementById('changeAccBtn').style.display = "none";
+            document.getElementById('balanceDisplay').style.display = "none";
+            document.getElementById('historySection').style.display = "none";
+            localStorage.removeItem('majed_wallet');
+        }
+
         async function checkBalance() {
-            const walletId = document.getElementById('walletNumber').value.trim();
+            const walletId = localStorage.getItem('majed_wallet');
             if(!walletId) return;
             
             try {
@@ -120,28 +120,26 @@
                 document.getElementById('balanceDisplay').style.display = "block";
                 document.getElementById('currentBalance').innerText = data.balance;
                 
-                // تحديث السجل إذا وجد في الرد (يتطلب تحديث بسيط في Apps Script)
-                if(data.history) renderHistory(data.history);
-            } catch (e) { console.log("Silent Sync Error"); }
+                if(data.history && data.history.length > 0) {
+                    renderHistory(data.history);
+                }
+            } catch (e) { console.log("Sync Error"); }
         }
 
         function renderHistory(history) {
             const body = document.getElementById('historyBody');
-            const section = document.getElementById('historySection');
-            if(!history || history.length === 0) return;
-            
-            section.style.display = "block";
-            body.innerHTML = history.slice(0, 5).map(item => `
+            document.getElementById('historySection').style.display = "block";
+            body.innerHTML = history.map(item => `
                 <tr>
                     <td>${item.packageName}</td>
-                    <td style="color:var(--gold); font-weight:bold;">${item.code}</td>
+                    <td style="color:var(--gold); font-weight:bold; user-select: all;">${item.code}</td>
                 </tr>
             `).join('');
         }
 
         async function requestTopup() {
-            const walletId = document.getElementById('walletNumber').value.trim();
-            const amount = document.getElementById('topupAmount').value.trim();
+            const walletId = localStorage.getItem('majed_wallet');
+            const amount = document.getElementById('topupAmount').value;
             if (!walletId || !amount) return showToast("⚠️ أكمل البيانات", "#f57c00");
 
             showToast("جاري الإرسال...", "#2196f3");
@@ -151,43 +149,38 @@
                     mode: 'no-cors',
                     body: new URLSearchParams({ action: "requestTopup", walletId: walletId, amount: amount })
                 });
-                showToast("✅ تم الطلب! سيحدث الرصيد تلقائياً", "#28a745");
+                showToast("✅ تم الطلب! انتظر التفعيل", "#28a745");
                 document.getElementById('topupAmount').value = "";
-            } catch (e) { showToast("❌ فشل الاتصال", "#d32f2f"); }
+            } catch (e) { showToast("❌ خطأ", "#d32f2f"); }
         }
 
-        async function processPurchase(packageName, price, pkgId) {
-            const walletId = document.getElementById('walletNumber').value.trim();
-            if(!walletId) return showToast("⚠️ أدخل رقم المحفظة", "#f57c00");
+        async function processPurchase(packageName, price) {
+            const walletId = localStorage.getItem('majed_wallet');
+            if(!walletId) return showToast("⚠️ أدخل رقم المحفظة أولاً", "#f57c00");
 
             if(!confirm(`شراء ${packageName}؟`)) return;
 
-            const btn = document.getElementById(`btn-${pkgId}`);
-            btn.disabled = true;
-
+            showToast("جاري المعالجة...", "#f59e0b");
             try {
                 const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${walletId}&packageName=${packageName}`);
                 const result = await res.json();
 
                 if(result.success) {
-                    alert(`✅ تم الشراء!\nكود الكرت: ${result.code}`);
-                    checkBalance(); // تحديث فوري للرصيد
+                    alert(`✅ نجحت العملية!\nكود الكرت: ${result.code}`);
+                    checkBalance(); // تحديث فوري للرصيد والسجل
                 } else {
                     alert(`❌ ${result.msg}`);
                 }
-            } catch (e) { showToast("❌ خطأ في العملية", "#d32f2f"); }
-            finally { btn.disabled = false; }
+            } catch (e) { showToast("❌ خطأ", "#d32f2f"); }
         }
 
-        function renderInitialPackages() {
+        function renderPackages() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = packagesData.map(pkg => `
-                <div class="package-unit ${pkg.id}">
-                    <div class="card-wrapper"><div class="diamond-card"><div class="card-content">
-                        <span class="price">${pkg.price} ريال</span>
-                        <div class="stock-tag" id="stock-${pkg.id}">..</div>
-                    </div></div></div>
-                    <button class="btn-buy" id="btn-${pkg.id}" onclick="processPurchase('${pkg.name}', ${pkg.price}, '${pkg.id}')">شراء ⚡</button>
+                <div class="package-card">
+                    <h3>${pkg.price} ريال</h3>
+                    <div id="stock-${pkg.name}" style="font-size:0.7rem; margin-bottom:10px;">..</div>
+                    <button class="btn-buy" onclick="processPurchase('${pkg.name}', ${pkg.price})">شراء ⚡</button>
                 </div>
             `).join('');
         }
@@ -198,7 +191,7 @@
                 const stock = await res.json();
                 packagesData.forEach(pkg => {
                     const count = stock[pkg.name] || 0;
-                    document.getElementById(`stock-${pkg.id}`).innerText = count > 0 ? `متاح: ${count}` : '❌';
+                    document.getElementById(`stock-${pkg.name}`).innerText = count > 0 ? `متاح: ${count}` : 'نفد';
                 });
             } catch (e) {}
         }
@@ -210,16 +203,11 @@
         }
 
         window.onload = () => {
-            renderInitialPackages();
-            // استرجاع الرقم المحفوظ
-            const savedWallet = localStorage.getItem('majed_wallet');
-            if(savedWallet) {
-                document.getElementById('walletNumber').value = savedWallet;
-                checkBalance();
-            }
+            renderPackages();
+            const saved = localStorage.getItem('majed_wallet');
+            if(saved) lockWallet(saved);
             fetchStock();
-            // تحديث تلقائي كل 10 ثوانٍ للرصيد والمخزون
-            setInterval(() => { checkBalance(); fetchStock(); }, 10000);
+            setInterval(() => { checkBalance(); fetchStock(); }, 15000);
         };
     </script>
 </body>
