@@ -60,11 +60,15 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
+        /* تدرجات ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
         .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
         .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
+        /* ألوان جديدة للباقات الكبيرة */
+        .b5000 { --accent-color: #ff4d4d; --card-gradient: linear-gradient(135deg, #800000, #ff4d4d); }
+        .b10000 { --accent-color: #ffd700; --card-gradient: linear-gradient(135deg, #b8860b, #ffd700); }
     </style>
 </head>
 <body>
@@ -81,15 +85,12 @@
 
     <div id="receiveModal" class="modal"><div class="modal-content receive-theme">
         <h2 style="color: #4caf50;">تحقق من حالة الطلب 🎫</h2>
-        
         <p style="font-size: 0.9rem; margin-bottom: 5px;">طلباتك الأخيرة:</p>
         <select id="refCombo" onchange="document.getElementById('checkRefInput').value = this.value">
             <option value="">-- اختر مرجعاً سابقاً --</option>
         </select>
-
         <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع يدوياً" />
         <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحديث الحالة 🚀</button>
-        
         <div id="orderStatusHeader" style="display:none;" class="status-header">
             <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
                 <span>الكروت الجاهزة: <b id="readyCount">0</b></span>
@@ -97,9 +98,7 @@
             </div>
             <div class="status-bar"><div id="statusFill" class="status-fill"></div></div>
         </div>
-
         <div id="checkResult"></div>
-        
         <button class="btn-contact" onclick="window.open('https://wa.me/YOUR_NUMBER')">💬 تواجه مشكلة؟ تواصل معنا</button>
         <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق النافذة</button>
     </div></div>
@@ -110,7 +109,6 @@
         <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
             إجمالي المبلغ: <span id="cartTotalText">0</span> ريال
         </div>
-        
         <input type="text" id="refInput" placeholder="أدخل رقم مرجع الحوالة هنا" />
         <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
         <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
@@ -121,12 +119,15 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
         
+        // --- المصفوفة المحدثة بناءً على طلبك ---
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
             { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
             { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
-            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' }
+            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' },
+            { id: 'b5000', name: 'باقة 5000', price: 5000, data: '25 جيجا' },
+            { id: 'b10000', name: 'باقة 10000', price: 10000, data: '50 جيجا' }
         ];
 
         let cart = [];
@@ -207,7 +208,6 @@
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); if(cart.length==0) toggleCart(); }
 
-        // --- تعديل: إضافة التاريخ والوقت عند إرسال الطلب ---
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
             if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "#f57c00");
@@ -217,7 +217,6 @@
             const totalQty = cart.reduce((s, i) => s + i.qty, 0);
             const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
 
-            // الحصول على الوقت الحالي بتنسيق عربي مبسط
             const now = new Date();
             const dateString = now.toLocaleDateString('ar-YE');
             const timeString = now.toLocaleTimeString('ar-YE', { hour: '2-digit', minute: '2-digit' });
@@ -229,7 +228,6 @@
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: "بدون" }) 
                 });
                 
-                // حفظ المرجع مع التاريخ والوقت في الذاكرة المحلية
                 orderHistory.push({ 
                     ref: ref, 
                     total: totalQty, 
@@ -288,42 +286,31 @@
                         html += `
                         <div style="background:rgba(255,165,0,0.1); border:1px solid orange; padding:10px; border-radius:10px; margin-top:10px; text-align:center;">
                             <p style="color:#ffcc00; font-size:0.85rem; margin:0;">⏳ يوجد ${pending} كرت معلق قيد التجهيز...</p>
-                            <p style="font-size:0.7rem; color:#ccc;">انتظر ثواني ثم اضغط "تحديث الحالة" مرة أخرى</p>
                         </div>`;
                     }
-
                     resDiv.innerHTML = html;
                 } else { 
                     resDiv.innerHTML = `<p style="color:#ffcc00;">${txt}</p>`; 
                 }
             } catch (e) { 
-                resDiv.innerHTML = `<p style="color:#ff4444;">❌ فشل الاتصال.. يرجى المحاولة مرة أخرى</p>`;
+                resDiv.innerHTML = `<p style="color:#ff4444;">❌ فشل الاتصال</p>`;
             }
         }
 
         function copyText(v) { navigator.clipboard.writeText(v); showToast("📋 تم نسخ الكرت", "#28a745"); }
-        
         function copyAllVertical() {
             const codes = Array.from(document.querySelectorAll('.code-row span')).map(s => s.innerText).join('\n');
             navigator.clipboard.writeText(codes);
             showToast("📋 تم نسخ الكل", "#28a745");
         }
 
-        // --- تعديل: عرض التاريخ والوقت في القائمة المنسدلة ---
         function toggleReceiveModal() {
             const combo = document.getElementById('refCombo');
-            // عكس القائمة لتظهر الطلبات الأحدث في الأعلى
             const sortedOrders = [...orderHistory].reverse();
-            
             combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + 
-                sortedOrders.map(o => {
-                    const label = o.timestamp ? `${o.ref} (${o.timestamp})` : o.ref;
-                    return `<option value="${o.ref}">${label}</option>`;
-                }).join('');
+                sortedOrders.map(o => `<option value="${o.ref}">${o.ref} (${o.timestamp || ''})</option>`).join('');
             
             document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex';
-            document.getElementById('orderStatusHeader').style.display = "none";
-            document.getElementById('checkResult').style.display = "none";
         }
 
         function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
