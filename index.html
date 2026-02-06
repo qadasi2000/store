@@ -10,8 +10,14 @@
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
+        /* شريط التنقل العلوي الجديد */
+        .nav { position: sticky; top: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 15px 0; border-bottom: 2px solid var(--gold); z-index: 1000; margin: 0 auto 20px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .nav-btn { flex: 1; text-align: center; font-size: 0.85rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
+        .nav-btn.active { color: var(--gold); transform: scale(1.1); }
+        .nav-btn:hover { color: #fff; }
+
         .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 20px; backdrop-filter: blur(10px); margin-bottom: 20px; }
-        .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 0 0 40px 40px; margin: -20px -20px 25px; border-bottom: 2px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
         
         .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
@@ -19,9 +25,8 @@
         .status-completed { background: var(--success); color: #000; }
         .status-pending { background: var(--pending); color: #000; }
 
-        /* تنسيق قسم الكروت المشتراة */
-        .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; }
-        .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; margin: 5px 0; letter-spacing: 2px; }
+        .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; margin: 5px 0; letter-spacing: 2px; text-align: center; }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
@@ -32,10 +37,6 @@
         #code-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; box-sizing: border-box; }
         .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 30px; width: 100%; text-align: center; }
         .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--gold); background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed var(--gold); }
-
-        .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 12px 0; border-top: 1px solid var(--gold); z-index: 1000; }
-        .nav-btn { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; }
-        .nav-btn.active { color: var(--gold); font-weight: bold; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
@@ -58,6 +59,13 @@
 </div>
 
 <div class="app">
+    <nav class="nav hidden" id="top-nav">
+        <div class="nav-btn active" onclick="switchSec('cards', this)">🛒 المتجر</div>
+        <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()">🎫 كروتي</div>
+        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
+        <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
+    </nav>
+
     <div id="page-login">
         <div style="text-align:center; padding: 60px 0;">
             <div style="background:var(--gold); width:80px; height:80px; border-radius:50%; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:bold;">M</div>
@@ -83,8 +91,7 @@
 
         <div id="sec-mycards" class="hidden">
             <h3 style="color:var(--gold); margin-bottom:15px">🎫 كروتي المشتراة</h3>
-            <div id="purchased-list">
-                </div>
+            <div id="purchased-list"></div>
         </div>
 
         <div id="sec-topup" class="hidden">
@@ -99,15 +106,7 @@
                 <div id="history-list"></div>
             </div>
         </div>
-        <div style="height:100px;"></div>
     </div>
-
-    <nav class="nav hidden" id="bottom-nav">
-        <div class="nav-btn active" onclick="switchSec('cards', this)">🏠 المتجر</div>
-        <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()">🎫 كروتي</div>
-        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
-        <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
-    </nav>
 </div>
 
 <script>
@@ -159,7 +158,7 @@
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-main').classList.remove('hidden');
-            document.getElementById('bottom-nav').classList.remove('hidden');
+            document.getElementById('top-nav').classList.remove('hidden');
             loadCards();
         } catch(e) { 
             alert("خطأ في الاتصال بالسيرفر"); 
@@ -167,7 +166,6 @@
         showLoading(false);
     }
 
-    // وظيفة حفظ الكرت في الذاكرة المحلية
     function saveCardLocally(type, code) {
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
         cards.unshift({
@@ -178,7 +176,6 @@
         localStorage.setItem('my_purchased_cards', JSON.stringify(cards));
     }
 
-    // عرض الكروت المشتراة في الواجهة
     function displaySavedCards() {
         const container = document.getElementById('purchased-list');
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
@@ -193,7 +190,7 @@
                 <small style="color:#666">${c.date}</small>
                 <div style="font-weight:bold; font-size:1.1rem">${c.type}</div>
                 <span class="my-card-code">${c.code}</span>
-                <button class="btn" style="padding:5px; font-size:0.7rem; width:80px" onclick="copyAnyCode('${c.code}')">نسخ</button>
+                <button class="btn" style="padding:10px; font-size:0.8rem" onclick="copyAnyCode('${c.code}')">نسخ الكود</button>
             </div>
         `).join('');
     }
@@ -208,10 +205,7 @@
                 document.getElementById('display-bal').innerText = data.newBalance;
                 document.getElementById('generated-code').innerText = data.code;
                 document.getElementById('code-modal').style.display = 'flex';
-                
-                // حفظ الكرت فوراً
                 saveCardLocally(cardName, data.code);
-                
                 loadCards();
             } else { alert("فشل: " + data.msg); }
         } catch(e) { alert("خطأ تقني"); }
@@ -270,6 +264,7 @@
         document.getElementById('sec-'+id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
+        window.scrollTo(0,0);
     }
 
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
