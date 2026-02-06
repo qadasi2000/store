@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V8.9</title>
+    <title>متجر شبكة الماجد - المطور V9.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -39,7 +39,6 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
         
-        /* اللون الأخضر لمنطقة الاستلام */
         .receive-theme { background: var(--success-bg) !important; border-color: #4caf50 !important; }
 
         input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; box-sizing: border-box; font-family: 'Cairo'; }
@@ -48,9 +47,14 @@
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         .btn-contact { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
 
+        /* تنسيق العداد وشريط الحالة */
+        .status-header { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px dashed #4caf50; }
+        .status-bar { height: 8px; background: #222; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+        .status-fill { height: 100%; background: #4caf50; width: 0%; transition: 0.5s; }
+
         #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; }
-        .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px; margin: 4px 0; border-radius: 8px; border: 1px solid #444; }
-        .copy-btn { background: var(--gold); border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; font-weight: bold; color: black; }
+        .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid #333; }
+        .copy-btn { background: var(--gold); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: black; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
@@ -68,7 +72,7 @@
 <body>
 
     <div id="toast"></div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - أدخل رقم المرجع واستلم كروتك فوراً 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - تابع حالة طلبك واستلم كروتك فوراً 🌙</div></div>
 
     <div class="header">
         <h1>متجر شبكة الماجد</h1>
@@ -86,8 +90,16 @@
         </select>
 
         <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع يدوياً" />
-        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحقق من الحالة 🚀</button>
+        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحديث الحالة 🚀</button>
         
+        <div id="orderStatusHeader" style="display:none;" class="status-header">
+            <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                <span>الكروت الجاهزة: <b id="readyCount">0</b></span>
+                <span>بانتظار التأكيد: <b id="pendingCount">0</b></span>
+            </div>
+            <div class="status-bar"><div id="statusFill" class="status-fill"></div></div>
+        </div>
+
         <div id="checkResult"></div>
         
         <button class="btn-contact" onclick="window.open('https://wa.me/YOUR_NUMBER')">💬 تواجه مشكلة؟ تواصل معنا</button>
@@ -201,8 +213,9 @@
             const ref = document.getElementById('refInput').value.trim();
             if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "#f57c00");
             const btn = document.getElementById('payBtn');
-            btn.disabled = true; btn.innerText = "جاري تأكيد الحجز...";
+            btn.disabled = true; btn.innerText = "جاري الحجز...";
             
+            const totalQty = cart.reduce((s, i) => s + i.qty, 0);
             const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
 
             try {
@@ -211,15 +224,15 @@
                     mode: 'no-cors', 
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: "بدون" }) 
                 });
-                orderHistory.push({ ref });
+                orderHistory.push({ ref, total: totalQty });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
-                showToast("🚀 تم إرسال الطلب.. جاري نقلك للاستلام", "#28a745");
+                showToast("🚀 تم الإرسال.. جاري المراجعة", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
                 setTimeout(() => { 
                     toggleReceiveModal(); 
                     document.getElementById('checkRefInput').value = ref;
                     checkOrderNow();
-                }, 1500);
+                }, 1000);
             } catch (e) { showToast("❌ خطأ في الإرسال", "#d32f2f"); }
             finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
         }
@@ -227,22 +240,49 @@
         async function checkOrderNow() {
             const ref = document.getElementById('checkRefInput').value.trim();
             const resDiv = document.getElementById('checkResult');
+            const statusHeader = document.getElementById('orderStatusHeader');
+            
             if(!ref) return showToast("⚠️ أدخل المرجع", "#f57c00");
-            resDiv.style.display = "block"; resDiv.innerHTML = "⏳ جاري التحقق من السيرفر...";
+            
+            resDiv.style.display = "block";
+            resDiv.innerHTML = "⏳ جاري جلب البيانات...";
+            statusHeader.style.display = "none";
+
             try {
                 const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
                 const txt = await res.text();
+                
                 if (txt.includes(":")) {
                     let codes = txt.split('\n').filter(l => l.trim() !== "");
-                    let html = `<div style="text-align:center; margin-bottom:10px;">
-                        <button class="btn-pay" onclick="copyAllVertical()" style="background:#fff; color:#000; font-size:0.9rem;">📋 نسخ الكل عمودياً</button>
+                    
+                    // محاولة معرفة الإجمالي من السجل المحلي
+                    let orderData = orderHistory.find(o => o.ref == ref);
+                    let totalNeeded = orderData ? orderData.total : codes.length;
+
+                    // تحديث شريط الحالة
+                    statusHeader.style.display = "block";
+                    document.getElementById('readyCount').innerText = codes.length;
+                    document.getElementById('pendingCount').innerText = Math.max(0, totalNeeded - codes.length);
+                    let percent = (codes.length / totalNeeded) * 100;
+                    document.getElementById('statusFill').style.width = percent + "%";
+
+                    let html = `<div style="text-align:center; margin-bottom:12px;">
+                        <button class="btn-pay" onclick="copyAllVertical()" style="background:#fff; color:#000; font-size:0.9rem;">📋 نسخ جميع الكروت الجاهزة</button>
                     </div>`;
+                    
                     codes.forEach(code => {
                         html += `<div class="code-row"><span>${code}</span><button class="copy-btn" onclick="copyText('${code}')">نسخ</button></div>`;
                     });
+
+                    if(codes.length < totalNeeded) {
+                        html += `<p style="color:#ffcc00; font-size:0.8rem; text-align:center;">⚠️ بعض الكروت قيد التجهيز، يرجى تحديث الحالة بعد قليل.</p>`;
+                    }
+
                     resDiv.innerHTML = html;
-                } else { resDiv.innerHTML = `<p style="color:#ffcc00;">${txt}</p>`; }
-            } catch (e) { resDiv.innerText = "❌ تعذر الاتصال.. حاول مرة أخرى"; }
+                } else { 
+                    resDiv.innerHTML = `<p style="color:#ffcc00;">${txt}</p>`; 
+                }
+            } catch (e) { resDiv.innerText = "❌ تعذر الاتصال بالسيرفر"; }
         }
 
         function copyText(v) { navigator.clipboard.writeText(v); showToast("📋 تم نسخ الكرت", "#28a745"); }
@@ -250,7 +290,7 @@
         function copyAllVertical() {
             const codes = Array.from(document.querySelectorAll('.code-row span')).map(s => s.innerText).join('\n');
             navigator.clipboard.writeText(codes);
-            showToast("📋 تم نسخ الكل عمودياً", "#28a745");
+            showToast("📋 تم نسخ الكل", "#28a745");
         }
 
         function toggleReceiveModal() {
@@ -260,6 +300,8 @@
                 uniqueRefs.map(r => `<option value="${r}">${r}</option>`).join('');
             
             document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex';
+            document.getElementById('orderStatusHeader').style.display = "none";
+            document.getElementById('checkResult').style.display = "none";
         }
 
         function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
