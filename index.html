@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - V15.0</title>
+    <title>متجر شبكة الماجد - النظام المحمي V16.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.1); }
@@ -11,29 +11,35 @@
         .header { text-align: center; padding: 20px 10px; }
         h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 4rem); color: var(--gold); margin: 0; }
         
-        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; text-align: center; border: 2px solid var(--gold); }
+        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; text-align: center; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .wallet-section input { width: 85%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1.1rem; }
-        .wallet-section input:disabled { background: #333; color: var(--gold); cursor: not-allowed; border-color: #666; }
+        .wallet-section input:disabled { background: #333; color: var(--gold); cursor: not-allowed; border-color: #666; opacity: 0.8; }
         
-        .change-acc { font-size: 0.8rem; color: #aaa; text-decoration: underline; cursor: pointer; display: block; margin-bottom: 10px; }
-        .balance-box { font-size: 1.6rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin: 10px 0; }
+        .balance-box { font-size: 2rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin: 10px 0; transition: 0.5s; }
         
-        .history-section { margin-top: 20px; text-align: right; width: 100%; }
+        .history-section { margin-top: 20px; text-align: right; width: 100%; animation: fadeIn 1s; }
         .history-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; font-size: 0.85rem; }
-        .history-table th { background: var(--gold); color: var(--primary-bg); padding: 8px; }
-        .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .history-table th { background: var(--gold); color: var(--primary-bg); padding: 10px; }
+        .history-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; color: #eee; }
 
-        .topup-btn { background: #28a745 !important; color: white !important; border-radius: 50px; padding: 10px 20px; width: 90%; cursor: pointer; border: none; font-weight: bold; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
+        .btn-check, .topup-btn { background: #28a745 !important; color: white !important; border-radius: 50px; padding: 12px 20px; width: 90%; cursor: pointer; border: none; font-weight: bold; font-size: 1rem; transition: 0.3s; }
+        .btn-check:hover { transform: scale(1.02); background: #218838 !important; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid rgba(249, 217, 118, 0.2); transition: 0.3s; }
+        .package-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .package-card h3 { color: var(--gold); margin: 5px 0; font-size: 1.5rem; }
         
-        .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; text-align: center; border: 1px solid rgba(249, 217, 118, 0.2); }
-        .package-card h3 { color: var(--gold); margin: 5px 0; }
-        .btn-buy { background: var(--gold); color: black; border: none; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
-        
+        .btn-buy { background: var(--gold); color: black; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-buy:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+
         #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 30px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        
+        .security-note { font-size: 0.75rem; color: #aaa; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -43,24 +49,25 @@
     <div class="header">
         <h1>شبكة الماجد</h1>
         <div class="wallet-section">
-            <h3 style="color: var(--gold); margin:0 0 10px 0;">💳 محفظتي</h3>
+            <h3 style="color: var(--gold); margin:0 0 10px 0;">💳 محفظتي الذكية</h3>
             
-            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف" oninput="handleInput(this)">
-            <span id="changeAccBtn" class="change-acc" style="display:none;" onclick="enableChange()">تغيير رقم المحفظة</span>
+            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف للبدء" oninput="validateAndLock(this)">
+            <p id="lockStatus" class="security-note" style="display:none;">🔒 هذا الرقم مرتبط بجهازك الحالي للخصوصية</p>
             
             <div id="balanceDisplay" class="balance-box" style="display:none;">
-                <span id="currentBalance">0</span> ريال
+                <small style="font-size: 1rem; display: block; opacity: 0.8;">الرصيد الحالي</small>
+                <span id="currentBalance">0</span> <small>ريال</small>
             </div>
 
-            <div id="topupSection">
-                <input type="number" id="topupAmount" placeholder="مبلغ الشحن">
-                <button onclick="requestTopup()" class="topup-btn">إرسال طلب شحن</button>
+            <div id="topupSection" style="margin-top: 15px; display: none;">
+                <input type="number" id="topupAmount" placeholder="أدخل مبلغ الشحن">
+                <button onclick="requestTopup()" class="topup-btn">إرسال طلب شحن رصيد</button>
             </div>
 
             <div id="historySection" class="history-section" style="display:none;">
-                <h4 style="color: var(--gold);">🕒 سجل الكروت المستلمة:</h4>
+                <h4 style="color: var(--gold); border-right: 4px solid var(--gold); padding-right: 10px;">🕒 سجل كروتك:</h4>
                 <table class="history-table">
-                    <thead><tr><th>الباقة</th><th>الكود (اضغط مطولاً للنسخ)</th></tr></thead>
+                    <thead><tr><th>الباقة</th><th>الكود</th></tr></thead>
                     <tbody id="historyBody"></tbody>
                 </table>
             </div>
@@ -70,7 +77,8 @@
     <div class="grid-container" id="packagesGrid"></div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbylq7ZTT-Y_VZs-tZY_3apMfQ3FEv0wZO66gS4lWrRtGnBaJgl82QV6g_nI-SzT-J7l/exec';
+        // رابط السكربت الجديد الخاص بك
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzZzrFJchuCsufhnM7-KQLcE6Dn61wxwQfGDcpWWO2o6RN_ick-Biy4T_AGMlGgUnbA/exec';
         
         const packagesData = [
             { name: 'باقة 100', price: 100 },
@@ -80,50 +88,55 @@
             { name: 'باقة 1000', price: 1000 }
         ];
 
-        // عند الإدخال لأول مرة
-        function handleInput(el) {
-            if(el.value.trim().length >= 9) {
-                localStorage.setItem('majed_wallet', el.value.trim());
-                lockWallet(el.value.trim());
+        // توليد معرف فريد للجهاز لمنع سرقة الرصيد
+        function getDeviceId() {
+            let id = localStorage.getItem('majed_device_id');
+            if (!id) {
+                id = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                localStorage.setItem('majed_device_id', id);
+            }
+            return id;
+        }
+
+        // قفل الرقم وتخزينه
+        function validateAndLock(el) {
+            const val = el.value.trim();
+            if(val.length >= 9) {
+                localStorage.setItem('majed_wallet', val);
+                startSystem();
             }
         }
 
-        // قفل الخانة
-        function lockWallet(val) {
+        function lockUI(walletId) {
             const input = document.getElementById('walletNumber');
-            input.value = val;
+            input.value = walletId;
             input.disabled = true;
-            document.getElementById('changeAccBtn').style.display = "block";
-            checkBalance();
+            document.getElementById('lockStatus').style.display = "block";
+            document.getElementById('topupSection').style.display = "block";
         }
 
-        // السماح بالتغيير
-        function enableChange() {
-            const input = document.getElementById('walletNumber');
-            input.disabled = false;
-            input.value = "";
-            input.focus();
-            document.getElementById('changeAccBtn').style.display = "none";
-            document.getElementById('balanceDisplay').style.display = "none";
-            document.getElementById('historySection').style.display = "none";
-            localStorage.removeItem('majed_wallet');
-        }
-
-        async function checkBalance() {
+        // تحديث الرصيد والسجل تلقائياً
+        async function refreshData() {
             const walletId = localStorage.getItem('majed_wallet');
+            const devId = getDeviceId();
             if(!walletId) return;
-            
+
             try {
-                const res = await fetch(`${scriptURL}?action=getWallet&id=${walletId}&t=${Date.now()}`);
+                const res = await fetch(`${scriptURL}?action=getWallet&id=${walletId}&deviceId=${devId}&t=${Date.now()}`);
                 const data = await res.json();
                 
+                if(data.error) {
+                    showToast("⚠️ الرقم مسجل بجهاز آخر", "#d32f2f");
+                    return;
+                }
+
                 document.getElementById('balanceDisplay').style.display = "block";
                 document.getElementById('currentBalance').innerText = data.balance;
                 
                 if(data.history && data.history.length > 0) {
                     renderHistory(data.history);
                 }
-            } catch (e) { console.log("Sync Error"); }
+            } catch (e) { console.log("تحديث تلقائي..."); }
         }
 
         function renderHistory(history) {
@@ -132,7 +145,7 @@
             body.innerHTML = history.map(item => `
                 <tr>
                     <td>${item.packageName}</td>
-                    <td style="color:var(--gold); font-weight:bold; user-select: all;">${item.code}</td>
+                    <td style="color:var(--gold); font-weight:bold; user-select: all; font-family: monospace;">${item.code}</td>
                 </tr>
             `).join('');
         }
@@ -140,38 +153,39 @@
         async function requestTopup() {
             const walletId = localStorage.getItem('majed_wallet');
             const amount = document.getElementById('topupAmount').value;
-            if (!walletId || !amount) return showToast("⚠️ أكمل البيانات", "#f57c00");
+            if (!walletId || !amount) return showToast("⚠️ أدخل المبلغ", "#f57c00");
 
-            showToast("جاري الإرسال...", "#2196f3");
+            showToast("جاري إرسال الطلب...", "#2196f3");
             try {
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: new URLSearchParams({ action: "requestTopup", walletId: walletId, amount: amount })
                 });
-                showToast("✅ تم الطلب! انتظر التفعيل", "#28a745");
+                showToast("✅ تم إرسال طلب الشحن بنجاح", "#28a745");
                 document.getElementById('topupAmount').value = "";
-            } catch (e) { showToast("❌ خطأ", "#d32f2f"); }
+            } catch (e) { showToast("❌ فشل الاتصال", "#d32f2f"); }
         }
 
         async function processPurchase(packageName, price) {
             const walletId = localStorage.getItem('majed_wallet');
-            if(!walletId) return showToast("⚠️ أدخل رقم المحفظة أولاً", "#f57c00");
+            const devId = getDeviceId();
+            if(!walletId) return showToast("⚠️ سجل رقمك أولاً", "#f57c00");
 
-            if(!confirm(`شراء ${packageName}؟`)) return;
+            if(!confirm(`هل تريد شراء ${packageName} بمبلغ ${price} ريال؟`)) return;
 
-            showToast("جاري المعالجة...", "#f59e0b");
+            showToast("جاري معالجة الشراء...", "#f59e0b");
             try {
-                const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${walletId}&packageName=${packageName}`);
+                const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${walletId}&deviceId=${devId}&packageName=${packageName}`);
                 const result = await res.json();
 
                 if(result.success) {
-                    alert(`✅ نجحت العملية!\nكود الكرت: ${result.code}`);
-                    checkBalance(); // تحديث فوري للرصيد والسجل
+                    alert(`✅ تمت العملية بنجاح!\n\nكود الكرت الخاص بك هو:\n${result.code}`);
+                    refreshData(); 
                 } else {
-                    alert(`❌ ${result.msg}`);
+                    alert(`❌ فشل: ${result.msg}`);
                 }
-            } catch (e) { showToast("❌ خطأ", "#d32f2f"); }
+            } catch (e) { showToast("❌ خطأ في النظام", "#d32f2f"); }
         }
 
         function renderPackages() {
@@ -179,8 +193,8 @@
             grid.innerHTML = packagesData.map(pkg => `
                 <div class="package-card">
                     <h3>${pkg.price} ريال</h3>
-                    <div id="stock-${pkg.name}" style="font-size:0.7rem; margin-bottom:10px;">..</div>
-                    <button class="btn-buy" onclick="processPurchase('${pkg.name}', ${pkg.price})">شراء ⚡</button>
+                    <div id="stock-${pkg.name}" style="font-size:0.8rem; margin-bottom:10px; color: #aaa;">تحقق من المخزون..</div>
+                    <button class="btn-buy" id="btn-${pkg.name}" onclick="processPurchase('${pkg.name}', ${pkg.price})">شراء الآن ⚡</button>
                 </div>
             `).join('');
         }
@@ -191,7 +205,17 @@
                 const stock = await res.json();
                 packagesData.forEach(pkg => {
                     const count = stock[pkg.name] || 0;
-                    document.getElementById(`stock-${pkg.name}`).innerText = count > 0 ? `متاح: ${count}` : 'نفد';
+                    const stockEl = document.getElementById(`stock-${pkg.name}`);
+                    const btnEl = document.getElementById(`btn-${pkg.name}`);
+                    if(count > 0) {
+                        stockEl.innerText = `متاح: ${count} كرت`;
+                        stockEl.style.color = "#28a745";
+                        btnEl.disabled = false;
+                    } else {
+                        stockEl.innerText = `نفد من المخزون`;
+                        stockEl.style.color = "#ff4d4d";
+                        btnEl.disabled = true;
+                    }
                 });
             } catch (e) {}
         }
@@ -202,12 +226,23 @@
             setTimeout(() => t.className = "", 3000); 
         }
 
+        function startSystem() {
+            const saved = localStorage.getItem('majed_wallet');
+            if(saved) {
+                lockUI(saved);
+                refreshData();
+                fetchStock();
+            }
+        }
+
         window.onload = () => {
             renderPackages();
-            const saved = localStorage.getItem('majed_wallet');
-            if(saved) lockWallet(saved);
-            fetchStock();
-            setInterval(() => { checkBalance(); fetchStock(); }, 15000);
+            startSystem();
+            // تحديث تلقائي للبيانات والمخزون كل 15 ثانية
+            setInterval(() => {
+                refreshData();
+                fetchStock();
+            }, 15000);
         };
     </script>
 </body>
