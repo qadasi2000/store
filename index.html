@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V6.3 Pro</title>
+    <title>محفظة الماجد الذكية | V6.4 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; }
@@ -33,6 +33,10 @@
         .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); }
         .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 2px; }
 
+        .order-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--pending); text-align: right; position: relative; }
+        .order-item.success { border-right-color: var(--success); }
+        .status-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; float: left; color: #fff; }
+
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -55,7 +59,7 @@
     <nav class="nav hidden" id="top-nav">
         <div class="nav-btn active" onclick="switchSec('cards', this)">🛒 المتجر</div>
         <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()">🎫 كروتي</div>
-        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
+        <div class="nav-btn" onclick="switchSec('topup', this); loadOrders()">💰 شحن</div>
         <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
     </nav>
 
@@ -103,15 +107,19 @@
             <div class="card">
                 <h3 style="color:var(--gold); margin-top:0">➕ شحن رصيد</h3>
                 <input type="number" id="top-amt" placeholder="المبلغ">
-                <input type="text" id="top-ref" placeholder="رقم المرجع">
+                <input type="text" id="top-ref" placeholder="رقم المرجع (رقم الحوالة)">
                 <button class="btn" onclick="handleTopup()">إرسال الطلب</button>
             </div>
+
+            <h4 style="color:var(--gold); margin-bottom:10px">📜 سجل العمليات والطلبات</h4>
+            <div id="orders-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxkDpsM5A3HDUev4hcFSo-kOZr7bxQyzfJhatpn-bt60H5_2phTPBuAAS-jQMehS0PY/exec';
+    // تأكد من وضع رابط Deployment الجديد الخاص بك هنا
+    const URL = 'https://script.google.com/macros/s/AKfycbxemzD7e64EVq0uunKF6lBmKkXbczlXxFn38_GgEBX7Tqyudbt53VDiq4q264uUqxIK/exec';
     
     let myUser = "";
     let myPass = "";
@@ -155,13 +163,11 @@
                 document.getElementById('top-nav').classList.remove('hidden');
                 loadCards();
             } else {
-                // إذا كان المستخدم غير موجود، نعرض خيار التسجيل
                 if(data.error === "NOT_FOUND") {
                     msgBox.style.display = "block";
                     msgBox.innerText = "هذا الحساب غير مسجل لدينا، يمكنك إنشاء حساب جديد الآن.";
                     document.getElementById('btn-login-action').classList.add('hidden');
                     document.getElementById('btn-reg-action').classList.remove('hidden');
-                    document.getElementById('reg-hint').innerText = "اضغط على الزر بالأعلى لإنشاء الحساب برقمك الحالي.";
                 } else {
                     alert("❌ " + data.msg);
                     if(data.error === "SECURITY_BLOCK") localStorage.clear();
@@ -174,24 +180,17 @@
     async function handleRegister() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
-
-        if (!u || u.length < 8) return alert("يرجى إدخال رقم هاتف صحيح");
-        if (!p || p.length < 4) return alert("كلمة المرور يجب أن تكون 4 أرقام أو حروف على الأقل");
+        if (!u || u.length < 8) return alert("رقم الهاتف غير صحيح");
 
         showLoading(true);
         try {
-            const response = await fetch(`${URL}?action=register&id=${u}&password=${p}&deviceId=${getDeviceId()}`);
-            const data = await response.json();
-
+            const res = await fetch(`${URL}?action=register&id=${u}&password=${p}&deviceId=${getDeviceId()}`);
+            const data = await res.json();
             if (data.success) {
                 alert("✨ " + data.msg);
                 handleLogin(u, p);
-            } else {
-                alert("❌ " + data.msg);
-            }
-        } catch (e) {
-            alert("حدث خطأ أثناء التسجيل.");
-        }
+            } else { alert("❌ " + data.msg); }
+        } catch (e) { alert("خطأ في التسجيل"); }
         showLoading(false);
     }
 
@@ -233,11 +232,46 @@
                 document.getElementById('display-bal').innerText = data.newBalance;
                 saveCardLocally(cardName, data.code);
                 showCodesModal([data.code]);
-            } else {
-                alert("❌ " + data.msg);
-            }
+            } else { alert("❌ " + data.msg); }
         } catch(e) { alert("حدث خطأ"); }
         showLoading(false);
+    }
+
+    async function handleTopup() {
+        const a = document.getElementById('top-amt').value;
+        const r = document.getElementById('top-ref').value;
+        if(!a || !r) return alert("أكمل البيانات");
+        showLoading(true);
+        try {
+            const res = await fetch(`${URL}?action=requestTopup&id=${myUser}&amount=${a}&ref=${r}&t=${Date.now()}`);
+            const data = await res.json();
+            if(data.success) {
+                alert("✅ تم إرسال طلبك بنجاح للمراجعة.");
+                document.getElementById('top-amt').value = '';
+                document.getElementById('top-ref').value = '';
+                loadOrders();
+            } else { alert("❌ " + data.msg); }
+        } catch(e) { alert("تم إرسال الطلب للمراجعة."); }
+        showLoading(false);
+    }
+
+    async function loadOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = "<small>جاري جلب السجل...</small>";
+        try {
+            const res = await fetch(`${URL}?action=getOrders&id=${myUser}`);
+            const data = await res.json();
+            if(data.success) {
+                list.innerHTML = data.orders.length === 0 ? "<p style='font-size:0.8rem; color:#888;'>لا توجد عمليات مسجلة.</p>" : 
+                    data.orders.map(o => `
+                        <div class="order-item ${o.status === 'مكتمل' ? 'success' : ''}">
+                            <span class="status-badge" style="background:${o.status === 'قيد الانتظار' ? 'var(--pending)' : 'var(--success)'}">${o.status}</span>
+                            <div style="font-weight:bold; font-size:0.9rem;">${o.amount} ريال</div>
+                            <small style="color:#bbb; font-size:0.7rem;">${o.date} | مرجع: ${o.ref}</small>
+                        </div>
+                    `).join('');
+            }
+        } catch(e) { list.innerHTML = "فشل تحميل السجل"; }
     }
 
     function saveCardLocally(type, code) {
@@ -257,7 +291,7 @@
                         <span style="font-weight:bold; color:#3d0016">${c.type}</span>
                     </div>
                     <span class="my-card-code">${c.code}</span>
-                    <button class="btn" style="padding:5px; font-size:0.7rem; width:100px; margin: 10px auto 0; display:block" onclick="copyCode('${c.code}')">نسخ الكود 📋</button>
+                    <button class="btn" style="padding:5px; font-size:0.7rem; width:100px; margin: 10px auto 0; display:block" onclick="copyCode('${c.code}')">نسخ 📋</button>
                 </div>
             `).join('');
     }
@@ -268,35 +302,13 @@
         document.getElementById('code-modal').style.display = 'flex';
     }
 
-    async function handleTopup() {
-        const a = document.getElementById('top-amt').value;
-        const r = document.getElementById('top-ref').value;
-        if(!a || !r) return alert("أكمل البيانات");
-        showLoading(true);
-        try {
-            const res = await fetch(`${URL}?action=requestTopup&id=${myUser}&password=${myPass}&amount=${a}&ref=${r}`);
-            const data = await res.json(); // إصلاح: قراءة الاستجابة JSON لتجنب خطأ الاتصال
-            alert("✅ تم إرسال طلبك. سيتم إضافة الرصيد بعد المراجعة.");
-            document.getElementById('top-amt').value = '';
-            document.getElementById('top-ref').value = '';
-        } catch(e) { 
-            // حتى لو حدث خطأ في معالجة الـ JSON، السيرفر غالباً استقبل الطلب
-            alert("✅ تم إرسال الطلب للمراجعة.");
-        }
-        showLoading(false);
-    }
-
-    function copyCode(code) {
-        navigator.clipboard.writeText(code).then(() => alert("تم النسخ!"));
-    }
-
+    function copyCode(code) { navigator.clipboard.writeText(code).then(() => alert("تم النسخ!")); }
     function switchSec(id, el) {
         ['sec-cards', 'sec-topup', 'sec-mycards'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById('sec-'+id).classList.remove('hidden');
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
-
     function handleLogout() { localStorage.clear(); location.reload(); }
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
     function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
