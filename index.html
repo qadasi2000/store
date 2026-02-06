@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V9.1</title>
+    <title>متجر شبكة الماجد - المطور V9.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -119,7 +119,6 @@
     <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        // رابط السكربت المحدث
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
         
         const packagesData = [
@@ -208,6 +207,7 @@
 
         function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); if(cart.length==0) toggleCart(); }
 
+        // --- تعديل: إضافة التاريخ والوقت عند إرسال الطلب ---
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
             if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "#f57c00");
@@ -217,14 +217,26 @@
             const totalQty = cart.reduce((s, i) => s + i.qty, 0);
             const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
 
+            // الحصول على الوقت الحالي بتنسيق عربي مبسط
+            const now = new Date();
+            const dateString = now.toLocaleDateString('ar-YE');
+            const timeString = now.toLocaleTimeString('ar-YE', { hour: '2-digit', minute: '2-digit' });
+
             try {
                 await fetch(scriptURL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: "بدون" }) 
                 });
-                orderHistory.push({ ref, total: totalQty });
+                
+                // حفظ المرجع مع التاريخ والوقت في الذاكرة المحلية
+                orderHistory.push({ 
+                    ref: ref, 
+                    total: totalQty, 
+                    timestamp: `${dateString} | ${timeString}` 
+                });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
+                
                 showToast("🚀 تم إرسال الطلب.. جاري المراجعة", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
                 setTimeout(() => { 
@@ -247,7 +259,6 @@
             resDiv.innerHTML = "⏳ جاري التحقق من حالة الكروت...";
             
             try {
-                // استخدام t لمنع التخزين المؤقت وضمان استلام الكروت فور التفعيل في الشيت
                 const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
                 const txt = await res.text();
                 
@@ -298,11 +309,17 @@
             showToast("📋 تم نسخ الكل", "#28a745");
         }
 
+        // --- تعديل: عرض التاريخ والوقت في القائمة المنسدلة ---
         function toggleReceiveModal() {
             const combo = document.getElementById('refCombo');
-            const uniqueRefs = [...new Set(orderHistory.map(o => o.ref))].reverse();
+            // عكس القائمة لتظهر الطلبات الأحدث في الأعلى
+            const sortedOrders = [...orderHistory].reverse();
+            
             combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + 
-                uniqueRefs.map(r => `<option value="${r}">${r}</option>`).join('');
+                sortedOrders.map(o => {
+                    const label = o.timestamp ? `${o.ref} (${o.timestamp})` : o.ref;
+                    return `<option value="${o.ref}">${label}</option>`;
+                }).join('');
             
             document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex';
             document.getElementById('orderStatusHeader').style.display = "none";
