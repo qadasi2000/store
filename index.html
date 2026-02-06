@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شبكة الماجد برو - V21.0</title>
+    <title>شبكة الماجد برو - V22.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #2b0010; --gold: #f9d976; --card: rgba(255, 255, 255, 0.1); --green: #28a745; }
@@ -18,11 +18,11 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 12px; margin-top: 20px; }
         .pkg-card { background: var(--card); padding: 15px; border-radius: 18px; border: 1px solid rgba(249,217,118,0.2); }
         .stock-tag { font-size: 0.75rem; color: #0f8; display: block; margin-bottom: 5px; }
-        .qty-box { width: 60px !important; display: inline-block !important; padding: 5px !important; margin: 5px !important; }
+        .qty-box { width: 50px !important; display: inline-block !important; padding: 5px !important; margin: 5px !important; border-radius: 8px !important; }
 
-        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d32f2f; padding: 16px; border-radius: 10px; z-index: 1000; }
+        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d32f2f; padding: 16px; border-radius: 10px; z-index: 1000; transition: 0.3s; }
         #toast.show { visibility: visible; }
-        .logout { font-size: 0.8rem; color: #aaa; text-decoration: underline; cursor: pointer; display: block; margin-top: 15px; }
+        .status-msg { font-size: 0.8rem; color: var(--gold); margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -31,28 +31,30 @@
     <div class="container">
         <h2 style="color:var(--gold)">⚡ شبكة الماجد الذكية</h2>
 
-        <div id="loginSection" class="wallet-card">
-            <input type="text" id="walletInput" placeholder="أدخل رقم الهاتف">
-            <button class="btn-gold" onclick="login()">دخول الحساب</button>
+        <div id="setupSection" class="wallet-card">
+            <h3 style="color:var(--gold)">إعداد المحفظة</h3>
+            <p style="font-size:0.9rem">أدخل رقم هاتفك لربطه بهذا الجهاز بشكل دائم</p>
+            <input type="text" id="walletInput" placeholder="أدخل رقم الهاتف (مثال: 777xxxxxx)">
+            <button class="btn-gold" onclick="setupWallet()">تفعيل المحفظة على هذا الجهاز</button>
         </div>
 
         <div id="mainUI" style="display:none">
             <div class="wallet-card">
+                <div class="status-msg">محفظة رقم: <span id="displayNum"></span> (مؤمنة 🔒)</div>
                 <div class="balance"><span id="balanceVal">0</span> <small style="font-size:1rem">ريال</small></div>
                 
                 <div class="action-group">
-                    <h4 style="margin:0 0 10px 0; color:var(--gold)">💸 تحويل رصيد سريع</h4>
+                    <h4 style="margin:0 0 10px 0; color:var(--gold)">💸 تحويل رصيد</h4>
                     <input type="text" id="targetId" placeholder="رقم المستلم" style="width:55%">
                     <input type="number" id="transferAmt" placeholder="المبلغ" style="width:30%">
                     <button class="btn-gold" style="background:#fff" onclick="transfer()">تحويل الآن</button>
                 </div>
 
                 <div class="action-group">
-                    <h4 style="margin:0 0 10px 0; color:var(--green)">🔋 طلب شحن رصيد</h4>
+                    <h4 style="margin:0 0 10px 0; color:var(--green)">🔋 طلب شحن</h4>
                     <input type="number" id="topupAmt" placeholder="المبلغ المطلوب">
                     <button class="btn-gold" style="background:var(--green); color:white" onclick="topup()">إرسال الطلب</button>
                 </div>
-                <span class="logout" onclick="logout()">تبديل الحساب</span>
             </div>
 
             <div class="grid" id="packagesGrid"></div>
@@ -60,78 +62,100 @@
     </div>
 
     <script>
+        // استبدل الرابط برابط السكربت الخاص بك
         const scriptURL = 'https://script.google.com/macros/s/AKfycbAyAh5BAnc2WLbkpozpnxn6Ih5eTv3H53mrsx3v0wl5GUnuVd7z5dfTrFTvlVkpTyJ/exec';
         let stock = {};
 
+        // الحصول على بصمة الجهاز
         function getDevId() {
             let id = localStorage.getItem('maj_dev');
-            if(!id) { id = 'ID-' + Math.random().toString(36).substr(2,7); localStorage.setItem('maj_dev', id); }
+            if(!id) {
+                id = 'DEV-' + Math.random().toString(36).substr(2,9).toUpperCase();
+                localStorage.setItem('maj_dev', id);
+            }
             return id;
         }
 
-        async function login(isAuto = false) {
-            const id = document.getElementById('walletInput').value.trim() || localStorage.getItem('maj_wal');
-            if(!id) return;
-            if(!isAuto) showToast("جاري التحقق...", "#f59e0b");
-
+        // إعداد المحفظة لأول مرة
+        async function setupWallet() {
+            const id = document.getElementById('walletInput').value.trim();
+            if(id.length < 7) return showToast("⚠️ يرجى إدخال رقم هاتف صحيح");
+            
+            showToast("جاري ربط المحفظة بالجهاز...", "#f59e0b");
+            
             try {
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${id}&deviceId=${getDevId()}`);
                 const data = await res.json();
+                
                 if(data.error) {
-                    if(!isAuto) alert("❌ هذا الرقم مسجل على جهاز آخر!");
+                    alert("❌ هذا الرقم مرتبط بجهاز آخر بالفعل. يرجى مراجعة الإدارة.");
                     return;
                 }
+                
                 localStorage.setItem('maj_wal', id);
                 renderUI(data);
-            } catch(e) { console.log("Login Error"); }
+            } catch(e) { showToast("❌ خطأ في الاتصال بالسيرفر"); }
+        }
+
+        // تسجيل الدخول التلقائي
+        async function autoLogin() {
+            const savedId = localStorage.getItem('maj_wal');
+            if(!savedId) return;
+
+            document.getElementById('setupSection').style.display = 'none';
+            try {
+                const res = await fetch(`${scriptURL}?action=getWallet&id=${savedId}&deviceId=${getDevId()}`);
+                const data = await res.json();
+                if(!data.error) renderUI(data);
+            } catch(e) { console.log("AutoLogin Failed"); }
         }
 
         function renderUI(data) {
-            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('setupSection').style.display = 'none';
             document.getElementById('mainUI').style.display = 'block';
+            document.getElementById('displayNum').innerText = localStorage.getItem('maj_wal');
             document.getElementById('balanceVal').innerText = data.balance;
             
             const packs = [
-                {p:100, n:"باقة 100", d:"512M"}, {p:200, n:"باقة 200", d:"1G"},
-                {p:300, n:"باقة 300", d:"1.5G"}, {p:500, n:"باقة 500", d:"2.5G"},
-                {p:1000, n:"باقة 1000", d:"5G"}, {p:2000, n:"باقة 2000", d:"10G"},
-                {p:3000, n:"باقة 3000", d:"15G"}, {p:5000, n:"باقة 5000", d:"25G"},
-                {p:10000, n:"باقة 10000", d:"50G"}
+                {p:100, n:"باقة 100"}, {p:200, n:"باقة 200"}, {p:300, n:"باقة 300"}, 
+                {p:500, n:"باقة 500"}, {p:1000, n:"باقة 1000"}, {p:2000, n:"باقة 2000"},
+                {p:3000, n:"باقة 3000"}, {p:5000, n:"باقة 5000"}, {p:10000, n:"باقة 10000"}
             ];
             
             document.getElementById('packagesGrid').innerHTML = packs.map(i => `
                 <div class="pkg-card">
                     <span class="stock-tag" id="stck-${i.n}">...</span>
                     <h3 style="margin:5px 0">${i.p} ريال</h3>
-                    <small>${i.d}</small><br>
                     <input type="number" id="qty-${i.p}" value="1" min="1" class="qty-box">
-                    <button class="btn-gold" style="padding:8px" onclick="buy('${i.n}', ${i.p})">شراء</button>
+                    <button class="btn-gold" style="padding:8px; font-size:0.8rem" onclick="buy('${i.n}', ${i.p})">شراء الآن</button>
                 </div>
             `).join('');
             updateStock();
         }
 
         async function updateStock() {
-            const res = await fetch(`${scriptURL}?action=getStock`);
-            stock = await res.json();
-            for(let key in stock) {
-                let el = document.getElementById(`stck-${key}`);
-                if(el) el.innerText = stock[key] > 0 ? `متاح: ${stock[key]}` : "نفد";
-            }
+            try {
+                const res = await fetch(`${scriptURL}?action=getStock`);
+                stock = await res.json();
+                for(let key in stock) {
+                    let el = document.getElementById(`stck-${key}`);
+                    if(el) el.innerText = stock[key] > 0 ? `متاح: ${stock[key]}` : "نفد";
+                }
+            } catch(e) {}
         }
 
         async function buy(name, price) {
             const qty = parseInt(document.getElementById(`qty-${price}`).value);
-            if(qty > (stock[name] || 0)) return alert("❌ الكمية غير متوفرة حالياً");
-            if(!confirm(`تأكيد شراء عدد ${qty} من ${name}؟`)) return;
+            if(qty > (stock[name] || 0)) return alert("❌ الكمية المطلوبة غير متوفرة");
+            if(!confirm(`تأكيد شراء ${qty} كروت من ${name}؟`)) return;
 
-            showToast("جاري المعالجة...", "#f59e0b");
+            showToast("جاري استخراج الكروت...", "#f59e0b");
             const wal = localStorage.getItem('maj_wal');
             const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${wal}&deviceId=${getDevId()}&packageName=${name}&qty=${qty}`);
             const data = await res.json();
             
             if(data.success) {
-                alert(`✅ تم الشراء بنجاح!\nالأكواد:\n${data.code}`);
+                alert(`✅ مبروك! تم الشراء.\nالأكواد المستخرجة:\n${data.code}`);
                 location.reload();
             } else { alert("❌ " + data.msg); }
         }
@@ -139,8 +163,8 @@
         async function transfer() {
             const to = document.getElementById('targetId').value.trim();
             const amt = document.getElementById('transferAmt').value;
-            if(!to || !amt) return;
-            if(!confirm(`هل تريد تحويل ${amt} ريال إلى ${to}؟`)) return;
+            if(!to || !amt) return showToast("⚠️ أكمل البيانات");
+            if(!confirm(`سيتم تحويل ${amt} ريال إلى ${to}. هل أنت متأكد؟`)) return;
 
             showToast("جاري التحويل...", "#f59e0b");
             const res = await fetch(`${scriptURL}?action=transfer&from=${localStorage.getItem('maj_wal')}&to=${to}&amount=${amt}&deviceId=${getDevId()}`);
@@ -152,14 +176,15 @@
         async function topup() {
             const amt = document.getElementById('topupAmt').value;
             if(!amt) return;
-            showToast("تم إرسال الطلب", "#28a745");
+            showToast("✅ تم إرسال طلب الشحن", "#28a745");
             fetch(scriptURL, {method:'POST', mode:'no-cors', body: new URLSearchParams({action:'requestTopup', walletId: localStorage.getItem('maj_wal'), amount:amt})});
+            document.getElementById('topupAmt').value = "";
         }
 
-        function logout() { localStorage.removeItem('maj_wal'); location.reload(); }
         function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.background = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
         
-        window.onload = () => { if(localStorage.getItem('maj_wal')) login(true); };
+        // عند التحميل: إذا كان هناك رقم مسجل، ادخل مباشرة
+        window.onload = () => { autoLogin(); };
     </script>
 </body>
 </html>
