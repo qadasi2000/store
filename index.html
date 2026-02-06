@@ -100,10 +100,20 @@
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxUFc51znmGY3_qrHleUIM6Do0udO3QYrQ6Og_vxiUEjwWYq52wXjbvl36Mplquw1x4/exec';
+    // الرابط المحدث الخاص بك
+    const URL = 'https://script.google.com/macros/s/AKfycbwp7c0VcKjywKrr1-njFypxFBSIVYRIpPaZOM6ycF1xo59qqcB8cii_T-y0rEb4Rzc6/exec';
     let myPhone = "";
 
-    // عند تحميل الصفحة، ابحث عن رقم هاتف مخزن
+    // وظيفة لتوليد بصمة جهاز فريدة (DeviceId)
+    function getDeviceId() {
+        let dId = localStorage.getItem('majed_device_id');
+        if (!dId) {
+            dId = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            localStorage.setItem('majed_device_id', dId);
+        }
+        return dId;
+    }
+
     window.onload = function() {
         const savedPhone = localStorage.getItem('majed_wallet_phone');
         if (savedPhone) {
@@ -116,28 +126,41 @@
         const p = directPhone || document.getElementById('login-phone').value;
         if(p.length < 9) return alert("أدخل رقم هاتف صحيح");
         
+        const deviceId = getDeviceId(); // الحصول على بصمة الجهاز
         showLoading(true);
+        
         try {
-            const res = await fetch(`${URL}?action=getWallet&id=${p}`);
+            // إرسال الاستعلام مع البصمة
+            const res = await fetch(`${URL}?action=getWallet&id=${p}&deviceId=${deviceId}`);
             const data = await res.json();
             
+            if (data.error === "SECURITY_BLOCK") {
+                alert("❌ حماية: " + data.msg);
+                localStorage.removeItem('majed_wallet_phone');
+                showLoading(false);
+                return;
+            }
+
             myPhone = p;
-            // حفظ الرقم في ذاكرة المتصفح
             localStorage.setItem('majed_wallet_phone', p);
             
+            // تنبيه العضو الجديد بالهدية
+            if(data.isNew) {
+                alert("🎁 مبروك! لقد تم إنشاء حسابك وحصلت على 1000 ريال رصيد إفتتاحي.");
+            }
+
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('bottom-nav').classList.remove('hidden');
             loadCards();
         } catch(e) { 
-            alert("خطأ في الاتصال"); 
-            localStorage.removeItem('majed_wallet_phone'); // مسح الرقم إذا فشل الاتصال
+            alert("خطأ في الاتصال بالسيرفر"); 
+            localStorage.removeItem('majed_wallet_phone');
         }
         showLoading(false);
     }
 
-    // وظيفة الخروج الصحيحة لمسح البيانات
     function handleLogout() {
         if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
             localStorage.removeItem('majed_wallet_phone');
