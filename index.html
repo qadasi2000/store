@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V9.2 المعدل</title>
+    <title>متجر شبكة الماجد - المطور V9.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -47,27 +47,30 @@
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         .btn-contact { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 10px; width: 100%; margin-top: 10px; cursor: pointer; font-size: 0.9rem; }
 
+        .status-header { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 10px; margin-bottom: 15px; border: 1px dashed #4caf50; }
+        .status-bar { height: 8px; background: #222; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+        .status-fill { height: 100%; background: #4caf50; width: 0%; transition: 0.5s; }
+
         #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; }
         .code-row { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid #333; }
         .copy-btn { background: var(--gold); border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: black; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* الألوان المحدثة للباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
         .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
         .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
-        .b5000 { --accent-color: #ff5252; --card-gradient: linear-gradient(135deg, #b71c1c, #ff5252); }
-        .b10000 { --accent-color: var(--gold); --card-gradient: linear-gradient(135deg, #000, #434343); }
     </style>
 </head>
 <body>
 
     <div id="toast"></div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - تابع حالة طلبك واستلم كروتك فوراً عبر المرجع 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - تابع حالة طلبك واستلم كروتك فوراً 🌙</div></div>
 
     <div class="header">
         <h1>متجر شبكة الماجد</h1>
@@ -78,14 +81,27 @@
 
     <div id="receiveModal" class="modal"><div class="modal-content receive-theme">
         <h2 style="color: #4caf50;">تحقق من حالة الطلب 🎫</h2>
-        <p style="font-size: 0.9rem;">طلباتك الأخيرة:</p>
+        
+        <p style="font-size: 0.9rem; margin-bottom: 5px;">طلباتك الأخيرة:</p>
         <select id="refCombo" onchange="document.getElementById('checkRefInput').value = this.value">
             <option value="">-- اختر مرجعاً سابقاً --</option>
         </select>
+
         <input type="text" id="checkRefInput" placeholder="أدخل رقم المرجع يدوياً" />
-        <button class="btn-pay" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحديث الحالة 🚀</button>
+        <button class="btn-pay" id="receiveBtn" onclick="checkOrderNow()" style="background:#4caf50; color:white;">تحديث الحالة 🚀</button>
+        
+        <div id="orderStatusHeader" style="display:none;" class="status-header">
+            <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
+                <span>الكروت الجاهزة: <b id="readyCount">0</b></span>
+                <span>المعلقة: <b id="pendingCount">0</b></span>
+            </div>
+            <div class="status-bar"><div id="statusFill" class="status-fill"></div></div>
+        </div>
+
         <div id="checkResult"></div>
-        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
+        
+        <button class="btn-contact" onclick="window.open('https://wa.me/YOUR_NUMBER')">💬 تواجه مشكلة؟ تواصل معنا</button>
+        <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق النافذة</button>
     </div></div>
 
     <div id="cartModal" class="modal"><div class="modal-content">
@@ -94,6 +110,7 @@
         <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
             إجمالي المبلغ: <span id="cartTotalText">0</span> ريال
         </div>
+        
         <input type="text" id="refInput" placeholder="أدخل رقم مرجع الحوالة هنا" />
         <button class="btn-pay" id="payBtn" onclick="sendOrder()">إرسال الطلب ✨</button>
         <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
@@ -104,15 +121,12 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
         
-        // القائمة النهائية للباقات كما طلبت
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
             { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
             { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
-            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' },
-            { id: 'b5000', name: 'باقة 5000', price: 5000, data: '25 جيجا' },
-            { id: 'b10000', name: 'باقة 10000', price: 10000, data: '50 جيجا' }
+            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' }
         ];
 
         let cart = [];
@@ -125,7 +139,7 @@
                 <div class="package-unit ${pkg.id}">
                     <div class="card-wrapper"><div class="diamond-card"><div class="card-content">
                         <span class="price">${pkg.price} ريال</span><div class="data">${pkg.data}</div>
-                        <div class="stock-tag" id="stock-${pkg.id}">...</div>
+                        <div class="stock-tag" id="stock-${pkg.id}">جاري فحص التوفر...</div>
                     </div></div></div>
                     <button class="btn-add-package" id="btn-${pkg.id}" onclick="addToCart('${pkg.name}', ${pkg.price}, '${pkg.id}')">إضافة للسلة 🛒</button>
                 </div>
@@ -139,17 +153,23 @@
                 packagesData.forEach(pkg => {
                     const count = currentStock[pkg.name] || 0;
                     const tag = document.getElementById(`stock-${pkg.id}`);
-                    if(tag) tag.innerText = count > 0 ? `متاح: ${count}` : '❌ نفد';
+                    const btn = document.getElementById(`btn-${pkg.id}`);
+                    if(tag) tag.innerText = count > 0 ? `متاح: ${count}` : '❌ نفدت الكمية';
+                    if(btn && count <= 0) btn.disabled = true;
                 });
-            } catch (e) {}
+            } catch (e) { console.log("Stock Sync Error"); }
         }
 
         function addToCart(name, price, id) {
             let item = cart.find(i => i.name === name);
-            if (!item) cart.push({ name, price, qty: 1, id });
+            if (!item) {
+                cart.push({ name, price, qty: 1, id });
+                showToast("✅ تمت الإضافة", "#28a745");
+            } else {
+                showToast("موجود في السلة - يمكنك تعديل الكمية هناك", "#f57c00");
+            }
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
-            showToast("✅ تمت الإضافة", "#28a745");
         }
 
         function updateCartUI() {
@@ -157,49 +177,159 @@
             document.getElementById('cartCount').innerText = count;
             let total = 0;
             const list = document.getElementById('cartItemsList');
+            
             list.innerHTML = cart.map((item, i) => {
                 total += (item.price * item.qty);
-                return `<div style="display:flex; justify-content:space-between; margin-bottom:5px"><span>${item.name}</span><span>${item.price} ر.ي</span></div>`;
+                const max = currentStock[item.name] || 1;
+                return `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>${item.name}</span>
+                    <div>
+                        الكمية: <input type="number" value="${item.qty}" min="1" max="${max}" class="qty-input" onchange="changeQty(${i}, this.value)">
+                    </div>
+                    <button onclick="removeFromCart(${i})" style="border:none; background:none; color:#ff4444; font-size:1.2rem; cursor:pointer;">🗑️</button>
+                </div>`;
             }).join('');
             document.getElementById('cartTotalText').innerText = total;
             if(cart.length === 0) document.getElementById('floatingCartBtn').style.display = 'none';
         }
 
+        function changeQty(index, val) {
+            const max = currentStock[cart[index].name] || 1;
+            let finalVal = parseInt(val);
+            if(finalVal > max) {
+                finalVal = max;
+                showToast(`أقصى كمية متوفرة هي ${max}`, "#f57c00");
+            }
+            if(finalVal < 1) finalVal = 1;
+            cart[index].qty = finalVal;
+            updateCartUI();
+        }
+
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); if(cart.length==0) toggleCart(); }
+
+        // --- تعديل: إضافة التاريخ والوقت عند إرسال الطلب ---
         async function sendOrder() {
             const ref = document.getElementById('refInput').value.trim();
-            if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "orange");
+            if(!ref) return showToast("⚠️ يرجى إدخال رقم المرجع", "#f57c00");
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true; btn.innerText = "جاري الحجز...";
+            
+            const totalQty = cart.reduce((s, i) => s + i.qty, 0);
             const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
+
+            // الحصول على الوقت الحالي بتنسيق عربي مبسط
+            const now = new Date();
+            const dateString = now.toLocaleDateString('ar-YE');
+            const timeString = now.toLocaleTimeString('ar-YE', { hour: '2-digit', minute: '2-digit' });
+
             try {
-                await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ packages: pkgsString, ref: ref }) });
-                orderHistory.push({ ref: ref, timestamp: new Date().toLocaleString('ar-YE') });
+                await fetch(scriptURL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: "بدون" }) 
+                });
+                
+                // حفظ المرجع مع التاريخ والوقت في الذاكرة المحلية
+                orderHistory.push({ 
+                    ref: ref, 
+                    total: totalQty, 
+                    timestamp: `${dateString} | ${timeString}` 
+                });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
-                showToast("🚀 تم الإرسال", "#28a745");
+                
+                showToast("🚀 تم إرسال الطلب.. جاري المراجعة", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
-            } catch (e) { showToast("❌ خطأ", "red"); }
+                setTimeout(() => { 
+                    toggleReceiveModal(); 
+                    document.getElementById('checkRefInput').value = ref;
+                    checkOrderNow();
+                }, 1000);
+            } catch (e) { showToast("❌ خطأ في الإرسال", "#d32f2f"); }
+            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
         }
 
         async function checkOrderNow() {
             const ref = document.getElementById('checkRefInput').value.trim();
             const resDiv = document.getElementById('checkResult');
-            if(!ref) return;
+            const statusHeader = document.getElementById('orderStatusHeader');
+            
+            if(!ref) return showToast("⚠️ أدخل المرجع", "#f57c00");
+            
             resDiv.style.display = "block";
-            resDiv.innerHTML = "⏳ جاري التحقق...";
+            resDiv.innerHTML = "⏳ جاري التحقق من حالة الكروت...";
+            
             try {
-                const res = await fetch(`${scriptURL}?action=check&ref=${ref}`);
+                const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
                 const txt = await res.text();
-                resDiv.innerHTML = txt.includes(":") ? txt.split('\n').map(c => `<div class="code-row">${c}</div>`).join('') : txt;
-            } catch (e) { resDiv.innerHTML = "خطأ في الاتصال"; }
+                
+                if (txt.includes(":")) {
+                    let codes = txt.split('\n').filter(l => l.trim() !== "");
+                    let orderData = orderHistory.find(o => o.ref == ref);
+                    let totalNeeded = orderData ? orderData.total : codes.length;
+
+                    statusHeader.style.display = "block";
+                    document.getElementById('readyCount').innerText = codes.length;
+                    
+                    let pending = totalNeeded - codes.length;
+                    document.getElementById('pendingCount').innerText = pending > 0 ? pending : 0;
+                    
+                    let percent = (codes.length / totalNeeded) * 100;
+                    document.getElementById('statusFill').style.width = percent + "%";
+
+                    let html = `<div style="text-align:center; margin-bottom:12px;">
+                        <button class="btn-pay" onclick="copyAllVertical()" style="background:#fff; color:#000; font-size:0.9rem;">📋 نسخ الجاهز (${codes.length})</button>
+                    </div>`;
+                    
+                    codes.forEach(code => {
+                        html += `<div class="code-row"><span>${code}</span><button class="copy-btn" onclick="copyText('${code}')">نسخ</button></div>`;
+                    });
+
+                    if(codes.length < totalNeeded) {
+                        html += `
+                        <div style="background:rgba(255,165,0,0.1); border:1px solid orange; padding:10px; border-radius:10px; margin-top:10px; text-align:center;">
+                            <p style="color:#ffcc00; font-size:0.85rem; margin:0;">⏳ يوجد ${pending} كرت معلق قيد التجهيز...</p>
+                            <p style="font-size:0.7rem; color:#ccc;">انتظر ثواني ثم اضغط "تحديث الحالة" مرة أخرى</p>
+                        </div>`;
+                    }
+
+                    resDiv.innerHTML = html;
+                } else { 
+                    resDiv.innerHTML = `<p style="color:#ffcc00;">${txt}</p>`; 
+                }
+            } catch (e) { 
+                resDiv.innerHTML = `<p style="color:#ff4444;">❌ فشل الاتصال.. يرجى المحاولة مرة أخرى</p>`;
+            }
         }
 
-        function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display === 'flex') ? 'none' : 'flex'; }
+        function copyText(v) { navigator.clipboard.writeText(v); showToast("📋 تم نسخ الكرت", "#28a745"); }
+        
+        function copyAllVertical() {
+            const codes = Array.from(document.querySelectorAll('.code-row span')).map(s => s.innerText).join('\n');
+            navigator.clipboard.writeText(codes);
+            showToast("📋 تم نسخ الكل", "#28a745");
+        }
+
+        // --- تعديل: عرض التاريخ والوقت في القائمة المنسدلة ---
         function toggleReceiveModal() {
             const combo = document.getElementById('refCombo');
-            combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + orderHistory.reverse().map(o => `<option value="${o.ref}">${o.ref}</option>`).join('');
-            document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display === 'flex') ? 'none' : 'flex';
+            // عكس القائمة لتظهر الطلبات الأحدث في الأعلى
+            const sortedOrders = [...orderHistory].reverse();
+            
+            combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + 
+                sortedOrders.map(o => {
+                    const label = o.timestamp ? `${o.ref} (${o.timestamp})` : o.ref;
+                    return `<option value="${o.ref}">${label}</option>`;
+                }).join('');
+            
+            document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex';
+            document.getElementById('orderStatusHeader').style.display = "none";
+            document.getElementById('checkResult').style.display = "none";
         }
-        function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.backgroundColor = c; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 3000); }
 
-        window.onload = () => { renderInitialPackages(); fetchStock(); };
+        function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
+        function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.backgroundColor = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+
+        window.onload = () => { renderInitialPackages(); fetchStock(); setInterval(fetchStock, 30000); };
     </script>
 </body>
 </html>
