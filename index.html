@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V8.5</title>
+    <title>متجر شبكة الماجد - المطور V8.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.05); }
@@ -50,33 +50,29 @@
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
         #historyList { max-height: 180px; overflow-y: auto; padding: 5px; margin-bottom: 10px; }
-        .history-item { background: rgba(0,0,0,0.2); margin-top: 8px; padding: 10px; border-radius: 12px; font-size: 0.85rem; text-align: right; border-right: 4px solid var(--gold); }
+        .history-item { background: rgba(255,255,255,0.05); margin-top: 8px; padding: 10px; border-radius: 12px; font-size: 0.85rem; text-align: right; border-right: 4px solid var(--gold); }
 
         #checkResult { margin-top: 15px; font-weight: bold; text-align: right; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 15px; display: none; border: 1px dashed var(--gold); }
-        .code-line { background: #1a1a1a; padding: 8px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; font-family: monospace; color: #00ff00; }
-        .copy-btn { background: var(--gold); border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; color: black; font-weight: bold; }
+        .code-line { background: #1a1a1a; padding: 12px; margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .copy-btn { background: var(--gold); border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; color: black; font-weight: bold; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: #28a745; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 100px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 100px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 100px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
-        /* الألوان للمجموعات */
+        /* ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
         .b500 { --accent-color: #f59e0b; --card-gradient: linear-gradient(135deg, #78350f, #f59e0b); }
         .b1000 { --accent-color: #ffffff; --card-gradient: linear-gradient(135deg, #455a64, #90a4ae); }
-        .b2000 { --accent-color: #a855f7; --card-gradient: linear-gradient(135deg, #581c87, #a855f7); }
-        .b3000 { --accent-color: #00ffcc; --card-gradient: linear-gradient(135deg, #004d40, #00ffcc); }
-        .b5000 { --accent-color: #fb923c; --card-gradient: linear-gradient(135deg, #9a3412, #fb923c); }
-        .b10000 { --accent-color: #ff3333; --card-gradient: linear-gradient(135deg, #7f1d1d, #ef4444); }
     </style>
 </head>
 <body>
 
     <div id="toast">✅ تمت الإضافة</div>
-    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - يتم حفظ طلباتك تلقائياً حتى تستلمها 🌙</div></div>
+    <div class="marquee"><div class="marquee-content">🌙 متجر شبكة الماجد - استلم كروتك فور إرسال الطلب بنجاح 🌙</div></div>
 
     <div class="header">
         <h1>متجر شبكة الماجد</h1>
@@ -124,11 +120,7 @@
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
             { id: 'b300', name: 'باقة 300', price: 300, data: '1.5 جيجا' },
             { id: 'b500', name: 'باقة 500', price: 500, data: '2.5 جيجا' },
-            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' },
-            { id: 'b2000', name: 'باقة 2000', price: 2000, data: '12 جيجا' },
-            { id: 'b3000', name: 'باقة 3000', price: 3000, data: '18 جيجا' },
-            { id: 'b5000', name: 'باقة 5000', price: 5000, data: '25 جيجا' },
-            { id: 'b10000', name: 'باقة 10000', price: 10000, data: '50 جيجا' }
+            { id: 'b1000', name: 'باقة 1000', price: 1000, data: '5 جيجا' }
         ];
 
         let cart = [];
@@ -164,15 +156,7 @@
         }
 
         function addToCart(name, price) {
-            let totalInCart = cart.reduce((s, i) => s + i.qty, 0);
-            if(totalInCart >= MAX_TOTAL_QTY) return showToast("⚠️ الحد الأقصى 50 كرت");
-
-            let stockAvailable = currentStock[name] || 0;
             let item = cart.find(i => i.name === name);
-            let currentQtyInCart = item ? item.qty : 0;
-
-            if (currentQtyInCart >= stockAvailable) return showToast(`⚠️ المتاح فقط هو ${stockAvailable} كروت`);
-
             if (item) item.qty++; else cart.push({ name, price, qty: 1 });
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
@@ -180,7 +164,7 @@
         }
 
         function updateCartUI() {
-            const count = cart.reduce((s, i) => s + i.qty, 0);
+            const count = cart.reduce((s, i) => s + (parseInt(i.qty)||0), 0);
             document.getElementById('cartCount').innerText = count;
             const list = document.getElementById('cartItemsList');
             let total = 0;
@@ -190,7 +174,7 @@
                     <span>${item.name}</span>
                     <div class="qty-box">
                         <button class="qty-btn" onclick="changeQty(${i}, -1)">-</button>
-                        <input type="number" class="qty-input" value="${item.qty}" onchange="setQty(${i}, this.value)">
+                        <input type="number" class="qty-input" value="${item.qty}" readonly>
                         <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
                     </div>
                 </div>`;
@@ -200,21 +184,8 @@
         }
 
         function changeQty(i, delta) {
-            let item = cart[i];
-            let stockAvailable = currentStock[item.name] || 0;
-            if (delta > 0 && item.qty >= stockAvailable) return showToast("⚠️ نفد المخزون لهذه الباقة");
-            item.qty += delta;
-            if (item.qty <= 0) cart.splice(i, 1);
-            updateCartUI();
-        }
-
-        function setQty(i, val) {
-            let item = cart[i];
-            let stockAvailable = currentStock[item.name] || 0;
-            let n = parseInt(val) || 0;
-            if(n > stockAvailable) n = stockAvailable;
-            item.qty = n;
-            if (item.qty <= 0) cart.splice(i, 1);
+            cart[i].qty += delta;
+            if (cart[i].qty <= 0) cart.splice(i, 1);
             updateCartUI();
         }
 
@@ -232,19 +203,38 @@
             const pkgsString = pkgsArray.join(', ');
 
             try {
+                // إرسال الطلب
                 await fetch(scriptURL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: phone||"بدون رقم" }) 
                 });
                 
+                // حفظ في السجل
                 orderHistory.push({ ref, pkgs: pkgsString, date: new Date().toLocaleString('ar-EG') });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
                 
-                showToast("✅ تم الطلب بنجاح!");
-                cart = []; updateCartUI(); toggleCart(); fetchStock();
-            } catch (e) { showToast("❌ فشل الاتصال"); }
-            finally { btn.disabled = false; btn.innerText = "إرسال الطلب ✨"; }
+                // نسخ المرجع تلقائياً
+                navigator.clipboard.writeText(ref);
+                showToast("✅ تم الطلب ونسخ المرجع!");
+
+                // تصفير السلة والانتقال المباشر
+                cart = []; 
+                updateCartUI(); 
+                toggleCart(); // إغلاق السلة
+                
+                // فتح نافذة الاستلام وتعبئة المرجع
+                setTimeout(() => {
+                    toggleReceiveModal();
+                    document.getElementById('checkRefInput').value = ref;
+                }, 500);
+
+            } catch (e) { 
+                showToast("❌ حدث خطأ غير متوقع"); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = "إرسال الطلب ✨"; 
+            }
         }
 
         async function checkOrderNow() {
@@ -253,64 +243,75 @@
             
             const btn = document.getElementById('receiveBtn');
             const resDiv = document.getElementById('checkResult');
-            btn.disabled = true; btn.innerText = "جاري التحقق...";
+            btn.disabled = true; btn.innerText = "جاري الاتصال بالسيرفر...";
             resDiv.style.display = 'none';
 
             try {
-                const response = await fetch(`${scriptURL}?action=checkOrder&ref=${ref}`);
+                // استخدام Fetch مع إضافة timestamp لمنع التخزين المؤقت (Cache)
+                const response = await fetch(`${scriptURL}?action=checkOrder&ref=${ref}&t=${Date.now()}`);
+                
+                if (!response.ok) throw new Error();
+
                 const data = await response.json();
                 
                 if(data.status === "pending") {
-                    resDiv.innerHTML = "⏳ طلبك قيد المعالجة.. يرجى الانتظار";
+                    resDiv.innerHTML = "⏳ طلبك مستلم وقيد التجهيز.. حاول بعد لحظات";
                     resDiv.style.color = "#f9d976";
                 } else if(data.status === "completed") {
-                    let html = `<div style="color:#00ff00; margin-bottom:10px;">✅ تم استخراج الكروت:</div>`;
+                    let html = `<div style="color:#00ff00; margin-bottom:10px; text-align:center;">✅ تم تجهيز كروتك:</div>`;
                     data.codes.forEach(code => {
                         html += `<div class="code-line">
-                            <span>${code}</span>
+                            <span style="color:#00ff00; font-weight:bold;">${code}</span>
                             <button class="copy-btn" onclick="copyToClipboard('${code}')">نسخ</button>
                         </div>`;
                     });
                     resDiv.innerHTML = html;
                 } else {
-                    resDiv.innerHTML = "❌ لم يتم العثور على هذا المرجع";
+                    resDiv.innerHTML = "❌ المرجع غير موجود أو لم يتم تأكيده بعد";
                     resDiv.style.color = "#ff3333";
                 }
                 resDiv.style.display = 'block';
-            } catch (e) { showToast("❌ خطأ في الاتصال بالسيرفر"); }
-            finally { btn.disabled = false; btn.innerText = "استلام الآن 🚀"; }
+            } catch (e) { 
+                resDiv.innerHTML = "⚠️ عذراً، تعذر الاتصال بالسيرفر.. حاول مرة أخرى";
+                resDiv.style.color = "#ff3333";
+                resDiv.style.display = 'block';
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = "استلام الآن 🚀"; 
+            }
         }
 
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => showToast("📋 تم نسخ الكرت"));
+            navigator.clipboard.writeText(text).then(() => showToast("📋 تم النسخ"));
         }
 
         function renderHistory() {
             const div = document.getElementById('historyList');
             const combo = document.getElementById('refCombo');
             
-            // تحديث القائمة المنسدلة
             combo.innerHTML = '<option value="">-- مراجع سابقة --</option>';
             const uniqueRefs = [...new Set(orderHistory.map(o => o.ref))].reverse();
             uniqueRefs.forEach(r => combo.innerHTML += `<option value="${r}">${r}</option>`);
 
             div.innerHTML = orderHistory.length ? orderHistory.slice().reverse().map(o => `
                 <div class="history-item">
-                    <strong>مرجع: ${o.ref}</strong><br>
-                    <small>${o.date || ''}</small><br>
-                    ${o.pkgs}
+                    <strong>مرجع: ${o.ref}</strong> | <small>${o.date.split(' ')[0]}</small><br>
+                    <span style="font-size:0.75rem; color:#bbb;">${o.pkgs}</span>
                 </div>
             `).join('') : '<p style="text-align:center; opacity:0.5;">لا يوجد طلبات سابقة</p>';
         }
 
         function toggleCart() { document.getElementById('cartModal').style.display = (document.getElementById('cartModal').style.display==='flex')?'none':'flex'; }
+        
         function toggleReceiveModal() { 
             renderHistory();
             document.getElementById('receiveModal').style.display = (document.getElementById('receiveModal').style.display==='flex')?'none':'flex'; 
+            document.getElementById('checkResult').style.display = 'none';
         }
+
         function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        window.onload = () => { fetchStock(); setInterval(fetchStock, 30000); };
+        window.onload = () => { fetchStock(); setInterval(fetchStock, 40000); };
     </script>
 </body>
 </html>
