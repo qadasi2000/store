@@ -25,7 +25,6 @@
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; }
         .btn:disabled { background: #555; color: #888; }
 
-        /* نافذة عرض الكود */
         #code-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; box-sizing: border-box; }
         .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 30px; width: 100%; text-align: center; }
         .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--gold); background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed var(--gold); }
@@ -96,7 +95,7 @@
     <nav class="nav hidden" id="bottom-nav">
         <div class="nav-btn active" onclick="switchSec('cards', this)">🏠 الرئيسة</div>
         <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
-        <div class="nav-btn" onclick="location.reload()" style="color:#ff6b6b">🚪 خروج</div>
+        <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
     </nav>
 </div>
 
@@ -104,21 +103,46 @@
     const URL = 'https://script.google.com/macros/s/AKfycbwp7c0VcKjywKrr1-njFypxFBSIVYRIpPaZOM6ycF1xo59qqcB8cii_T-y0rEb4Rzc6/exec';
     let myPhone = "";
 
-    async function handleLogin() {
-        const p = document.getElementById('login-phone').value;
+    // عند تحميل الصفحة، ابحث عن رقم هاتف مخزن
+    window.onload = function() {
+        const savedPhone = localStorage.getItem('majed_wallet_phone');
+        if (savedPhone) {
+            document.getElementById('login-phone').value = savedPhone;
+            handleLogin(savedPhone);
+        }
+    };
+
+    async function handleLogin(directPhone = null) {
+        const p = directPhone || document.getElementById('login-phone').value;
         if(p.length < 9) return alert("أدخل رقم هاتف صحيح");
+        
         showLoading(true);
         try {
             const res = await fetch(`${URL}?action=getWallet&id=${p}`);
             const data = await res.json();
+            
             myPhone = p;
+            // حفظ الرقم في ذاكرة المتصفح
+            localStorage.setItem('majed_wallet_phone', p);
+            
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('bottom-nav').classList.remove('hidden');
             loadCards();
-        } catch(e) { alert("خطأ في الاتصال"); }
+        } catch(e) { 
+            alert("خطأ في الاتصال"); 
+            localStorage.removeItem('majed_wallet_phone'); // مسح الرقم إذا فشل الاتصال
+        }
         showLoading(false);
+    }
+
+    // وظيفة الخروج الصحيحة لمسح البيانات
+    function handleLogout() {
+        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            localStorage.removeItem('majed_wallet_phone');
+            location.reload();
+        }
     }
 
     async function loadCards() {
@@ -141,7 +165,6 @@
         } catch(e) { grid.innerHTML = "خطأ في التحميل"; }
     }
 
-    // وظيفة الشراء التي كانت ناقصة
     async function handleBuy(cardName) {
         if(!confirm(`هل تريد شراء ${cardName}؟`)) return;
         showLoading(true);
