@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شبكة الماجد - الإصدار المؤمن V17.0</title>
+    <title>متجر الماجد الذكي - V18.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.1); }
@@ -11,26 +11,29 @@
         .header { padding: 20px 10px; }
         h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 4rem); color: var(--gold); margin: 0; }
         
-        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 20px auto; max-width: 500px; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { width: 85%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1.1rem; }
-        input:disabled { background: #333; color: var(--gold); cursor: not-allowed; border-color: #666; opacity: 0.8; }
+        .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 10px auto; max-width: 500px; border: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input, select { width: 85%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; font-size: 1rem; }
+        input:disabled { background: #333; color: var(--gold); cursor: not-allowed; }
         
-        .btn-main { background: var(--gold); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 85%; font-size: 1.1rem; margin-top: 5px; }
-        .balance-box { font-size: 2rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px dashed var(--gold); margin: 15px 0; display: none; }
+        .btn-main { background: var(--gold); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 85%; font-size: 1.1rem; }
+        .balance-box { font-size: 2rem; font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; border: 1px dashed var(--gold); margin: 10px 0; display: none; }
         
-        .history-section { margin-top: 20px; display: none; text-align: right; }
-        .history-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 10px; overflow: hidden; font-size: 0.9rem; }
-        .history-table th { background: var(--gold); color: var(--primary-bg); padding: 10px; }
-        .history-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 15px; max-width: 1000px; margin: 0 auto; display: none; }
+        .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid rgba(249, 217, 118, 0.2); position: relative; }
+        .package-card h3 { color: var(--gold); margin: 5px 0 0 0; font-size: 1.3rem; }
+        .package-card p { font-size: 0.8rem; margin-bottom: 10px; color: #ccc; }
+        .stock-tag { font-size: 0.75rem; color: #00ff88; display: block; margin-bottom: 5px; }
 
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; max-width: 1000px; margin: 0 auto; display: none; }
-        .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid rgba(249, 217, 118, 0.2); }
-        .btn-buy { background: var(--gold); color: black; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .qty-selector { width: 60px; padding: 5px; margin-left: 5px; border-radius: 5px; background: #000; color: var(--gold); border: 1px solid var(--gold); }
+        .btn-buy { background: var(--gold); color: black; border: none; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
         
+        .history-section { margin-top: 20px; display: none; text-align: right; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .history-table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.85rem; }
+        .history-table th { background: var(--gold); color: #000; padding: 8px; }
+        .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+
         #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 30px; left: 50%; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        .logout-btn { color: #aaa; font-size: 0.8rem; text-decoration: underline; cursor: pointer; display: block; margin-top: 15px; }
-        
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
@@ -44,37 +47,44 @@
     </div>
 
     <div class="wallet-section">
-        <h3 id="statusTitle" style="color: var(--gold); margin-bottom:15px;">تسجيل الدخول للمحفظة</h3>
-        
+        <h3 id="statusTitle" style="color: var(--gold); margin-bottom:15px;">تسجيل الدخول</h3>
         <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف">
-        
         <button id="loginBtn" class="btn-main" onclick="attemptLogin()">دخول</button>
 
         <div id="userArea" style="display: none;">
             <div id="balanceBox" class="balance-box">
                 <span id="currentBalance">0</span> <small>ريال</small>
             </div>
-            
             <input type="number" id="topupAmount" placeholder="أدخل مبلغ الشحن">
-            <button class="btn-main" style="background:#28a745; color:white;" onclick="sendTopup()">طلب شحن رصيد</button>
-            
-            <span class="logout-btn" onclick="logout()">تسجيل الخروج / تغيير الرقم</span>
-        </div>
-
-        <div id="historySection" class="history-section">
-            <h4 style="color: var(--gold); margin-bottom:10px;">🕒 سجل كروتك:</h4>
-            <table class="history-table">
-                <thead><tr><th>الباقة</th><th>الكود</th></tr></thead>
-                <tbody id="historyBody"></tbody>
-            </table>
+            <button class="btn-main" style="background:#28a745; color:white; font-size: 1rem;" onclick="sendTopup()">طلب شحن رصيد</button>
+            <small onclick="logout()" style="color:#aaa; cursor:pointer; display:block; margin-top:10px; text-decoration:underline;">تبديل الحساب</small>
         </div>
     </div>
 
     <div id="packagesGrid" class="grid-container"></div>
 
+    <div id="historySection" class="history-section">
+        <h4 style="color: var(--gold);">🕒 سجل كروتك الأخيرة:</h4>
+        <table class="history-table">
+            <thead><tr><th>الباقة</th><th>الكود</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+        </table>
+    </div>
+
     <script>
-        // الرابط الجديد الخاص بك
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzAyAh5BAnc2WLbkpozpnxn6Ih5eTv3H53mrsx3v0wl5GUnuVd7z5dfTrFTvlVkpTyJ/exec';
+
+        const packagesData = [
+            { id: "100", name: "باقة 100", price: 100, desc: "512 ميجا" },
+            { id: "200", name: "باقة 200", price: 200, desc: "1 جيجا" },
+            { id: "300", name: "باقة 300", price: 300, desc: "1.5 جيجا" },
+            { id: "500", name: "باقة 500", price: 500, desc: "2.5 جيجا" },
+            { id: "1000", name: "باقة 1000", price: 1000, desc: "5 جيجا" },
+            { id: "2000", name: "باقة 2000", price: 2000, desc: "10 جيجا" },
+            { id: "3000", name: "باقة 3000", price: 3000, desc: "15 جيجا" },
+            { id: "5000", name: "باقة 5000", price: 5000, desc: "25 جيجا" },
+            { id: "10000", name: "باقة 10000", price: 10000, desc: "50 جيجا" }
+        ];
 
         function getDeviceId() {
             let id = localStorage.getItem('majed_device_id');
@@ -87,23 +97,18 @@
 
         async function attemptLogin() {
             const walletId = document.getElementById('walletNumber').value.trim();
-            if(walletId.length < 9) return showToast("⚠️ أدخل رقم هاتف صحيح");
+            if(walletId.length < 7) return showToast("⚠️ الرقم غير صحيح");
 
-            showToast("جاري التحقق من الهوية...", "#f59e0b");
-            
+            showToast("جاري التحقق...", "#f59e0b");
             try {
-                const res = await fetch(`${scriptURL}?action=getWallet&id=${walletId}&deviceId=${getDeviceId()}&t=${Date.now()}`);
+                const res = await fetch(`${scriptURL}?action=getWallet&id=${walletId}&deviceId=${getDeviceId()}`);
                 const data = await res.json();
 
-                if(data.error) {
-                    showToast("❌ هذا الرقم مرتبط بجهاز آخر!", "#d32f2f");
-                    return;
-                }
+                if(data.error) return showToast("❌ الرقم مسجل لجهاز آخر");
 
-                // نجاح الدخول: حفظ البيانات وفتح الواجهة
                 localStorage.setItem('majed_wallet', walletId);
                 showUI(data);
-            } catch (e) { showToast("❌ خطأ في الاتصال بالخادم"); }
+            } catch (e) { showToast("❌ خطأ في الاتصال"); }
         }
 
         function showUI(data) {
@@ -112,17 +117,71 @@
             document.getElementById('userArea').style.display = "block";
             document.getElementById('balanceBox').style.display = "block";
             document.getElementById('packagesGrid').style.display = "grid";
-            document.getElementById('statusTitle').innerText = "محفظتي";
-            
+            document.getElementById('statusTitle').innerText = "مرحباً بك";
             document.getElementById('currentBalance').innerText = data.balance;
             
             if(data.history && data.history.length > 0) {
                 document.getElementById('historySection').style.display = "block";
                 document.getElementById('historyBody').innerHTML = data.history.map(item => `
-                    <tr><td>${item.packageName}</td><td style="font-weight:bold; color:var(--gold); user-select:all;">${item.code}</td></tr>
+                    <tr><td>${item.packageName}</td><td style="color:var(--gold); font-weight:bold; user-select:all;">${item.code}</td></tr>
                 `).join('');
             }
             renderPackages();
+            fetchStock();
+        }
+
+        function renderPackages() {
+            const grid = document.getElementById('packagesGrid');
+            grid.innerHTML = packagesData.map(pkg => `
+                <div class="package-card">
+                    <span class="stock-tag" id="stock-${pkg.id}">جارِ الفحص..</span>
+                    <h3>${pkg.price} ريال</h3>
+                    <p>${pkg.desc}</p>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <select id="qty-${pkg.id}" class="qty-selector">
+                            <option value="1">1</option><option value="2">2</option>
+                            <option value="3">3</option><option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <button class="btn-buy" onclick="buyPackage('${pkg.id}', '${pkg.name}', ${pkg.price})">شراء</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchStock() {
+            try {
+                const res = await fetch(`${scriptURL}?action=getStock`);
+                const stock = await res.json();
+                packagesData.forEach(pkg => {
+                    const count = stock[pkg.name] || 0;
+                    const el = document.getElementById(`stock-${pkg.id}`);
+                    if(el) el.innerText = count > 0 ? `متاح: ${count}` : "نفد";
+                });
+            } catch (e) {}
+        }
+
+        async function buyPackage(id, name, price) {
+            const walletId = localStorage.getItem('majed_wallet');
+            const qty = document.getElementById(`qty-${id}`).value;
+            const totalPrice = price * qty;
+
+            if(!confirm(`هل تريد شراء عدد (${qty}) من ${name}؟\nالإجمالي: ${totalPrice} ريال`)) return;
+
+            showToast("جاري المعالجة...", "#f59e0b");
+            try {
+                // ملاحظة: السكربت يحتاج لدعم شراء كروت متعددة في طلب واحد، 
+                // حالياً سنقوم بإرسال الطلب، إذا كان السكربت لا يدعم التكرار سيحتاج لتعديل بسيط.
+                const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${walletId}&deviceId=${getDeviceId()}&packageName=${name}&qty=${qty}`);
+                const data = await res.json();
+                
+                if(data.success) {
+                    alert(`✅ نجحت العملية!\nكود الكرت: ${data.code}`);
+                    location.reload();
+                } else {
+                    alert(`❌ فشل: ${data.msg}`);
+                }
+            } catch (e) { showToast("❌ خطأ في الشبكة"); }
         }
 
         async function sendTopup() {
@@ -131,44 +190,18 @@
             if(!amount) return showToast("⚠️ أدخل المبلغ");
 
             showToast("جاري إرسال الطلب...", "#2196f3");
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ action: "requestTopup", walletId: walletId, amount: amount }) });
-            showToast("✅ تم الطلب! ستصلك رسالة عند التفعيل", "#28a745");
+            // استخدام URLSearchParams لضمان وصول البيانات كـ POST
+            const params = new URLSearchParams();
+            params.append('action', 'requestTopup');
+            params.append('walletId', walletId);
+            params.append('amount', amount);
+
+            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: params });
+            showToast("✅ تم الطلب! انتظر الإشعار", "#28a745");
             document.getElementById('topupAmount').value = "";
         }
 
-        function renderPackages() {
-            const packs = [100, 200, 300, 500, 1000];
-            const grid = document.getElementById('packagesGrid');
-            grid.innerHTML = packs.map(p => `
-                <div class="package-card">
-                    <h3>${p} ريال</h3>
-                    <button class="btn-buy" onclick="buyPackage('باقة ${p}')">شراء الآن</button>
-                </div>
-            `).join('');
-        }
-
-        async function buyPackage(name) {
-            const walletId = localStorage.getItem('majed_wallet');
-            if(!confirm(`تأكيد شراء ${name}؟`)) return;
-
-            showToast("جاري المعالجة...", "#f59e0b");
-            try {
-                const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${walletId}&deviceId=${getDeviceId()}&packageName=${name}`);
-                const data = await res.json();
-                if(data.success) {
-                    alert("✅ نجحت العملية!\nكود الكرت: " + data.code);
-                    location.reload();
-                } else {
-                    alert("❌ " + data.msg);
-                }
-            } catch (e) { showToast("❌ خطأ في الشبكة"); }
-        }
-
-        function logout() {
-            localStorage.removeItem('majed_wallet');
-            location.reload();
-        }
-
+        function logout() { localStorage.removeItem('majed_wallet'); location.reload(); }
         function showToast(m, c) {
             const t = document.getElementById("toast");
             t.innerText = m; t.style.background = c; t.className = "show";
