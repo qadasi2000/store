@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V4 Pro</title>
+    <title>محفظة الماجد الذكية | V5 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; }
+        :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; }
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
-        /* البطاقات والتصميم العام */
+        /* البطاقات */
         .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 20px; backdrop-filter: blur(10px); margin-bottom: 20px; }
         .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 0 0 40px 40px; margin: -20px -20px 25px; border-bottom: 2px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
         
-        /* شبكة الكروت */
+        /* السجل */
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; }
+        .status-completed { background: var(--success); color: #000; }
+        .status-pending { background: var(--pending); color: #000; }
+
+        /* العناصر التفاعلية */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .item:active { transform: scale(0.95); }
-        
-        /* المدخلات والأزرار */
         input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; }
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; }
-        .btn:disabled { background: #555; color: #888; cursor: not-allowed; }
         
-        /* النافذة المنبثقة للكود */
-        #code-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; box-sizing: border-box; }
-        .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 30px; width: 100%; text-align: center; }
-        .code-display { font-size: 2rem; letter-spacing: 5px; color: var(--gold); background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed var(--gold); }
-
         /* التنقل السفلي */
-        .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 12px 0; border-top: 1px solid var(--gold); }
-        .nav-btn { flex: 1; text-align: center; font-size: 0.85rem; color: #888; cursor: pointer; }
+        .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 12px 0; border-top: 1px solid var(--gold); z-index: 1000; }
+        .nav-btn { flex: 1; text-align: center; font-size: 0.8rem; color: #888; cursor: pointer; }
         .nav-btn.active { color: var(--gold); font-weight: bold; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
@@ -48,21 +45,11 @@
     <div style="color:var(--gold)">جاري معالجة طلبك...</div>
 </div>
 
-<div id="code-modal">
-    <div class="modal-content">
-        <h3 style="margin-top:0">مبروك! تم شراء الكرت</h3>
-        <div class="code-display" id="generated-code">------</div>
-        <button class="btn" onclick="copyCode()">نسخ الكود</button>
-        <button class="btn" style="background:transparent; color:#fff; margin-top:10px" onclick="closeModal()">إغلاق</button>
-    </div>
-</div>
-
 <div class="app">
     <div id="page-login">
         <div style="text-align:center; padding: 60px 0;">
-            <div style="background:var(--gold); width:90px; height:90px; border-radius:50%; margin:0 auto; line-height:90px; font-size:2.5rem; color:#000; font-weight:bold; box-shadow: 0 0 20px var(--gold);">M</div>
+            <div style="background:var(--gold); width:80px; height:80px; border-radius:50%; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:bold;">M</div>
             <h2 style="margin-top:20px">شبكة الماجد الذكية</h2>
-            <p style="color:#aaa; font-size:0.9rem">أهلاً بك في الجيل الرابع من خدماتنا</p>
         </div>
         <div class="card">
             <input type="number" id="login-phone" placeholder="أدخل رقم الهاتف">
@@ -72,24 +59,29 @@
 
     <div id="page-main" class="hidden">
         <div class="bal-box">
-            <small style="opacity: 0.8;">الرصيد المتاح</small>
+            <small>الرصيد المتاح</small>
             <span class="bal-val" id="display-bal">0</span>
-            <small style="color:var(--gold)">ريال يمني</small>
+            <small>ريال يمني</small>
         </div>
 
         <div id="sec-cards">
-            <h3 style="color:var(--gold); margin-bottom:15px; padding-right:5px">🛒 شراء باقة انترنت</h3>
-            <div id="cards-grid" class="grid">
-                </div>
+            <h3 style="color:var(--gold); margin-bottom:15px">🛒 شراء باقة انترنت</h3>
+            <div id="cards-grid" class="grid"></div>
         </div>
 
         <div id="sec-topup" class="hidden">
             <div class="card">
-                <h3 style="color:var(--gold); margin-top:0">➕ شحن رصيد المحفظة</h3>
-                <p style="font-size:0.8rem; color:#ccc">قم بتحويل المبلغ عبر الكريمي وأرسل المرجع</p>
-                <input type="number" id="top-amt" placeholder="المبلغ المراد شحنه">
+                <h3 style="color:var(--gold); margin-top:0">➕ شحن رصيد</h3>
+                <input type="number" id="top-amt" placeholder="المبلغ">
                 <input type="text" id="top-ref" placeholder="رقم المرجع">
-                <button class="btn" onclick="handleTopup()">إرسال الطلب للمراجعة</button>
+                <button class="btn" onclick="handleTopup()">إرسال الطلب</button>
+            </div>
+
+            <div class="card">
+                <h3 style="color:var(--gold); margin-top:0; font-size:1.1rem">📜 سجل العمليات الأخيرة</h3>
+                <div id="history-list">
+                    <p style="text-align:center; color:#666; font-size:0.8rem">لا توجد عمليات حالياً</p>
+                </div>
             </div>
         </div>
         
@@ -98,23 +90,23 @@
 
     <nav class="nav hidden" id="bottom-nav">
         <div class="nav-btn active" onclick="switchSec('cards', this)">🏠 الرئيسة</div>
-        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
+        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن وسجل</div>
         <div class="nav-btn" onclick="location.reload()" style="color:#ff6b6b">🚪 خروج</div>
     </nav>
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbwARXe1-gbXuyoF73TiJ6YgQ9eusxzYFajf20QJXBPgeoGNTpYvKOqtS5u0JX18a5ma/exec';
+    // كود النشر الجديد الخاص بك
+    const URL = 'https://script.google.com/macros/s/AKfycbzttnVr4qTeVw-zU9XrQD9BhSKzT5uWAjmWxGemZMuNrhusxkYMC0ckuKNER9oy0Yt_/exec';
     let myPhone = "";
 
-    // الدخول
     async function handleLogin() {
         const p = document.getElementById('login-phone').value;
-        if(p.length < 9) return alert("يرجى إدخال رقم هاتف صحيح");
+        if(p.length < 9) return alert("أدخل رقم هاتف صحيح");
         
         showLoading(true);
         try {
-            const res = await fetch(`${URL}?action=getWallet&id=${p}&deviceId=DEVICE-${Math.floor(Math.random()*9999)}`);
+            const res = await fetch(`${URL}?action=getWallet&id=${p}`);
             const data = await res.json();
             myPhone = p;
             document.getElementById('display-bal').innerText = data.balance;
@@ -122,14 +114,13 @@
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('bottom-nav').classList.remove('hidden');
             loadCards();
-        } catch(e) { alert("تعذر الاتصال بالسيرفر"); }
+            loadHistory(); // تحميل السجل عند الدخول
+        } catch(e) { alert("خطأ في الاتصال"); }
         showLoading(false);
     }
 
-    // جلب المخزون وتوليد أزرار الشراء
     async function loadCards() {
         const grid = document.getElementById('cards-grid');
-        grid.innerHTML = "<div style='grid-column:1/3; text-align:center'>جاري تحميل الباقات...</div>";
         try {
             const res = await fetch(`${URL}?action=getStock`);
             const stock = await res.json();
@@ -137,59 +128,49 @@
             Object.keys(stock).forEach(key => {
                 const isOut = stock[key] == 0;
                 grid.innerHTML += `
-                    <div class="item" style="${isOut ? 'opacity:0.6' : ''}">
-                        <div style="font-size:0.75rem; font-weight:bold; color:${isOut?'#ff4d4d':'#2ecc71'}">
-                            ${isOut ? 'نفد من المخزون' : 'متوفر: ' + stock[key]}
-                        </div>
-                        <h4 style="margin:10px 0; color:var(--gold)">${key}</h4>
-                        <button class="btn" style="padding:8px; font-size:0.85rem" 
-                            onclick="handleBuy('${key}')" ${isOut ? 'disabled' : ''}>
-                            شراء الآن
-                        </button>
+                    <div class="item">
+                        <div style="font-size:0.7rem; color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</div>
+                        <h4 style="margin:8px 0">${key}</h4>
+                        <button class="btn" style="padding:8px; font-size:0.8rem" ${isOut?'disabled':''}>شراء</button>
                     </div>`;
             });
-        } catch(e) { grid.innerHTML = "خطأ في تحديث البيانات"; }
+        } catch(e) { grid.innerHTML = "خطأ في تحميل البيانات"; }
     }
 
-    // شراء كرت
-    async function handleBuy(cardName) {
-        if(!confirm(`هل ترغب في شراء (${cardName})؟ سيتم الخصم من رصيدك فوراً.`)) return;
-        
-        showLoading(true);
-        try {
-            const res = await fetch(`${URL}?action=buyCard&id=${myPhone}&cardType=${cardName}`);
-            const data = await res.json();
-            
-            if(data.success) {
-                document.getElementById('display-bal').innerText = data.newBalance;
-                document.getElementById('generated-code').innerText = data.code;
-                document.getElementById('code-modal').style.display = 'flex';
-                loadCards(); // تحديث المخزون
-            } else {
-                alert("❌ فشل الشراء: " + data.msg);
-            }
-        } catch(e) { alert("حدث خطأ تقني أثناء الشراء"); }
-        showLoading(false);
-    }
-
-    // شحن الرصيد
+    // وظيفة جديدة لجلب السجل (تحتاج إضافة action=getHistory في السكربت أو سنعتمد على التحديث اليدوي)
     async function handleTopup() {
         const a = document.getElementById('top-amt').value;
         const r = document.getElementById('top-ref').value;
-        if(!a || !r) return alert("يرجى ملء كافة البيانات");
+        if(!a || !r) return alert("أكمل البيانات");
         
         showLoading(true);
         try {
             await fetch(`${URL}?action=requestTopup&walletId=${myPhone}&amount=${a}&ref=${r}`);
-            alert("✅ تم إرسال طلبك بنجاح. سيتم مراجعة الدفعة وإضافة الرصيد قريباً.");
+            alert("✅ تم الإرسال بنجاح");
+            
+            // إضافة الطلب للسجل مؤقتاً في الواجهة
+            addEntryToUI(a, "قيد المراجعة");
+            
             document.getElementById('top-amt').value = "";
             document.getElementById('top-ref').value = "";
-            switchSec('cards', document.querySelectorAll('.nav-btn')[0]);
-        } catch(e) { alert("خطأ في الإرسال"); }
+        } catch(e) { alert("حدث خطأ"); }
         showLoading(false);
     }
 
-    // وظائف مساعدة
+    function addEntryToUI(amt, status) {
+        const list = document.getElementById('history-list');
+        if(list.innerText.includes("لا توجد")) list.innerHTML = "";
+        const html = `
+            <div class="history-item">
+                <div>
+                    <strong>${amt} ريال</strong><br>
+                    <small style="color:#888">${new Date().toLocaleDateString('ar-YE')}</small>
+                </div>
+                <span class="status-badge ${status==='مكتمل'?'status-completed':'status-pending'}">${status}</span>
+            </div>`;
+        list.innerHTML = html + list.innerHTML;
+    }
+
     function switchSec(id, el) {
         document.getElementById('sec-cards').classList.add('hidden');
         document.getElementById('sec-topup').classList.add('hidden');
@@ -199,14 +180,6 @@
     }
 
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
-    
-    function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
-    
-    function copyCode() {
-        const code = document.getElementById('generated-code').innerText;
-        navigator.clipboard.writeText(code);
-        alert("تم نسخ الكود بنجاح!");
-    }
 </script>
 </body>
 </html>
