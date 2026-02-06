@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المحفظة والسلة</title>
+    <title>متجر شبكة الماجد - النسخة الاحترافية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); --wallet-color: #00e676; }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
 
-        /* --- شريط المحفظة العلوي الجديد --- */
+        /* --- شريط المحفظة العلوي --- */
         .wallet-bar { background: rgba(0,0,0,0.6); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 1500; backdrop-filter: blur(10px); }
         .balance-display { color: var(--wallet-color); font-weight: bold; font-size: 1.1rem; background: rgba(0,230,118,0.1); padding: 5px 15px; border-radius: 10px; border: 1px solid var(--wallet-color); cursor: pointer; }
         .wallet-id-tag { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
@@ -71,8 +71,10 @@
 
     <div id="walletModal" class="modal"><div class="modal-content">
         <h2 style="color: var(--gold);">شحن المحفظة 💰</h2>
-        <p>قم بتحويل المبلغ وأدخل رقم المرجع هنا:</p>
-        <input type="text" id="depositRef" placeholder="رقم مرجع الحوالة" />
+        <p>أدخل المبلغ المراد شحنه:</p>
+        <input type="number" id="depositAmount" placeholder="المبلغ (مثال: 500)" />
+        <p>أدخل رقم مرجع الحوالة:</p>
+        <input type="text" id="depositRef" placeholder="رقم المرجع" />
         <button class="btn-pay" onclick="sendDepositRequest()">إرسال طلب الشحن</button>
         <button onclick="toggleWalletModal()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
     </div></div>
@@ -98,7 +100,8 @@
     <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxbS9rAHPTPpRprfZVBZ62Hq1G46_Mhs-fpgvChyEUmYTNCrnKhIsJO2WwozGKlpFzN/exec';
+        // رابط السكربت الجديد الخاص بك
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyZ8Ghxdl_nZjBMnENAM3a8JA07LcYERRF3FkGAEM7PZJ_2gd9j1WTpXAQB01Oe9XE5/exec';
         
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
@@ -108,7 +111,6 @@
         ];
 
         let cart = [];
-        // نظام معرف المحفظة: إذا لم يوجد واحد، يتم إنشاء معرف فريد
         let wallet = {
             id: localStorage.getItem('maj_wallet_id') || 'MAJ-' + Math.floor(1000 + Math.random() * 9000),
             balance: parseFloat(localStorage.getItem('maj_wallet_balance') || '0.00')
@@ -129,11 +131,12 @@
         }
 
         async function syncWallet() {
-            document.getElementById('userBalance').innerText = "⏳";
+            const balanceEl = document.getElementById('userBalance');
+            balanceEl.innerText = "⏳";
             try {
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${wallet.id}&t=${Date.now()}`);
                 const data = await res.json();
-                wallet.balance = parseFloat(data.balance);
+                wallet.balance = parseFloat(data.balance || 0);
                 localStorage.setItem('maj_wallet_balance', wallet.balance);
                 updateWalletUI();
             } catch (e) { updateWalletUI(); }
@@ -182,7 +185,6 @@
             const total = cart.reduce((s, i) => s + i.price, 0);
             let ref = document.getElementById('refInput').value.trim();
             
-            // إذا كان الرصيد كافٍ ولم يكتب مرجع، نصنع مرجع محفظة تلقائي
             if (wallet.balance >= total && !ref) {
                 ref = "محفظة-" + wallet.id + "-" + Math.floor(Math.random()*1000);
             }
@@ -204,11 +206,22 @@
             finally { btn.disabled = false; btn.innerText = "تأكيد العملية 🚀"; }
         }
 
+        // إرسال طلب شحن المحفظة مع المبلغ
         async function sendDepositRequest() {
+            const amount = document.getElementById('depositAmount').value.trim();
             const ref = document.getElementById('depositRef').value.trim();
-            if (!ref) return;
+            if (!amount || !ref) return showToast("⚠️ أكمل البيانات");
+            
             showToast("⏳ جاري إرسال الطلب...");
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ packages: "طلب شحن رصيد", ref: ref, phone: wallet.id }) });
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: new URLSearchParams({ 
+                    packages: "طلب شحن رصيد " + amount, 
+                    ref: ref, 
+                    phone: wallet.id 
+                }) 
+            });
             showToast("✅ تم إرسال الطلب للمراجعة");
             toggleWalletModal();
         }
