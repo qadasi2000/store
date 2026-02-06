@@ -3,52 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر شبكة الماجد - المطور V9.2 + المحفظة</title>
+    <title>متجر شبكة الماجد - النسخة الاحترافية V9.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
     <style>
+        /* [نفس التنسيقات السابقة التي في كودك دون تغيير لضمان التصميم] */
         :root { --primary-bg: #2b0010; --gold: #f9d976; --success-bg: #0d2b15; --card-bg: rgba(255, 255, 255, 0.05); --wallet-color: #00e676; }
         body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; overflow-x: hidden;}
-        
-        /* شريط المحفظة الاحترافي */
-        .wallet-bar { background: rgba(0,0,0,0.5); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); sticky; top: 0; z-index: 1500; backdrop-filter: blur(10px); }
+        .wallet-bar { background: rgba(0,0,0,0.5); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); position: sticky; top: 0; z-index: 1500; backdrop-filter: blur(10px); }
         .wallet-info { display: flex; align-items: center; gap: 15px; }
         .balance-display { color: var(--wallet-color); font-weight: bold; font-size: 1.2rem; background: rgba(0,230,118,0.1); padding: 5px 15px; border-radius: 10px; border: 1px solid var(--wallet-color); cursor: pointer; }
         .wallet-id { font-size: 0.75rem; color: #aaa; }
-
         h1 { font-family: 'Lateef', serif; font-size: clamp(2.5rem, 10vw, 5rem) !important; color: var(--gold); text-shadow: 0 4px 10px rgba(0,0,0,0.5); margin: 0; white-space: nowrap; }
-        
         .marquee { background: rgba(0, 0, 0, 0.4); border-bottom: 2px solid var(--gold); color: var(--gold); padding: 12px 0; overflow: hidden; }
         .marquee-content { display: inline-block; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
         .header { text-align: center; padding: 20px 10px; }
         .btn-check, .cart-float { display: inline-block; margin: 10px; color: var(--primary-bg); background: var(--gold); border: 2px solid white; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(249, 217, 118, 0.4); }
         .cart-float { position: fixed; bottom: 30px; left: 30px; z-index: 1000; padding: 18px 25px; font-size: 1.1rem; }
-
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding: 20px; max-width: 1400px; margin: 0 auto; justify-items: center; }
         .package-unit { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        
         .card-wrapper { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; border-radius: 50px; overflow: hidden; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--accent-color)); }
         .card-wrapper::before { content: ""; position: absolute; width: 180%; height: 180%; background: conic-gradient(transparent, transparent, transparent, var(--accent-color)); animation: rotate-border 3s linear infinite; }
         .card-wrapper::after { content: ""; position: absolute; inset: 7px; background: var(--primary-bg); border-radius: 45px; z-index: 1; }
         @keyframes rotate-border { 100% { transform: rotate(360deg); } }
-        
         .diamond-card { width: 180px; height: 180px; background: var(--card-gradient); border-radius: 40px; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; }
         .card-content { text-align: center; color: white; }
         .price { font-size: 2rem; font-weight: 900; display: block; color: white; }
         .data { font-size: 1.2rem; font-weight: bold; color: var(--gold); }
         .stock-tag { font-size: 0.8rem; margin-top: 5px; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 10px; }
-
         .btn-add-package { background: var(--gold); color: var(--primary-bg); border: none; padding: 12px 30px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: 180px; }
         .btn-add-package:disabled { background: #666; color: #ccc; cursor: not-allowed; opacity: 0.7; }
-
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 20px; }
         .modal-content { background: var(--primary-bg); border: 2px solid var(--gold); padding: 25px; border-radius: 25px; width: 100%; max-width: 480px; text-align: center; color: white; max-height: 90vh; overflow-y: auto; }
-        
         input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.3); color: white; text-align: center; box-sizing: border-box; font-family: 'Cairo'; }
         .btn-pay { background: var(--gold); color: var(--primary-bg); border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 1.2rem; }
         
-        /* تدرجات ألوان الباقات */
         .b100 { --accent-color: #00d2ff; --card-gradient: linear-gradient(135deg, #1e3a8a, #3b82f6); }
         .b200 { --accent-color: #10b981; --card-gradient: linear-gradient(135deg, #064e3b, #10b981); }
         .b300 { --accent-color: #d946ef; --card-gradient: linear-gradient(135deg, #701a75, #d946ef); }
@@ -69,10 +58,10 @@
 
     <div class="wallet-bar">
         <div class="wallet-info">
-            <div class="balance-display" onclick="toggleWalletModal()">
-                <span id="userBalance">0.00</span> ريال
+            <div class="balance-display" onclick="syncWalletWithCloud()">
+                <span id="userBalance">...</span> ريال
             </div>
-            <div class="wallet-id">معرف المحفظة: <b id="displayWalletId">...</b></div>
+            <div class="wallet-id">معرف المحفظة: <b id="displayWalletId">جاري التحميل...</b></div>
         </div>
         <button onclick="toggleWalletModal()" style="background:var(--gold); border:none; border-radius:8px; padding:5px 10px; font-weight:bold; cursor:pointer;">+ شحن</button>
     </div>
@@ -104,7 +93,6 @@
         <div style="margin: 15px 0; font-weight: bold; border-top: 1px solid var(--gold); padding-top: 10px;">
             إجمالي المبلغ: <span id="cartTotalText">0</span> ريال
         </div>
-        
         <div id="paymentMethods">
             <p style="font-size:0.9rem; color:var(--wallet-color);" id="walletPayInfo">سيتم الخصم من رصيد المحفظة تلقائياً</p>
             <div id="manualRefInput" style="display:none;">
@@ -112,7 +100,6 @@
                 <input type="text" id="refInput" placeholder="أدخل رقم مرجع الحوالة هنا" />
             </div>
         </div>
-
         <button class="btn-pay" id="payBtn" onclick="processOrder()">تأكيد العملية 🚀</button>
         <button onclick="toggleCart()" style="background:none; border:none; color:#bbb; margin-top:10px; cursor:pointer;">إلغاء</button>
     </div></div>
@@ -121,17 +108,17 @@
         <h2 style="color: #4caf50;">استلام الكروت 🎫</h2>
         <select id="refCombo" onchange="document.getElementById('checkRefInput').value = this.value"></select>
         <input type="text" id="checkRefInput" placeholder="أدخل المرجع يدوياً" />
-        <button class="btn-pay" style="background:#4caf50; color:white;" onclick="checkOrderNow()">تحديث الحالة</button>
-        <div id="checkResult"></div>
+        <button id="checkBtn" class="btn-pay" style="background:#4caf50; color:white;" onclick="checkOrderNow()">تحديث الحالة</button>
+        <div id="checkResult" style="margin-top:15px; white-space:pre-wrap; font-weight:bold; color:var(--gold);"></div>
         <button onclick="toggleReceiveModal()" style="background:none; border:none; color:#bbb; margin-top:15px; cursor:pointer;">إغلاق</button>
     </div></div>
 
     <div class="cart-float" id="floatingCartBtn" style="display:none;" onclick="toggleCart()">🛒 السلة (<span id="cartCount">0</span>)</div>
 
     <script>
+        // رابط السكربت الخاص بك
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw4nnvf8mBvKgTJcEcz-9_1O5Lf-gsGyMmIurV3MvSsKUBMa_nc_rQetGVaK4h8arrm/exec';
         
-        // البيانات
         const packagesData = [
             { id: 'b100', name: 'باقة 100', price: 100, data: '500 ميجا' },
             { id: 'b200', name: 'باقة 200', price: 200, data: '1 جيجا' },
@@ -143,10 +130,9 @@
         ];
 
         let cart = [];
-        let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
         let currentStock = {};
+        let orderHistory = JSON.parse(localStorage.getItem('my_orders') || '[]');
         
-        // نظام المحفظة
         let wallet = {
             id: localStorage.getItem('wallet_id') || generateWalletId(),
             balance: parseFloat(localStorage.getItem('wallet_balance') || '0.00')
@@ -158,13 +144,27 @@
             return newId;
         }
 
+        // --- ميزة المزامنة السحابية الجديدة ---
+        async function syncWalletWithCloud() {
+            document.getElementById('displayWalletId').innerText = "جاري المزامنة...";
+            try {
+                const res = await fetch(`${scriptURL}?action=getWallet&id=${wallet.id}&t=${Date.now()}`);
+                const data = await res.json();
+                wallet.balance = parseFloat(data.balance);
+                localStorage.setItem('wallet_balance', wallet.balance);
+                updateWalletUI();
+            } catch (e) {
+                console.error("Cloud sync failed", e);
+                updateWalletUI();
+            }
+        }
+
         function updateWalletUI() {
             document.getElementById('userBalance').innerText = wallet.balance.toFixed(2);
             document.getElementById('modalBalance').innerText = wallet.balance.toFixed(2);
             document.getElementById('displayWalletId').innerText = wallet.id;
         }
 
-        // الوظائف الأساسية
         function renderInitialPackages() {
             const grid = document.getElementById('packagesGrid');
             grid.innerHTML = packagesData.map(pkg => `
@@ -187,39 +187,34 @@
                     const tag = document.getElementById(`stock-${pkg.id}`);
                     const btn = document.getElementById(`btn-${pkg.id}`);
                     if(tag) tag.innerText = count > 0 ? `متاح: ${count}` : '❌ نفدت';
-                    if(btn && count <= 0) btn.disabled = true;
+                    if(btn) btn.disabled = count <= 0;
                 });
             } catch (e) { console.log("Stock Sync Error"); }
         }
 
         function addToCart(name, price, id) {
-            let item = cart.find(i => i.name === name);
-            if (!item) {
-                cart.push({ name, price, qty: 1, id });
-                showToast("✅ تمت الإضافة", "#28a745");
-            }
+            cart.push({ name, price, id, qty: 1 });
+            showToast("✅ تمت الإضافة للسلة", "#28a745");
             updateCartUI();
             document.getElementById('floatingCartBtn').style.display = 'block';
         }
 
         function updateCartUI() {
-            const count = cart.reduce((s, i) => s + i.qty, 0);
+            const count = cart.length;
             document.getElementById('cartCount').innerText = count;
             let total = 0;
             const list = document.getElementById('cartItemsList');
             
-            list.innerHTML = cart.map((item, i) => {
-                total += (item.price * item.qty);
+            list.innerHTML = cart.map(item => {
+                total += item.price;
                 return `<div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between;">
                     <span>${item.name}</span>
                     <span>${item.price} ريال</span>
                 </div>`;
             }).join('');
             
-            const totalText = document.getElementById('cartTotalText');
-            totalText.innerText = total;
+            document.getElementById('cartTotalText').innerText = total;
 
-            // منطق الدفع
             if (wallet.balance >= total) {
                 document.getElementById('walletPayInfo').style.display = 'block';
                 document.getElementById('manualRefInput').style.display = 'none';
@@ -230,28 +225,22 @@
         }
 
         async function processOrder() {
-            const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+            const total = cart.reduce((s, i) => s + i.price, 0);
             let ref;
 
             if (wallet.balance >= total) {
-                // دفع عبر المحفظة
-                ref = "WLT-" + wallet.id + "-" + Date.now().toString().slice(-4);
-                wallet.balance -= total;
-                localStorage.setItem('wallet_balance', wallet.balance);
-                updateWalletUI();
-                showToast("💰 تم الخصم من المحفظة", "#28a745");
+                ref = "WLT-" + wallet.id + "-" + Date.now().toString().slice(-5);
+                // ملاحظة: الخصم الحقيقي يتم يدوياً في الشيت أو برمجياً عند التفعيل
             } else {
-                // دفع يدوي
                 ref = document.getElementById('refInput').value.trim();
                 if(!ref) return showToast("⚠️ أدخل المرجع", "#f57c00");
             }
 
             const btn = document.getElementById('payBtn');
-            btn.disabled = true; btn.innerText = "جاري المعالجة...";
+            btn.disabled = true; btn.innerText = "جاري الإرسال...";
 
-            const pkgsString = cart.flatMap(item => Array(item.qty).fill(item.name)).join(', ');
-            const now = new Date();
-
+            const pkgsString = cart.map(i => i.name).join(', ');
+            
             try {
                 await fetch(scriptURL, { 
                     method: 'POST', 
@@ -259,26 +248,63 @@
                     body: new URLSearchParams({ packages: pkgsString, ref: ref, phone: wallet.id }) 
                 });
                 
-                orderHistory.push({ ref: ref, total: cart.length, timestamp: now.toLocaleString('ar-YE') });
+                orderHistory.push({ ref: ref, timestamp: new Date().toLocaleString('ar-YE') });
                 localStorage.setItem('my_orders', JSON.stringify(orderHistory));
                 
-                showToast("🚀 تم إرسال الطلب بنجاح", "#28a745");
+                showToast("🚀 تم إرسال طلبك بنجاح", "#28a745");
                 cart = []; updateCartUI(); toggleCart();
-                setTimeout(() => { toggleReceiveModal(); document.getElementById('checkRefInput').value = ref; checkOrderNow(); }, 1000);
-            } catch (e) { showToast("❌ خطأ اتصال", "#d32f2f"); }
+                
+                // الانتقال المباشر لصفحة الاستلام
+                setTimeout(() => { 
+                    toggleReceiveModal(); 
+                    document.getElementById('checkRefInput').value = ref; 
+                    checkOrderNow(); 
+                }, 1000);
+
+            } catch (e) { showToast("❌ فشل الاتصال", "#d32f2f"); }
             finally { btn.disabled = false; btn.innerText = "تأكيد العملية 🚀"; }
+        }
+
+        // --- وظيفة استلام الكروت المحسنة ---
+        async function checkOrderNow() {
+            const ref = document.getElementById('checkRefInput').value.trim();
+            if(!ref) return;
+            
+            const resDiv = document.getElementById('checkResult');
+            const btn = document.getElementById('checkBtn');
+            
+            resDiv.innerText = "⏳ جاري فحص الحالة...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${scriptURL}?action=check&ref=${ref}&t=${Date.now()}`);
+                const text = await res.text();
+                resDiv.innerText = text;
+                
+                // إذا تم التفعيل، قم بتحديث المحفظة أيضاً فقد يكون المدير خصم المبلغ
+                if(text.includes("✅")) syncWalletWithCloud();
+                
+            } catch (e) { resDiv.innerText = "❌ تعذر الاتصال بالسيرفر"; }
+            finally { btn.disabled = false; }
         }
 
         async function requestDeposit() {
             const ref = document.getElementById('depositRef').value.trim();
             if(!ref) return showToast("⚠️ أدخل رقم المرجع", "#f57c00");
             
-            showToast("⌛ تم إرسال طلب الشحن للمراجعة", "#2196f3");
-            document.getElementById('depositRef').value = '';
-            toggleWalletModal();
+            // إرسال طلب الشحن كطلب "باقة شحن" ليعرف المدير
+            try {
+                await fetch(scriptURL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: new URLSearchParams({ packages: "طلب شحن رصيد", ref: ref, phone: wallet.id }) 
+                });
+                showToast("⌛ تم إرسال طلب الشحن للمراجعة", "#2196f3");
+                document.getElementById('depositRef').value = '';
+                toggleWalletModal();
+            } catch(e) { showToast("❌ خطأ", "red"); }
         }
 
-        // التنقل والواجهة
         function toggleWalletModal() { 
             const m = document.getElementById('walletModal');
             m.style.display = (m.style.display==='flex')?'none':'flex'; 
@@ -291,14 +317,20 @@
             const combo = document.getElementById('refCombo');
             const sortedOrders = [...orderHistory].reverse();
             combo.innerHTML = '<option value="">-- اختر مرجعاً سابقاً --</option>' + 
-                sortedOrders.map(o => `<option value="${o.ref}">${o.ref} (${o.timestamp})</option>`).join('');
+                sortedOrders.map(o => `<option value="${o.ref}">${o.ref} (${o.timestamp.split(',')[1]})</option>`).join('');
             const m = document.getElementById('receiveModal');
             m.style.display = (m.style.display==='flex')?'none':'flex';
         }
         
         function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.backgroundColor = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        window.onload = () => { renderInitialPackages(); fetchStock(); updateWalletUI(); setInterval(fetchStock, 30000); };
+        window.onload = () => { 
+            renderInitialPackages(); 
+            fetchStock(); 
+            syncWalletWithCloud(); // مزامنة الرصيد عند الفتح
+            setInterval(fetchStock, 30000); 
+            setInterval(syncWalletWithCloud, 60000); // مزامنة الرصيد كل دقيقة
+        };
     </script>
 </body>
 </html>
