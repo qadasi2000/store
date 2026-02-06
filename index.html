@@ -3,34 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر الماجد برو - V19.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Lateef&display=swap" rel="stylesheet">
+    <title>متجر الماجد برو - V20.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-bg: #2b0010; --gold: #f9d976; --card-bg: rgba(255, 255, 255, 0.1); --green: #28a745; }
-        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; background-image: radial-gradient(circle at center, #4a001a 0%, #2b0010 100%); background-attachment: fixed; text-align: center; }
+        body { background-color: var(--primary-bg); color: white; font-family: 'Cairo', sans-serif; margin: 0; padding-bottom: 20px; text-align: center; background-image: radial-gradient(circle, #4a001a, #2b0010); background-attachment: fixed; }
         .wallet-section { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 25px; margin: 10px auto; max-width: 500px; border: 2px solid var(--gold); }
         input { width: 85%; padding: 12px; margin-bottom: 10px; border-radius: 12px; border: 1px solid var(--gold); background: #1a000a; color: white; text-align: center; }
         .btn-main { background: var(--gold); color: black; border: none; padding: 12px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 85%; }
         .balance-box { font-size: 2.2rem; font-weight: bold; color: var(--gold); border: 1px dashed var(--gold); margin: 10px 0; padding: 10px; border-radius: 15px; display: none; }
-        
         .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 15px; display: none; }
         .package-card { background: var(--card-bg); padding: 15px; border-radius: 20px; border: 1px solid rgba(249, 217, 118, 0.2); }
-        .stock-tag { font-size: 0.8rem; color: #00ff88; font-weight: bold; }
-        .qty-input { width: 50px !important; padding: 5px !important; margin: 0 5px !important; display: inline-block; }
-        
+        .qty-input { width: 60px !important; padding: 5px !important; display: inline-block; margin-bottom: 10px; }
         .action-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; margin-top: 15px; border: 1px solid #444; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 3000; bottom: 30px; left: 50%; transform: translateX(-50%); }
+        #toast { visibility: hidden; min-width: 250px; background: #d32f2f; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 999; }
         #toast.show { visibility: visible; }
     </style>
 </head>
 <body>
     <div id="toast"></div>
-    <div class="header"><h1>شبكة الماجد</h1></div>
+    <h1>شبكة الماجد</h1>
 
     <div class="wallet-section">
         <div id="loginArea">
-            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف للبدء">
-            <button class="btn-main" onclick="attemptLogin()">دخول للمحفظة</button>
+            <input type="text" id="walletNumber" placeholder="أدخل رقم الهاتف">
+            <button class="btn-main" onclick="attemptLogin(false)">دخول للمحفظة</button>
         </div>
 
         <div id="userArea" style="display: none;">
@@ -38,17 +35,17 @@
             
             <div class="action-box">
                 <h4 style="margin:0 0 10px 0; color:var(--gold);">💸 تحويل رصيد</h4>
-                <input type="text" id="transferTarget" placeholder="رقم المستلم" style="width:60%; font-size:0.9rem;">
-                <input type="number" id="transferAmount" placeholder="المبلغ" style="width:30%; font-size:0.9rem;">
-                <button onclick="transferBalance()" class="btn-main" style="background:white;">تحويل الآن</button>
+                <input type="text" id="transferTarget" placeholder="رقم المستلم" style="width:55%">
+                <input type="number" id="transferAmount" placeholder="المبلغ" style="width:30%">
+                <button onclick="transferBalance()" class="btn-main" style="background:white; margin-top:5px;">تحويل الآن</button>
             </div>
 
             <div class="action-box">
                 <h4 style="margin:0 0 10px 0; color:var(--green);">🔋 شحن المحفظة</h4>
-                <input type="number" id="topupAmount" placeholder="أدخل مبلغ الشحن">
-                <button onclick="sendTopup()" class="btn-main" style="background:var(--green); color:white;">إرسال طلب شحن</button>
+                <input type="number" id="topupAmount" placeholder="المبلغ المطلوب">
+                <button onclick="sendTopup()" class="btn-main" style="background:var(--green); color:white;">إرسال طلب</button>
             </div>
-            <small onclick="logout()" style="color:#aaa; cursor:pointer; display:block; margin-top:10px;">تسجيل خروج</small>
+            <small onclick="logout()" style="color:#aaa; cursor:pointer; display:block; margin-top:15px;">تسجيل خروج</small>
         </div>
     </div>
 
@@ -58,35 +55,27 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzAyAh5BAnc2WLbkpozpnxn6Ih5eTv3H53mrsx3v0wl5GUnuVd7z5dfTrFTvlVkpTyJ/exec';
         let currentStock = {};
 
-        const packagesData = [
-            { id: "100", name: "باقة 100", price: 100, desc: "512 ميجا" },
-            { id: "200", name: "باقة 200", price: 200, desc: "1 جيجا" },
-            { id: "300", name: "باقة 300", price: 300, desc: "1.5 جيجا" },
-            { id: "500", name: "باقة 500", price: 500, desc: "2.5 جيجا" },
-            { id: "1000", name: "باقة 1000", price: 1000, desc: "5 جيجا" },
-            { id: "2000", name: "باقة 2000", price: 2000, desc: "10 جيجا" },
-            { id: "3000", name: "باقة 3000", price: 3000, desc: "15 جيجا" },
-            { id: "5000", name: "باقة 5000", price: 5000, desc: "25 جيجا" },
-            { id: "10000", name: "باقة 10000", price: 10000, desc: "50 جيجا" }
-        ];
-
         function getDeviceId() {
             let id = localStorage.getItem('majed_device_id');
             if (!id) { id = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('majed_device_id', id); }
             return id;
         }
 
-        async function attemptLogin() {
-            const walletId = document.getElementById('walletNumber').value.trim();
-            if(walletId.length < 7) return showToast("⚠️ رقم غير صحيح");
-            showToast("جاري التحقق...", "#f59e0b");
+        async function attemptLogin(isSilent) {
+            const walletId = document.getElementById('walletNumber').value.trim() || localStorage.getItem('majed_wallet');
+            if(!walletId) return;
+
+            if(!isSilent) showToast("جاري التحقق...", "#f59e0b");
             try {
                 const res = await fetch(`${scriptURL}?action=getWallet&id=${walletId}&deviceId=${getDeviceId()}`);
                 const data = await res.json();
-                if(data.error) return showToast("❌ هذا الرقم مرتبط بجهاز آخر");
+                if(data.error) {
+                    if(!isSilent) showToast("❌ الرقم مسجل بجهاز آخر");
+                    return;
+                }
                 localStorage.setItem('majed_wallet', walletId);
                 showUI(data);
-            } catch (e) { showToast("❌ خطأ اتصال"); }
+            } catch (e) { if(!isSilent) showToast("❌ خطأ اتصال"); }
         }
 
         function showUI(data) {
@@ -100,16 +89,18 @@
         }
 
         function renderPackages() {
-            const grid = document.getElementById('packagesGrid');
-            grid.innerHTML = packagesData.map(pkg => `
+            const packs = [
+                {p:100, g:"512M"}, {p:200, g:"1G"}, {p:300, g:"1.5G"}, 
+                {p:500, g:"2.5G"}, {p:1000, g:"5G"}, {p:2000, g:"10G"},
+                {p:3000, g:"15G"}, {p:5000, g:"25G"}, {p:10000, g:"50G"}
+            ];
+            document.getElementById('packagesGrid').innerHTML = packs.map(pkg => `
                 <div class="package-card">
-                    <span class="stock-tag" id="stock-${pkg.id}">...</span>
-                    <h3>${pkg.price} ريال</h3>
-                    <p>${pkg.desc}</p>
-                    <div style="margin-bottom:10px;">
-                        الكمية: <input type="number" id="qty-${pkg.id}" value="1" min="1" class="qty-input">
-                    </div>
-                    <button class="btn-main" style="padding:8px; font-size:0.9rem;" onclick="buyPackage('${pkg.id}', '${pkg.name}', ${pkg.price})">شراء ⚡</button>
+                    <span id="stock-باقة ${pkg.p}" style="color:#0f8; font-size:0.8rem;">فحص..</span>
+                    <h3>${pkg.p} ريال</h3>
+                    <p>${pkg.g}</p>
+                    <input type="number" id="qty-${pkg.p}" value="1" min="1" class="qty-input">
+                    <button class="btn-main" onclick="buyPackage('باقة ${pkg.p}', ${pkg.p})">شراء</button>
                 </div>
             `).join('');
         }
@@ -117,55 +108,50 @@
         async function fetchStock() {
             const res = await fetch(`${scriptURL}?action=getStock`);
             currentStock = await res.json();
-            packagesData.forEach(pkg => {
-                const count = currentStock[pkg.name] || 0;
-                document.getElementById(`stock-${pkg.id}`).innerText = count > 0 ? `متاح: ${count}` : "نفد";
-            });
+            for (let key in currentStock) {
+                let el = document.getElementById(`stock-${key}`);
+                if(el) el.innerText = currentStock[key] > 0 ? "متاح: " + currentStock[key] : "نفد";
+            }
         }
 
-        async function buyPackage(id, name, price) {
-            const qty = parseInt(document.getElementById(`qty-${id}`).value);
-            const stockAvailable = currentStock[name] || 0;
-            if(qty > stockAvailable) return alert(`❌ الكمية المطلوبة غير متوفرة! المتاح فقط: ${stockAvailable}`);
-            
-            if(!confirm(`تأكيد شراء (${qty}) كروت من ${name}؟`)) return;
+        async function buyPackage(name, price) {
+            const qty = parseInt(document.getElementById(`qty-${price}`).value);
+            if(qty > currentStock[name]) return alert("❌ الكمية المطلوبة أكبر من المخزون");
+            if(!confirm(`شراء ${qty} كروت من ${name}؟`)) return;
 
             showToast("جاري المعالجة...", "#f59e0b");
             const res = await fetch(`${scriptURL}?action=buyFromWallet&walletId=${localStorage.getItem('majed_wallet')}&deviceId=${getDeviceId()}&packageName=${name}&qty=${qty}`);
             const data = await res.json();
-            if(data.success) { alert(`✅ تمت العملية!\nالأكواد: \n${data.code}`); location.reload(); }
-            else { alert(`❌ فشل: ${data.msg}`); }
+            if(data.success) { 
+                alert("✅ تمت العملية بنجاح!\nالأكواد:\n" + data.code);
+                location.reload(); 
+            } else { alert("❌ " + data.msg); }
         }
 
         async function transferBalance() {
-            const target = document.getElementById('transferTarget').value.trim();
-            const amount = parseFloat(document.getElementById('transferAmount').value);
-            if(!target || !amount || amount <= 0) return showToast("⚠️ أكمل بيانات التحويل");
-
-            if(!confirm(`هل أنت متأكد من تحويل مبلغ ${amount} ريال إلى المحفظة ${target}؟`)) return;
-
+            const to = document.getElementById('transferTarget').value.trim();
+            const amt = document.getElementById('transferAmount').value;
+            if(!to || !amt) return showToast("⚠️ أكمل البيانات");
+            
             showToast("جاري التحويل...", "#f59e0b");
-            const res = await fetch(`${scriptURL}?action=transfer&from=${localStorage.getItem('majed_wallet')}&to=${target}&amount=${amount}&deviceId=${getDeviceId()}`);
+            const res = await fetch(`${scriptURL}?action=transfer&from=${localStorage.getItem('majed_wallet')}&to=${to}&amount=${amt}&deviceId=${getDeviceId()}`);
             const data = await res.json();
             if(data.success) { alert("✅ تم التحويل بنجاح"); location.reload(); }
             else { alert("❌ " + data.msg); }
         }
 
         async function sendTopup() {
-            const amount = document.getElementById('topupAmount').value;
-            if(!amount) return showToast("⚠️ أدخل المبلغ");
-            const params = new URLSearchParams();
-            params.append('action', 'requestTopup');
-            params.append('walletId', localStorage.getItem('majed_wallet'));
-            params.append('amount', amount);
-            await fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: params });
-            showToast("✅ تم إرسال الطلب بنجاح", "#28a745");
+            const amt = document.getElementById('topupAmount').value;
+            if(!amt) return showToast("⚠️ أدخل المبلغ");
+            const p = new URLSearchParams({action: "requestTopup", walletId: localStorage.getItem('majed_wallet'), amount: amt});
+            await fetch(scriptURL, {method: 'POST', mode: 'no-cors', body: p});
+            showToast("✅ تم الطلب", "#28a745");
         }
 
         function logout() { localStorage.removeItem('majed_wallet'); location.reload(); }
         function showToast(m, c) { const t = document.getElementById("toast"); t.innerText = m; t.style.background = c; t.className = "show"; setTimeout(() => t.className = "", 3000); }
         
-        window.onload = () => { if(localStorage.getItem('majed_wallet')) attemptLogin(); };
+        window.onload = () => { if(localStorage.getItem('majed_wallet')) attemptLogin(true); };
     </script>
 </body>
 </html>
