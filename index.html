@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V8.7 Platinum</title>
+    <title>محفظة الماجد الذكية | V8.8 Platinum Plus</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -84,6 +84,26 @@
         }
         .bal-val { font-size: 3rem; font-weight: 800; color: var(--gold); line-height: 1; margin: 10px 0; }
 
+        /* زر التعليمات العائم */
+        .help-fab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 4000;
+            cursor: pointer;
+            font-size: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
         #toast-msg { 
             position: fixed; 
             top: 50%; 
@@ -149,6 +169,8 @@
 </div>
 
 <audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
+
+<div class="help-fab" onclick="toggleHelpModal()">❓</div>
 
 <div id="loading-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display:none; flex-direction: column; align-items: center; justify-content: center;">
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
@@ -226,6 +248,32 @@
     </div>
 </div>
 
+<div id="reg-success-modal" class="custom-modal">
+    <div class="modal-content" style="border-color: var(--success);">
+        <h3 style="color:var(--success);">تم إنشاء الحساب بنجاح! 🎉</h3>
+        <p>يرجى تصوير الشاشة لحفظ بياناتك:</p>
+        <div style="background:rgba(255,255,255,0.1); padding:15px; border-radius:15px; margin:15px 0; text-align:right;">
+            <div>👤 المستخدم: <b id="new-user-id" style="color:var(--gold);"></b></div>
+            <div>🔑 كلمة السر: <b id="new-user-pass" style="color:var(--gold);"></b></div>
+        </div>
+        <button class="btn" onclick="closeRegModal()">فهمت، دخول الآن 🚀</button>
+    </div>
+</div>
+
+<div id="help-modal" class="custom-modal">
+    <div class="modal-content" style="max-width: 400px; text-align: right;">
+        <h3 style="color:var(--gold); text-align:center;">📖 تعليمات الاستخدام</h3>
+        <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+            <li>🔸 <b>شراء الكروت:</b> اختر الفئة والكمية وسيظهر الكود فوراً.</li>
+            <li>🔸 <b>كروتي:</b> جميع مشترياتك مخزنة هنا للرجوع إليها لاحقاً.</li>
+            <li>🔸 <b>شحن الرصيد:</b> أرسل المبلغ ثم أدخل رقم المرجع ليتفعل تلقائياً.</li>
+            <li>🔸 <b>التحويل:</b> يمكنك إرسال رصيد لأي مستخدم آخر بالرقم.</li>
+            <li>🔸 <b>الأمان:</b> الحساب مرتبط بجهازك، لا تشارك كلمة سرك أبداً.</li>
+        </ul>
+        <button class="btn btn-outline" onclick="toggleHelpModal()">إغلاق النافذة</button>
+    </div>
+</div>
+
 <div id="qty-modal" class="custom-modal">
     <div class="modal-content">
         <h3 style="color:var(--gold); margin-top:0;">تحديد الكمية 🛒</h3>
@@ -278,15 +326,31 @@
         rb.classList.toggle('hidden');
     }
 
+    function toggleHelpModal() {
+        const m = document.getElementById('help-modal');
+        m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+    }
+
     async function handleRegister() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
         if(!u || !p) return showToast("يرجى تعبئة الحقول أعلاه أولاً", true);
         showLoading(true, "جاري إنشاء الحساب...");
         const data = await apiRequest({ action: 'register', id: u, password: p });
-        showToast(data.msg, !data.success);
-        if(data.success) toggleRegisterUI();
+        
+        if(data.success) {
+            document.getElementById('new-user-id').innerText = u;
+            document.getElementById('new-user-pass').innerText = p;
+            document.getElementById('reg-success-modal').style.display = 'flex';
+        } else {
+            showToast(data.msg, true);
+        }
         showLoading(false);
+    }
+
+    function closeRegModal() {
+        document.getElementById('reg-success-modal').style.display = 'none';
+        handleLogin(); // تسجيل دخول تلقائي
     }
 
     async function handleLogin() {
