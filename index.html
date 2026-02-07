@@ -32,16 +32,20 @@
         .old-price { text-decoration: line-through; color: #ff6b6b; font-size: 0.75rem; margin-left: 5px; }
         .new-price { color: var(--gold); font-weight: 700; }
 
-        input { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; font-size: 1rem; }
-        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 10px; font-size: 1rem; }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; font-size: 0.95rem; }
+        .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 0.95rem; }
+        .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; opacity: 0.6; }
         .btn:active { transform: scale(0.96); opacity: 0.9; }
         
         .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; }
         .my-card-code { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 1px; margin: 10px 0; }
         .copy-btn-small { background: #f3f3f3; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: #333; width: 100%; }
 
-        .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
-        .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 25px; width: 100%; text-align: center; max-width: 380px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        /* Modal Small Sizes */
+        .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 15px; }
+        .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 20px; padding: 15px; width: 90%; text-align: center; max-width: 320px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .modal-content h3 { font-size: 1.1rem; margin-bottom: 10px; }
+        .modal-content p { font-size: 0.85rem; margin-bottom: 10px; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 7000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
@@ -57,8 +61,8 @@
 <div id="qty-modal" class="custom-modal">
     <div class="modal-content">
         <h3 style="color:var(--gold); margin-top:0;">تحديد الكمية 🛒</h3>
-        <p id="qty-card-name" style="margin-bottom:15px;"></p>
-        <input type="number" id="buy-qty-input" value="1" min="1" style="font-size: 1.5rem; height: 60px;">
+        <p id="qty-card-name" style="color: #eee;"></p>
+        <input type="number" id="buy-qty-input" value="1" min="1" style="font-size: 1.2rem; height: 50px; margin-bottom: 15px;">
         <button class="btn" onclick="confirmPurchaseAction()">تأكيد الشراء</button>
         <button class="btn" style="background:transparent; color:#fff; border:1px solid #666;" onclick="closeQtyModal()">إلغاء</button>
     </div>
@@ -67,7 +71,7 @@
 <div id="code-modal" class="custom-modal">
     <div class="modal-content">
         <h3 style="color:var(--gold); margin-top:0;">تم الشراء بنجاح! 🎉</h3>
-        <div id="codes-container" style="max-height: 250px; overflow-y: auto; margin: 15px 0; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px;"></div>
+        <div id="codes-container" style="max-height: 200px; overflow-y: auto; margin: 10px 0; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;"></div>
         <button class="btn" style="background:#fff; color:#3d0016;" onclick="copyAllFromModal()">نسخ كل الأكواد 📋</button>
         <button class="btn" onclick="closeCodeModal()">إغلاق</button>
     </div>
@@ -104,11 +108,11 @@
         </div>
 
         <div id="sec-cards">
-            <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div>
+            <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
         </div>
 
         <div id="sec-mycards" class="hidden">
-            <button id="btn-copy-all" class="btn" style="background:var(--success); color:#fff; display:none; margin-bottom:15px;" onclick="copyAllSaved()">نسخ جميع الكروت عمودياً 📋</button>
+            <button id="btn-copy-all" class="btn" style="background:var(--success); color:#fff; display:none; margin-bottom:15px;" onclick="copyAllSaved()">نسخ مع اسم الباقة عمودياً 📋</button>
             <div id="purchased-list"></div>
         </div>
 
@@ -149,7 +153,6 @@
         }
     };
 
-    // تحديث الرصيد تلقائياً كل 10 ثواني
     function startBalanceAutoUpdate() {
         if(balanceTimer) clearInterval(balanceTimer);
         balanceTimer = setInterval(updateBalanceOnly, 10000);
@@ -160,9 +163,7 @@
         try {
             const res = await fetch(`${URL}?action=getBalance&id=${myUser}`);
             const data = await res.json();
-            if (data.success) {
-                document.getElementById('display-bal').innerText = data.balance;
-            }
+            if (data.success) { document.getElementById('display-bal').innerText = data.balance; }
         } catch (e) {}
     }
 
@@ -205,12 +206,9 @@
         showLoading(false);
     }
 
-    // عرض الباقات بسرعة ثم تحديث الكميات
     async function loadCardsFast() {
         const grid = document.getElementById('cards-grid');
-        // عرض هيكل مبدئي سريع إذا كان هناك كروت معروفة سابقاً (اختياري) أو عرض رسالة تحميل
-        grid.innerHTML = "<small style='grid-column: 1 / -1; text-align: center;'>جاري جلب الباقات...</small>";
-        
+        grid.innerHTML = "<small style='grid-column: 1 / -1; text-align: center;'>جاري التحديث...</small>";
         try {
             const res = await fetch(`${URL}?action=getStock`);
             const stock = await res.json();
@@ -220,19 +218,19 @@
                 const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
                 const discountedPrice = Math.floor(originalPrice * 0.80);
                 grid.innerHTML += `
-                <div class="item" id="card-${key.replace(/\s+/g, '')}">
-                    <small class="stock-count" style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
-                    <h4 style="margin:5px 0">${key}</h4>
+                <div class="item">
+                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
+                    <h4 style="margin:5px 0; font-size:0.95rem;">${key}</h4>
                     <div class="price-tag"><span class="old-price">${originalPrice}</span> <span class="new-price">${discountedPrice} ر.ي</span></div>
-                    <button class="btn" onclick="openQtyModal('${key}', ${stock[key]})" ${isOut?'disabled':''}>شراء</button>
+                    <button class="btn" onclick="openQtyModal('${key}', ${stock[key]})" ${isOut?'disabled':''}>${isOut?'غير متوفر':'شراء'}</button>
                 </div>`;
             });
-        } catch(e) { grid.innerHTML = "خطأ في تحميل المتجر"; }
+        } catch(e) { grid.innerHTML = "خطأ في التحديث"; }
     }
 
     function openQtyModal(name, max) {
         currentBuyingCard = { name, max };
-        document.getElementById('qty-card-name').innerText = `طلب كروت: ${name} (المتوفر ${max})`;
+        document.getElementById('qty-card-name').innerText = `باقة: ${name}`;
         document.getElementById('buy-qty-input').value = 1;
         document.getElementById('qty-modal').style.display = 'flex';
     }
@@ -270,7 +268,7 @@
 
     function showCodesInModal(codes) {
         const container = document.getElementById('codes-container');
-        container.innerHTML = codes.map(c => `<div style="font-family:monospace; font-size:1.2rem; padding:10px; border-bottom:1px solid #444; color:var(--gold)">${c}</div>`).join('');
+        container.innerHTML = codes.map(c => `<div style="font-family:monospace; font-size:1.1rem; padding:8px; border-bottom:1px solid #444; color:var(--gold)">${c}</div>`).join('');
         document.getElementById('code-modal').style.display = 'flex';
     }
 
@@ -278,7 +276,7 @@
 
     function copyAllFromModal() {
         const codes = Array.from(document.querySelectorAll('#codes-container div')).map(el => el.innerText).join('\n');
-        navigator.clipboard.writeText(codes).then(() => showToast("تم النسخ"));
+        navigator.clipboard.writeText(codes).then(() => showToast("تم نسخ الأكواد"));
     }
 
     function saveCardLocally(type, code) {
@@ -297,20 +295,21 @@
             return;
         }
         btnCopyAll.style.display = 'block';
-        container.innerHTML = cards.map((c, index) => `
+        container.innerHTML = cards.map(c => `
             <div class="my-card-item">
                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#666;"><span>${c.date}</span><b>${c.type}</b></div>
                 <span class="my-card-code">${c.code}</span>
-                <button class="copy-btn-small" onclick="copySingle('${c.code}')">نسخ 📋</button>
+                <button class="copy-btn-small" onclick="copySingle('${c.code}')">نسخ الكود فقط 📋</button>
             </div>`).join('');
     }
 
-    function copySingle(text) { navigator.clipboard.writeText(text).then(() => showToast("تم نسخ الكرت")); }
+    function copySingle(text) { navigator.clipboard.writeText(text).then(() => showToast("تم النسخ")); }
 
     function copyAllSaved() {
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
-        let allCodes = cards.map(c => c.code).join('\n');
-        navigator.clipboard.writeText(allCodes).then(() => showToast("تم نسخ الكل عمودياً"));
+        // تمييز نوع الباقة بجانب الكود عند النسخ العمودي
+        let allContent = cards.map(c => `${c.code} - ${c.type}`).join('\n');
+        navigator.clipboard.writeText(allContent).then(() => showToast("تم النسخ مع أسماء الباقات"));
     }
 
     async function handleTransfer() {
@@ -323,12 +322,10 @@
             const data = await res.json();
             showToast(data.msg, !data.success);
             if(data.success) { 
-                document.getElementById('trans-id').value = ""; 
-                document.getElementById('trans-amt').value = "";
-                // تحديث الرصيد فورا بعد التحويل
+                document.getElementById('trans-id').value = ""; document.getElementById('trans-amt').value = "";
                 updateBalanceOnly();
             }
-        } catch(e) { showToast("خطأ في التحويل", true); }
+        } catch(e) { showToast("خطأ", true); }
         showLoading(false);
     }
 
@@ -354,8 +351,8 @@
             if(data.success) {
                 list.innerHTML = data.orders.map(o => `
                     <div class="order-item ${o.status === 'مكتمل' ? 'success' : ''}">
-                        <span class="status-badge" style="background:${o.status === 'قيد الانتظار' ? 'var(--pending)' : 'var(--success)'}">${o.status}</span>
-                        <b>${o.amount} ريال</b><br><small>${o.date} | ${o.ref}</small>
+                        <span style="float:left; font-size:0.7rem;">${o.status}</span>
+                        <b>${o.amount} ريال</b><br><small>${o.date}</small>
                     </div>`).join('');
             }
         } catch(e) {}
@@ -373,11 +370,7 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
-    function handleLogout() { 
-        if(balanceTimer) clearInterval(balanceTimer);
-        localStorage.clear(); 
-        location.reload(); 
-    }
+    function handleLogout() { if(balanceTimer) clearInterval(balanceTimer); localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>
