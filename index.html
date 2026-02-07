@@ -41,11 +41,8 @@
         .my-card-code { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 1px; margin: 10px 0; }
         .copy-btn-small { background: #f3f3f3; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: #333; width: 100%; }
 
-        /* Modal Small Sizes */
         .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 15px; }
         .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 20px; padding: 15px; width: 90%; text-align: center; max-width: 320px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        .modal-content h3 { font-size: 1.1rem; margin-bottom: 10px; }
-        .modal-content p { font-size: 0.85rem; margin-bottom: 10px; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 7000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
@@ -54,6 +51,8 @@
     </style>
 </head>
 <body>
+
+<audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
 
 <div id="loading-overlay"><div class="loader"></div><div style="color:var(--gold); margin-top:10px;">جاري المعالجة...</div></div>
 <div id="toast-msg"></div>
@@ -95,7 +94,6 @@
             <input type="text" id="login-user" placeholder="رقم الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
             <button id="btn-login-action" class="btn" onclick="handleLogin()">تسجيل الدخول</button>
-            <button id="btn-reg-action" class="btn hidden" style="background:#2c3e50; color:#fff; border:1px solid var(--gold)" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
         </div>
     </div>
 
@@ -142,6 +140,7 @@
     let myUser = "", myPass = "";
     let currentBuyingCard = { name: "", max: 0 };
     let balanceTimer = null;
+    let lastKnownBalance = 0;
 
     window.onload = () => {
         const savedU = localStorage.getItem('m_user');
@@ -153,6 +152,13 @@
         }
     };
 
+    // وظيفة تشغيل نغمة النجاح
+    function playSuccessSound() {
+        const sound = document.getElementById('success-sound');
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Sound play blocked by browser"));
+    }
+
     function startBalanceAutoUpdate() {
         if(balanceTimer) clearInterval(balanceTimer);
         balanceTimer = setInterval(updateBalanceOnly, 10000);
@@ -163,7 +169,16 @@
         try {
             const res = await fetch(`${URL}?action=getBalance&id=${myUser}`);
             const data = await res.json();
-            if (data.success) { document.getElementById('display-bal').innerText = data.balance; }
+            if (data.success) { 
+                const newBal = parseFloat(data.balance);
+                // إذا زاد الرصيد (وصول حوالة)، شغل الصوت
+                if (newBal > lastKnownBalance && lastKnownBalance !== 0) {
+                    playSuccessSound();
+                    showToast("تم استلام رصيد جديد! 💰");
+                }
+                lastKnownBalance = newBal;
+                document.getElementById('display-bal').innerText = data.balance; 
+            }
         } catch (e) {}
     }
 
@@ -187,6 +202,7 @@
                 myUser = u; myPass = p;
                 localStorage.setItem('m_user', u);
                 localStorage.setItem('m_pass', p);
+                lastKnownBalance = parseFloat(data.balance);
                 document.getElementById('display-bal').innerText = data.balance;
                 document.getElementById('display-phone').innerText = u;
                 document.getElementById('page-login').classList.add('hidden');
@@ -195,12 +211,7 @@
                 loadCardsFast();
                 startBalanceAutoUpdate();
             } else {
-                localStorage.clear();
-                if(data.error === "NOT_FOUND") {
-                    showToast("الحساب غير موجود", true);
-                    document.getElementById('btn-login-action').classList.add('hidden');
-                    document.getElementById('btn-reg-action').classList.remove('hidden');
-                } else { showToast(data.msg, true); }
+                showToast(data.msg, true);
             }
         } catch(e) { showToast("مشكلة في الاتصال", true); }
         showLoading(false);
@@ -240,12 +251,10 @@
     async function confirmPurchaseAction() {
         let qty = parseInt(document.getElementById('buy-qty-input').value);
         if (isNaN(qty) || qty <= 0 || qty > currentBuyingCard.max) return showToast("الكمية غير متوفرة", true);
-        
         closeQtyModal();
         showLoading(true);
         let boughtCodes = [];
         let lastBalance = 0;
-
         for (let i = 0; i < qty; i++) {
             try {
                 const res = await fetch(`${URL}?action=buyCard&id=${myUser}&password=${myPass}&cardType=${currentBuyingCard.name}`);
@@ -257,9 +266,10 @@
                 } else { showToast(data.msg, true); break; }
             } catch(e) { break; }
         }
-
         if (boughtCodes.length > 0) {
+            playSuccessSound(); // صوت عند نجاح الشراء أيضاً
             document.getElementById('display-bal').innerText = lastBalance;
+            lastKnownBalance = parseFloat(lastBalance);
             showCodesInModal(boughtCodes);
             loadCardsFast(); 
         }
@@ -299,7 +309,7 @@
             <div class="my-card-item">
                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#666;"><span>${c.date}</span><b>${c.type}</b></div>
                 <span class="my-card-code">${c.code}</span>
-                <button class="copy-btn-small" onclick="copySingle('${c.code}')">نسخ الكود فقط 📋</button>
+                <button class="copy-btn-small" onclick="copySingle('${c.code}')">نسخ الكود 📋</button>
             </div>`).join('');
     }
 
@@ -307,9 +317,8 @@
 
     function copyAllSaved() {
         let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
-        // تمييز نوع الباقة بجانب الكود عند النسخ العمودي
         let allContent = cards.map(c => `${c.code} - ${c.type}`).join('\n');
-        navigator.clipboard.writeText(allContent).then(() => showToast("تم النسخ مع أسماء الباقات"));
+        navigator.clipboard.writeText(allContent).then(() => showToast("تم النسخ بنجاح"));
     }
 
     async function handleTransfer() {
@@ -320,10 +329,13 @@
         try {
             const res = await fetch(`${URL}?action=transfer&id=${myUser}&targetId=${tid}&amount=${amt}`);
             const data = await res.json();
-            showToast(data.msg, !data.success);
             if(data.success) { 
+                playSuccessSound(); // تشغيل الصوت عند نجاح الإرسال
+                showToast(data.msg);
                 document.getElementById('trans-id').value = ""; document.getElementById('trans-amt').value = "";
                 updateBalanceOnly();
+            } else {
+                showToast(data.msg, true);
             }
         } catch(e) { showToast("خطأ", true); }
         showLoading(false);
