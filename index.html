@@ -22,9 +22,9 @@
         .nav-btn { flex: 1; text-align: center; font-size: 0.85rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
         .nav-btn.active { color: var(--gold); transform: scale(1.1); }
 
-        .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
+        .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
         .bal-box { text-align: center; padding: 40px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); }
-        .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; }
+        .bal-val { font-size: 3.5rem; font-weight: 700; color: var(--gold); display: block; line-height: 1; }
         
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         .price-tag { margin: 8px 0; }
@@ -35,9 +35,12 @@
         .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 10px; }
         .btn-reg { background: #2c3e50 !important; color: #fff !important; border: 1px solid var(--gold) !important; }
         
-        .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; text-align: center; }
+        .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); }
+        .my-card-code { font-family: monospace; font-size: 1.4rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 2px; }
+
         .order-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--pending); text-align: right; }
         .order-item.success { border-right-color: var(--success); }
+        .status-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; float: left; color: #fff; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
@@ -82,7 +85,7 @@
 
     <div id="page-main" class="hidden">
         <div class="bal-box">
-            <small>الرصيد المتاح</small>
+            <small>الرصيد المتاح (خصم 20% مفعل)</small>
             <span class="bal-val" id="display-bal">0</span>
             <small>ريال يمني</small>
         </div>
@@ -92,9 +95,16 @@
         <div id="sec-mycards" class="hidden"><div id="purchased-list"></div></div>
         <div id="sec-topup" class="hidden">
             <div class="card">
+                <h4 style="color:var(--gold); margin-top:0">💸 تحويل رصيد</h4>
+                <input type="text" id="trans-id" placeholder="رقم هاتف المستلم">
+                <input type="number" id="trans-amt" placeholder="المبلغ">
+                <button class="btn" style="background:#2ecc71; color:#fff" onclick="handleTransfer()">إرسال تحويل 🚀</button>
+            </div>
+            <div class="card">
+                <h4 style="color:var(--gold); margin-top:0">➕ طلب شحن</h4>
                 <input type="number" id="top-amt" placeholder="المبلغ">
                 <input type="text" id="top-ref" placeholder="رقم المرجع">
-                <button class="btn" onclick="handleTopup()">طلب شحن</button>
+                <button class="btn" onclick="handleTopup()">إرسال الطلب</button>
             </div>
             <div id="orders-list"></div>
         </div>
@@ -102,7 +112,7 @@
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbw0UvPHT7vcFyNccuGsy4jQASlYkuYDmUTZ_dQX-js0vYWMreVhJ1J2ixmHi9LwmiNr/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbxOTcA7GbOr15kAPwrUEcW3GDBGevkejpSOrGSOIs-RM-lr9ybbUmKr8M_CENul_8bz/exec';
     let myUser = "", myPass = "";
 
     function showToast(msg, isError = false) {
@@ -110,7 +120,7 @@
         toast.innerText = msg;
         toast.style.background = isError ? "rgba(231, 76, 60, 0.9)" : "rgba(46, 204, 113, 0.9)";
         toast.style.display = "block";
-        setTimeout(() => { toast.style.display = "none"; }, 3000);
+        setTimeout(() => { toast.style.display = "none"; }, 4000);
     }
 
     function getDeviceId() {
@@ -118,6 +128,19 @@
         localStorage.setItem('majed_device_id', dId);
         return dId;
     }
+
+    // تحديث الرصيد تلقائياً كل 10 ثوانٍ
+    setInterval(async () => {
+        if (myUser) {
+            try {
+                const res = await fetch(`${URL}?action=getBalance&id=${myUser}`);
+                const data = await res.json();
+                if (data.success && document.getElementById('display-bal').innerText != data.balance) {
+                    document.getElementById('display-bal').innerText = data.balance;
+                }
+            } catch (e) {}
+        }
+    }, 10000);
 
     async function handleLogin() {
         const u = document.getElementById('login-user').value;
@@ -137,7 +160,7 @@
             } else {
                 if(data.error === "NOT_FOUND") {
                     document.getElementById('login-msg').style.display = "block";
-                    document.getElementById('login-msg').innerText = "الحساب غير موجود، يمكنك التسجيل الآن.";
+                    document.getElementById('login-msg').innerText = "الحساب غير موجود، أنشئ حساباً جديداً.";
                     document.getElementById('btn-login-action').classList.add('hidden');
                     document.getElementById('btn-reg-action').classList.remove('hidden');
                 } else { showToast(data.msg, true); }
@@ -170,15 +193,101 @@
             const stock = await res.json();
             grid.innerHTML = "";
             Object.keys(stock).forEach(key => {
+                const isOut = stock[key] <= 0;
+                const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
+                const discountedPrice = Math.floor(originalPrice * 0.80);
                 grid.innerHTML += `<div class="item">
-                    <h4>${key}</h4>
-                    <button class="btn" onclick="handleBuy('${key}')">شراء</button>
+                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
+                    <h4 style="margin:5px 0">${key}</h4>
+                    <div class="price-tag"><span class="old-price">${originalPrice}</span> <span class="new-price">${discountedPrice} ر.ي</span></div>
+                    <button class="btn" onclick="handleBuy('${key}')" ${isOut?'disabled':''}>شراء</button>
                 </div>`;
             });
-        } catch(e) { grid.innerHTML = "المتجر فارغ حالياً"; }
+        } catch(e) { grid.innerHTML = "خطأ في تحميل المتجر"; }
+    }
+
+    async function handleBuy(cardName) {
+        if(!confirm(`تأكيد شراء ${cardName}؟`)) return;
+        showLoading(true);
+        try {
+            const res = await fetch(`${URL}?action=buyCard&id=${myUser}&password=${myPass}&cardType=${cardName}`);
+            const data = await res.json();
+            if(data.success) {
+                showToast("🎉 تم الشراء بنجاح!");
+                document.getElementById('display-bal').innerText = data.newBalance;
+                saveCardLocally(cardName, data.code);
+                document.getElementById('codes-container').innerHTML = `<div class="my-card-code">${data.code}</div>`;
+                document.getElementById('code-modal').style.display = 'flex';
+            } else { showToast(data.msg, true); }
+        } catch(e) { showToast("خطأ في الاتصال", true); }
+        showLoading(false);
+    }
+
+    async function handleTransfer() {
+        const tid = document.getElementById('trans-id').value;
+        const amt = document.getElementById('trans-amt').value;
+        if(!tid || !amt) return showToast("أكمل البيانات", true);
+        showLoading(true);
+        try {
+            const res = await fetch(`${URL}?action=transfer&id=${myUser}&targetId=${tid}&amount=${amt}`);
+            const data = await res.json();
+            showToast(data.msg, !data.success);
+            if(data.success) { 
+                document.getElementById('trans-id').value = ""; 
+                document.getElementById('trans-amt').value = "";
+                loadOrders(); 
+            }
+        } catch(e) { showToast("فشل التحويل", true); }
+        showLoading(false);
+    }
+
+    async function handleTopup() {
+        const a = document.getElementById('top-amt').value;
+        const r = document.getElementById('top-ref').value;
+        if(!a || !r) return showToast("أكمل البيانات", true);
+        showLoading(true);
+        try {
+            const res = await fetch(`${URL}?action=requestTopup&id=${myUser}&amount=${a}&ref=${r}`);
+            const data = await res.json();
+            showToast("تم إرسال الطلب بنجاح");
+            document.getElementById('top-amt').value = '';
+            document.getElementById('top-ref').value = '';
+            loadOrders();
+        } catch(e) { showToast("فشل إرسال الطلب", true); }
+        showLoading(false);
+    }
+
+    async function loadOrders() {
+        const list = document.getElementById('orders-list');
+        try {
+            const res = await fetch(`${URL}?action=getOrders&id=${myUser}`);
+            const data = await res.json();
+            if(data.success) {
+                list.innerHTML = data.orders.map(o => `
+                    <div class="order-item ${o.status === 'مكتمل' ? 'success' : ''}">
+                        <span class="status-badge" style="background:${o.status === 'قيد الانتظار' ? 'var(--pending)' : 'var(--success)'}">${o.status}</span>
+                        <b>${o.amount} ريال</b><br><small>${o.date} | ${o.ref}</small>
+                    </div>`).join('');
+            }
+        } catch(e) {}
+    }
+
+    function saveCardLocally(type, code) {
+        let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
+        cards.unshift({ type, code, date: new Date().toLocaleString('ar-YE') });
+        localStorage.setItem('my_purchased_cards', JSON.stringify(cards));
+    }
+
+    function displaySavedCards() {
+        const container = document.getElementById('purchased-list');
+        let cards = JSON.parse(localStorage.getItem('my_purchased_cards') || '[]');
+        container.innerHTML = cards.map(c => `<div class="my-card-item">
+            <small>${c.date} - ${c.type}</small><br><span class="my-card-code">${c.code}</span>
+        </div>`).join('');
     }
 
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
+    function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
     function switchSec(id, el) {
         ['sec-cards', 'sec-topup', 'sec-mycards'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById('sec-'+id).classList.remove('hidden');
@@ -186,7 +295,6 @@
         el.classList.add('active');
     }
     function handleLogout() { localStorage.clear(); location.reload(); }
-    function closeModal() { document.getElementById('code-modal').style.display = 'none'; }
 </script>
 </body>
 </html>
