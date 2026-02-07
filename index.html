@@ -9,107 +9,160 @@
         :root { 
             --main: #3d0016; 
             --gold: #f9d976; 
-            --glass: rgba(255,255,255,0.07); 
+            --gold-light: #ffebad;
+            --glass: rgba(255, 255, 255, 0.05); 
             --success: #2ecc71; 
-            --pending: #f39c12; 
             --error: #e74c3c; 
-            --bg: #1a000a; 
+            --bg: #0f0006; 
         }
 
-        body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; transition: background 0.5s ease; }
-        body.register-mode { background: #001a1a; } 
-
-        .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
-        
-        .login-container { text-align: center; padding: 40px 10px; }
-        
-        /* وميض الشعار M */
-        .logo-circle { 
-            background: var(--gold); width: 80px; height: 80px; border-radius: 25px; margin: 0 auto 20px; 
-            line-height: 80px; font-size: 2.2rem; color: #000; font-weight: bold; transform: rotate(-10deg); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            animation: pulse-gold 2s infinite;
+        body { 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Cairo', sans-serif; 
+            margin: 0; 
+            overflow-x: hidden; 
+            transition: 0.5s;
+            background-image: radial-gradient(circle at top right, #3d0016, transparent), radial-gradient(circle at bottom left, #1a000a, transparent);
+            min-height: 100vh;
         }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(249, 217, 118, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(249, 217, 118, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(249, 217, 118, 0); }
+
+        /* واجهة تسجيل الدخول */
+        #page-login {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 90vh;
+            padding: 20px;
         }
+
+        .login-header { text-align: center; margin-bottom: 30px; }
+
+        .logo-container {
+            position: relative; width: 80px; height: 80px; margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--gold), #b38f00);
+            border-radius: 25px; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: #000; font-weight: 900; transform: rotate(-10deg);
+            box-shadow: 0 10px 25px rgba(249, 217, 118, 0.2);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px;
+            padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; margin-right: 5px; }
+        .input-group input {
+            width: 100%; padding: 14px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3); color: #fff; box-sizing: border-box; text-align: center; font-family: 'Cairo';
+        }
+        .input-group input:focus { border-color: var(--gold); outline: none; background: rgba(0,0,0,0.5); }
+
+        .main-btn {
+            width: 100%; padding: 15px; border-radius: 15px; border: none;
+            background: linear-gradient(90deg, var(--gold), #d4af37);
+            color: #000; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .main-btn:active { transform: scale(0.97); }
+
+        .secondary-btn {
+            width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 12px; border-radius: 15px; margin-top: 10px; cursor: pointer; font-family: 'Cairo';
+        }
+
+        /* واجهة المحفظة */
+        .app { max-width: 450px; margin: 0 auto; padding: 20px; }
+        .nav { position: sticky; top: 0; background: var(--bg); display: flex; padding: 10px 0; border-bottom: 2px solid var(--gold); z-index: 1000; }
+        .nav-btn { flex: 1; text-align: center; font-size: 0.75rem; color: #aaa; cursor: pointer; font-weight: 600; }
+        .nav-btn.active { color: var(--gold); }
         
-        .marquee-container { background: #4a041c; color: var(--gold); padding: 8px 0; border-bottom: 1px solid var(--gold); font-size: 0.85rem; font-weight: bold; overflow: hidden; white-space: nowrap; position: relative; z-index: 1001; }
-        .marquee-text { display: inline-block; animation: marquee 40s linear infinite; padding-left: 100%; }
-        @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        #toast-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(46, 204, 113, 0.9); color: white; padding: 12px 25px; border-radius: 15px; z-index: 9000; display: none; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; min-width: 250px; }
-
-        .nav { position: sticky; top: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 15px 0; border-bottom: 2px solid var(--gold); z-index: 1000; margin: 0 auto 20px auto; }
-        .nav-btn { flex: 1; text-align: center; font-size: 0.8rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
-        .nav-btn.active { color: var(--gold); transform: scale(1.05); }
-
-        .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); }
-        .bal-box { text-align: center; padding: 30px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); }
-        .bal-val { font-size: 3.2rem; font-weight: 700; color: var(--gold); display: block; line-height: 1.2; }
-        .wallet-num { font-size: 0.9rem; color: var(--gold); background: rgba(0,0,0,0.3); padding: 4px 15px; border-radius: 20px; margin-bottom: 10px; display: inline-block; border: 1px solid rgba(249,217,118,0.2); }
+        .bal-box { text-align: center; padding: 25px; background: linear-gradient(145deg, #4a041c, #1a000a); border-radius: 25px; border: 1px solid var(--gold); margin-bottom: 20px; }
+        .bal-val { font-size: 2.8rem; font-weight: 700; color: var(--gold); }
         
-        .btn { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 1rem; font-family: 'Cairo'; }
-        .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
-        .btn:active { transform: scale(0.96); }
-
-        input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
-
         .hidden { display: none !important; }
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+        #loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; border-radius: 12px; z-index: 10000; display: none; font-weight: bold; width: 80%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
 
-<div id="loading-overlay"><div class="loader"></div><div id="loading-text" style="color:var(--gold); margin-top:10px;">جاري المعالجة...</div></div>
 <div id="toast-msg"></div>
+<div id="loading-overlay"><div class="loader"></div><div id="loading-text" style="color:var(--gold); margin-top:10px;">جاري المعالجة...</div></div>
 
 <div class="app">
     <div id="page-login">
-        <div class="login-container">
-            <div class="logo-circle">M</div>
-            <h2 id="app-title" style="color:var(--gold); margin: 0 0 5px 0;">محفظة الماجد الذكية</h2>
-            <p style="color: #888; margin-bottom: 25px; font-size: 0.9rem;">الجيل الثامن للدفع الإلكتروني</p>
+        <div class="login-header">
+            <div class="logo-container">M</div>
+            <h1 style="margin:0; font-size: 1.6rem;">الماجد للخدمات الذكية</h1>
+            <p id="login-sub-text" style="color: #888; margin-top: 5px; font-size: 0.85rem;">سجل دخولك للمتابعة</p>
         </div>
-        
-        <div class="card">
-            <input type="text" id="login-user" placeholder="رقم الهاتف (7xxxxxxxx)" inputmode="numeric">
-            <input type="password" id="login-pass" placeholder="كلمة المرور">
 
+        <div class="login-card">
+            <div class="input-group">
+                <label>رقم الهاتف</label>
+                <input type="text" id="login-user" placeholder="7xxxxxxxx" inputmode="numeric">
+            </div>
+            <div class="input-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="login-pass" placeholder="••••••••">
+            </div>
+            
             <div id="login-actions">
-                <button class="btn" onclick="handleLogin()">دخول للمحفظة</button>
-                <button class="btn btn-outline" id="btn-reg-view" onclick="toggleRegisterUI(true)">ليس لديك حساب؟ سجل الآن ✨</button>
+                <button class="main-btn" onclick="handleLogin()">دخول للمحفظة</button>
+                <button class="secondary-btn" onclick="toggleRegisterUI(true)">إنشاء حساب جديد ✨</button>
             </div>
             
             <div id="reg-actions" class="hidden">
-                 <button class="btn" style="background:var(--success); color:#fff" onclick="handleRegister()">تأكيد بيانات الحساب وربطه 🔗</button>
-                 <button class="btn btn-outline" onclick="toggleRegisterUI(false)">إلغاء والعودة</button>
+                 <button class="main-btn" style="background:var(--success); color:#000" onclick="handleRegister()">تأكيد البيانات وربط الحساب</button>
+                 <button class="secondary-btn" onclick="toggleRegisterUI(false)">العودة للدخول</button>
             </div>
-            
-            <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; text-align: center;">
-                <small style="color: #666; display: block; margin-bottom: 8px;">هل تريد استخدام الحساب في جهاز آخر؟</small>
-                <button class="btn btn-outline" style="font-size: 0.75rem; padding: 8px; border-color: var(--error); color: var(--error);" onclick="handleUnbind()">إلغاء اقتران الجهاز الحالي 📱</button>
+
+            <div style="text-align: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                <button onclick="handleUnbind()" style="background:transparent; border:none; color:var(--error); cursor:pointer; font-family:'Cairo'; font-size:0.8rem; opacity: 0.8;">فك ارتباط الجهاز الحالي 📱</button>
             </div>
         </div>
     </div>
 
     <nav class="nav hidden" id="top-nav">
         <div class="nav-btn active" onclick="switchSec('cards', this)">🛒 المتجر</div>
-        <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪 خروج</div>
+        <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()">🎫 كروتي</div>
+        <div class="nav-btn" onclick="switchSec('transfer', this)">💸 تحويل</div>
+        <div class="nav-btn" onclick="switchSec('topup', this)">💰 شحن</div>
+        <div class="nav-btn" onclick="handleLogout()" style="color:#ff6b6b">🚪</div>
     </nav>
+
     <div id="page-main" class="hidden">
         <div class="bal-box">
             <div class="wallet-num" id="display-phone">000000000</div><br>
-            <small>الرصيد المتاح</small>
             <span class="bal-val" id="display-bal">0</span>
-            <small>ريال يمني</small>
+            <small style="display:block; color:var(--gold)">ريال يمني</small>
         </div>
+        
         <div id="sec-cards">
             <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
+        </div>
+        
+        <div id="sec-mycards" class="hidden"><div id="purchased-list"></div></div>
+        
+        <div id="sec-transfer" class="hidden">
+             <div class="card" style="background:var(--glass); padding:15px; border-radius:20px;">
+                <input type="text" id="trans-id" placeholder="رقم المستلم" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:none; background:#000; color:#fff; text-align:center;">
+                <input type="number" id="trans-amt" placeholder="المبلغ" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:none; background:#000; color:#fff; text-align:center;">
+                <button class="main-btn" onclick="handleTransfer()">إرسال الآن</button>
+            </div>
+        </div>
+
+        <div id="sec-topup" class="hidden">
+            <div class="card" style="background:var(--glass); padding:15px; border-radius:20px;">
+                <input type="number" id="top-amt" placeholder="المبلغ المراد شحنه" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:none; background:#000; color:#fff; text-align:center;">
+                <input type="text" id="top-ref" placeholder="رقم الحوالة / المرجع" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:none; background:#000; color:#fff; text-align:center;">
+                <button class="main-btn" onclick="handleTopup()">إرسال طلب الشحن</button>
+            </div>
         </div>
     </div>
 </div>
@@ -118,104 +171,117 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbwH6SWfold_HbZIDMffs9JkxvkP15EJquUwCLjrMcUtpxAr-Gvgm4wLyrHj9eOh2GmB/exec';
     let myUser = "", myPass = "";
 
+    // جلب معرف الجهاز
     function getDeviceId() {
         let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
         localStorage.setItem('m_dev_id', d);
         return d;
     }
 
+    // الدالة الموحدة للطلبات
     async function apiRequest(params) {
         params.deviceId = getDeviceId();
         const query = new URLSearchParams(params).toString();
         try {
             const res = await fetch(`${API_URL}?${query}`);
             return await res.json();
-        } catch (e) { return { success: false, msg: "فشل الاتصال بالسيرفر" }; }
-    }
-
-    function toggleRegisterUI(showReg) {
-        if(showReg) {
-            document.body.classList.add('register-mode');
-            document.getElementById('login-actions').classList.add('hidden');
-            document.getElementById('reg-actions').classList.remove('hidden');
-            document.getElementById('app-title').innerText = "إنشاء حساب جديد";
-        } else {
-            document.body.classList.remove('register-mode');
-            document.getElementById('login-actions').classList.remove('hidden');
-            document.getElementById('reg-actions').classList.add('hidden');
-            document.getElementById('app-title').innerText = "محفظة الماجد الذكية";
+        } catch (e) {
+            return { success: false, msg: "فشل الاتصال.. تحقق من الإنترنت" };
         }
     }
 
-    // إصلاح زر إنشاء الحساب
-    async function handleRegister() {
+    // تبديل واجهة التسجيل
+    function toggleRegisterUI(isReg) {
+        document.getElementById('login-actions').classList.toggle('hidden', isReg);
+        document.getElementById('reg-actions').classList.toggle('hidden', !isReg);
+        document.getElementById('login-sub-text').innerText = isReg ? "أدخل بياناتك لإنشاء حساب جديد" : "سجل دخولك للمتابعة";
+    }
+
+    // تسجيل الدخول
+    async function handleLogin() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
+        if(!u || !p) return showToast("يرجى إدخال الهاتف وكلمة المرور", true);
         
-        if(u.length < 9) return showToast("يرجى إدخال رقم هاتف صحيح", true);
-        if(p.length < 4) return showToast("كلمة المرور ضعيفة جداً", true);
-
-        showLoading(true, "جاري ربط الحساب بالجهاز...");
-        const data = await apiRequest({ action: 'register', id: u, password: p });
+        showLoading(true, "جاري التحقق...");
+        const data = await apiRequest({ action: 'getWallet', id: u, password: p });
         
-        if(data.success) {
-            showToast("تم إنشاء الحساب وربطه بنجاح ✅");
-            handleLogin(); // دخول تلقائي بعد التسجيل
+        if (data.success) {
+            myUser = u; myPass = p;
+            localStorage.setItem('m_user', u); localStorage.setItem('m_pass', p);
+            loginSuccess(data);
         } else {
             showToast(data.msg, true);
         }
         showLoading(false);
     }
 
-    // إصلاح زر إلغاء الاقتران
+    // إنشاء حساب جديد (الإصلاح المطلوب)
+    async function handleRegister() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        if(u.length < 9 || p.length < 4) return showToast("البيانات قصيرة جداً", true);
+
+        showLoading(true, "جاري إنشاء الحساب...");
+        const data = await apiRequest({ action: 'register', id: u, password: p });
+        
+        if(data.success) {
+            showToast("تم إنشاء الحساب بنجاح!");
+            handleLogin(); // تسجيل دخول تلقائي
+        } else {
+            showToast(data.msg, true);
+        }
+        showLoading(false);
+    }
+
+    // فك الارتباط (الإصلاح المطلوب)
     async function handleUnbind() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
+        if(!u || !p) return showToast("يجب كتابة البيانات أولاً لفك الارتباط", true);
 
-        if(!u || !p) return showToast("يرجى كتابة رقم الهاتف وكلمة المرور للإلغاء", true);
-
-        const confirmUnbind = confirm("تحذير: سيتم فك ارتباط هذا الجهاز بالحساب. هل أنت متأكد؟");
-        if(!confirmUnbind) return;
+        if(!confirm("هل أنت متأكد من فك ارتباط الحساب بهذا الجهاز؟ سيتم إغلاق الحساب فوراً.")) return;
 
         showLoading(true, "جاري فك الارتباط...");
         const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
         
         if(data.success) {
-            showToast("تم فك الارتباط بنجاح. يمكنك الآن الربط من جهاز آخر.");
-            localStorage.clear();
+            showToast("تم فك الارتباط بنجاح");
+            handleLogout();
         } else {
             showToast(data.msg, true);
         }
         showLoading(false);
     }
 
-    async function handleLogin() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أدخل البيانات كاملة", true);
+    function loginSuccess(data) {
+        document.getElementById('display-bal').innerText = data.balance;
+        document.getElementById('display-phone').innerText = myUser;
+        document.getElementById('page-login').classList.add('hidden');
+        document.getElementById('page-main').classList.remove('hidden');
+        document.getElementById('top-nav').classList.remove('hidden');
+        loadCardsFast();
+    }
 
-        showLoading(true, "جاري الدخول...");
-        const data = await apiRequest({ action: 'getWallet', id: u, password: p });
-        
+    async function loadCardsFast() {
+        const grid = document.getElementById('cards-grid');
+        grid.innerHTML = "<small>جاري جلب الكروت...</small>";
+        const data = await apiRequest({ action: 'getStock' });
         if(data.success) {
-            myUser = u; myPass = p;
-            localStorage.setItem('m_user', u); localStorage.setItem('m_pass', p);
-            document.getElementById('display-bal').innerText = data.balance;
-            document.getElementById('display-phone').innerText = u;
-            document.getElementById('page-login').classList.add('hidden');
-            document.getElementById('page-main').classList.remove('hidden');
-            document.getElementById('top-nav').classList.remove('hidden');
-            showToast("مرحباً بك مجدداً");
-        } else {
-            showToast(data.msg, true);
+            grid.innerHTML = Object.keys(data.stock).map(key => `
+                <div class="item" style="background:var(--glass); padding:15px; border-radius:15px; text-align:center;">
+                    <h4 style="margin:0">${key}</h4>
+                    <p class="new-price">${Math.floor(parseInt(key) * (1-data.discount))} ر.ي</p>
+                    <button class="main-btn" style="padding:8px; font-size:0.8rem;" onclick="buyCard('${key}')">شراء</button>
+                </div>
+            `).join('');
         }
-        showLoading(false);
     }
 
     function showToast(m, e=false) {
         const t = document.getElementById('toast-msg');
         t.innerText = m;
-        t.style.background = e ? "var(--error)" : "rgba(46, 204, 113, 0.9)";
+        t.style.background = e ? "var(--error)" : "var(--success)";
         t.style.display="block";
         setTimeout(()=>t.style.display="none", 3000);
     }
@@ -225,11 +291,24 @@
         document.getElementById('loading-text').innerText = txt;
     }
 
-    function handleLogout() {
-        localStorage.removeItem('m_user');
-        localStorage.removeItem('m_pass');
-        location.reload();
+    function switchSec(id, el) {
+        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        document.getElementById('sec-'+id).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
     }
+
+    window.onload = () => {
+        const savedU = localStorage.getItem('m_user');
+        const savedP = localStorage.getItem('m_pass');
+        if(savedU && savedP) {
+            document.getElementById('login-user').value = savedU;
+            document.getElementById('login-pass').value = savedP;
+            handleLogin();
+        }
+    };
+    
+    function handleLogout() { localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>
