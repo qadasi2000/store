@@ -84,7 +84,6 @@
         }
         .bal-val { font-size: 3rem; font-weight: 800; color: var(--gold); line-height: 1; margin: 10px 0; }
 
-        /* زر التعليمات العائم */
         .help-fab {
             position: fixed;
             bottom: 20px;
@@ -176,7 +175,6 @@
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
     <div id="loading-text" style="color:var(--gold); margin-top:15px; font-weight: 700;">جاري المعالجة...</div>
 </div>
-<style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
 
 <div id="toast-msg"></div>
 
@@ -191,7 +189,7 @@
             <input type="text" id="login-user" placeholder="رقم الهاتف" inputmode="numeric">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
             
-            <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <button class="btn" id="btn-main-login" onclick="handleLogin()">تسجيل الدخول</button>
             
             <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
                 <button class="btn" id="btn-reg-view" onclick="toggleRegisterUI()" style="filter: brightness(1.1) saturate(1.2);">
@@ -319,11 +317,15 @@
         }
     };
 
+    // 1. تبديل واجهة التسجيل (إخفاء دخول وإظهار تأكيد إنشاء)
     function toggleRegisterUI() {
         const ra = document.getElementById('reg-actions');
         const rb = document.getElementById('btn-reg-view');
+        const lb = document.getElementById('btn-main-login');
+        
         ra.classList.toggle('hidden');
         rb.classList.toggle('hidden');
+        lb.classList.toggle('hidden'); // إخفاء/إظهار زر تسجيل الدخول
     }
 
     function toggleHelpModal() {
@@ -350,7 +352,7 @@
 
     function closeRegModal() {
         document.getElementById('reg-success-modal').style.display = 'none';
-        handleLogin(); // تسجيل دخول تلقائي
+        handleLogin(); 
     }
 
     async function handleLogin() {
@@ -374,6 +376,26 @@
         showLoading(false);
     }
 
+    // 2. فك الارتباط وتسجيل الدخول آلياً
+    async function handleUnbind() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        if(!u || !p) return showToast("أدخل بياناتك لفك الارتباط", true);
+        
+        showLoading(true, "جاري فك ارتباط الجهاز...");
+        const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
+        
+        if(data.success) {
+            showToast("✅ تم فك الارتباط بنجاح! جاري الدخول المباشر...");
+            setTimeout(() => {
+                handleLogin(); // تسجيل دخول آلي فوراً
+            }, 1000);
+        } else {
+            showToast(data.msg, true);
+        }
+        showLoading(false);
+    }
+
     function showToast(m, e=false) {
         const t = document.getElementById('toast-msg');
         t.innerText = m;
@@ -382,6 +404,9 @@
         setTimeout(()=>t.style.display="none", 3500);
     }
 
+    function showLoading(s, txt) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; document.getElementById('loading-text').innerText = txt; }
+    
+    // بقية الوظائف الأساسية للمتجر والتحويل
     function switchSec(id, el) {
         ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
         document.getElementById('sec-'+id).classList.remove('hidden');
@@ -458,7 +483,6 @@
         document.getElementById('code-modal').style.display = 'flex';
     }
     function closeCodeModal() { document.getElementById('code-modal').style.display = 'none'; }
-    function showLoading(s, txt) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; document.getElementById('loading-text').innerText = txt; }
     function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
     function saveCardLocally(t, c) { let cards = JSON.parse(localStorage.getItem('m_cards') || '[]'); cards.unshift({type:t, code:c, date: new Date().toLocaleString('ar-YE')}); localStorage.setItem('m_cards', JSON.stringify(cards)); }
     
@@ -522,17 +546,6 @@
     }
 
     function playSuccessSound() { document.getElementById('success-sound').play().catch(()=>{}); }
-
-    async function handleUnbind() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أدخل بياناتك", true);
-        showLoading(true, "جاري المعالجة...");
-        const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
-        showToast(data.msg, !data.success);
-        showLoading(false);
-    }
-
     function handleLogout() { localStorage.clear(); location.reload(); }
 </script>
 </body>
