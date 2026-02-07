@@ -8,13 +8,11 @@
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; --error: #e74c3c; --bg: #1a000a; }
         body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; transition: background 0.5s ease; }
-        /* تغيير لون الخلفية عند التسجيل */
         body.register-mode { background: #001a1a; } 
 
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
         .marquee-container { background: #4a041c; color: var(--gold); padding: 8px 0; border-bottom: 1px solid var(--gold); font-size: 0.85rem; font-weight: bold; overflow: hidden; white-space: nowrap; position: relative; z-index: 1001; }
-        /* 4. عكس حركة شريط الاعلان */
         .marquee-text { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
         @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
@@ -31,10 +29,13 @@
         
         .discount-badge { background: var(--gold); color: #3d0016; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-top: 10px; display: inline-block; }
 
-        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; position: relative; }
         .price-tag { margin: 8px 0; }
         .old-price { text-decoration: line-through; color: #ff6b6b; font-size: 0.75rem; margin-left: 5px; }
         .new-price { color: var(--gold); font-weight: 700; }
+        
+        /* تصميم رصيد الجيجا */
+        .data-size { display: block; background: rgba(249, 217, 118, 0.1); color: var(--gold); font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-top: 5px; border: 1px solid rgba(249, 217, 118, 0.3); }
 
         input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
         .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 0.95rem; }
@@ -169,6 +170,19 @@
     let balanceTimer = null;
     let currentBuyingCard = { name: "", max: 0 };
 
+    // مصفوفة لتحديد الأحجام بناءً على السعر
+    const dataVolumes = {
+        "100": "512 ميجا",
+        "200": "1 جيجا",
+        "300": "1.5 جيجا",
+        "500": "2.5 جيجا",
+        "1000": "5 جيجا",
+        "2000": "10 جيجا",
+        "3000": "15 جيجا",
+        "5000": "25 جيجا",
+        "10000": "50 جيجا"
+    };
+
     async function apiRequest(params) {
         params.deviceId = getDeviceId();
         const query = new URLSearchParams(params).toString();
@@ -192,7 +206,6 @@
         }
     };
 
-    // 5. وظيفة تغيير لون الصفحة عند إنشاء حساب
     function toggleRegisterUI() {
         const body = document.body;
         const regActions = document.getElementById('reg-actions');
@@ -274,6 +287,7 @@
         showLoading(false);
     }
 
+    // 1. تعديل عرض الباقات لتشمل رصيد الجيجا
     async function loadCardsFast() {
         const grid = document.getElementById('cards-grid');
         grid.innerHTML = "<small style='grid-column:1/-1;'>جاري التحديث...</small>";
@@ -284,10 +298,15 @@
                 const price = parseInt(key.replace(/[^0-9]/g, '')) || 0;
                 const discPrice = Math.floor(price * (1 - data.discount));
                 const isOut = data.stock[key] <= 0;
+                
+                // تحديد حجم الجيجا بناءً على السعر المستخرج من الاسم
+                const volume = dataVolumes[price] || "";
+
                 grid.innerHTML += `
                 <div class="item">
                     <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نافد':'متوفر: '+data.stock[key]}</small>
-                    <h4 style="margin:5px 0;">${key}</h4>
+                    <h4 style="margin:5px 0 0 0;">${key}</h4>
+                    ${volume ? `<span class="data-size">📦 ${volume}</span>` : ''}
                     <div class="price-tag">
                         <span class="old-price">${price}</span> <span class="new-price">${discPrice} ر.ي</span>
                     </div>
@@ -392,7 +411,6 @@
 
     function copySingle(t) { navigator.clipboard.writeText(t).then(()=>showToast("تم النسخ")); }
 
-    // 3. تمييز نوع الباقة عند نسخ الكل عمودياً
     function copyAllSaved() {
         let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
         let txt = cards.map(c => `نوع: ${c.type} | كود: ${c.code}`).join('\n');
@@ -424,11 +442,10 @@
         showLoading(false);
     }
 
-    // 2. دالة لجلب وعرض تقارير التحويلات
     async function loadTransferHistory() {
         const histDiv = document.getElementById('transfer-history-list');
         histDiv.innerHTML = "<small>جاري التحديث...</small>";
-        const data = await apiRequest({ action: 'getOrders', id: myUser }); // نفترض أن السيرفر يعيد التحويلات في قائمة الطلبات أو قائمة منفصلة
+        const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success && data.transfers) {
             histDiv.innerHTML = data.transfers.slice(0, 5).map(t => `
                 <div class="history-item">
@@ -453,13 +470,11 @@
         showLoading(false);
     }
 
-    // 1. إصلاح جلب طلبات الشحن لتظهر في الأسفل (ترتيب تصاعدي حسب الوقت)
     async function loadOrders() {
         const list = document.getElementById('orders-list');
         list.innerHTML = "<small>جاري جلب الطلبات...</small>";
         const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success) {
-            // استخدام reverse لجعل الأحدث في الأسفل إذا كان السيرفر يرسل الأحدث أولاً
             const orderedData = data.orders; 
             list.innerHTML = orderedData.map(o => `
                 <div class="order-item ${o.status === 'قيد الانتظار' ? 'pending' : 'success'}">
