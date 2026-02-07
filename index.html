@@ -57,25 +57,6 @@
 <div id="loading-overlay"><div class="loader"></div><div style="color:var(--gold); margin-top:10px;">جاري المعالجة...</div></div>
 <div id="toast-msg"></div>
 
-<div id="qty-modal" class="custom-modal">
-    <div class="modal-content">
-        <h3 style="color:var(--gold); margin-top:0;">تحديد الكمية 🛒</h3>
-        <p id="qty-card-name" style="color: #eee;"></p>
-        <input type="number" id="buy-qty-input" value="1" min="1" style="font-size: 1.2rem; height: 50px; margin-bottom: 15px;">
-        <button class="btn" onclick="confirmPurchaseAction()">تأكيد الشراء</button>
-        <button class="btn" style="background:transparent; color:#fff; border:1px solid #666;" onclick="closeQtyModal()">إلغاء</button>
-    </div>
-</div>
-
-<div id="code-modal" class="custom-modal">
-    <div class="modal-content">
-        <h3 style="color:var(--gold); margin-top:0;">تم الشراء بنجاح! 🎉</h3>
-        <div id="codes-container" style="max-height: 200px; overflow-y: auto; margin: 10px 0; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;"></div>
-        <button class="btn" style="background:#fff; color:#3d0016;" onclick="copyAllFromModal()">نسخ كل الأكواد 📋</button>
-        <button class="btn" onclick="closeCodeModal()">إغلاق</button>
-    </div>
-</div>
-
 <div class="app">
     <nav class="nav hidden" id="top-nav">
         <div class="nav-btn active" onclick="switchSec('cards', this)">🛒 المتجر</div>
@@ -94,6 +75,10 @@
             <input type="text" id="login-user" placeholder="رقم الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
             <button id="btn-login-action" class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <p style="font-size: 0.75rem; color: #aaa; margin-bottom: 10px;">هل قمت بتغيير هاتفك؟</p>
+                <button class="btn" style="background: transparent; border: 1px solid var(--gold); color: var(--gold);" onclick="handleUnbind()">فك ارتباط الجهاز الحالي 📱</button>
+            </div>
         </div>
     </div>
 
@@ -135,6 +120,25 @@
     </div>
 </div>
 
+<div id="qty-modal" class="custom-modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin-top:0;">تحديد الكمية 🛒</h3>
+        <p id="qty-card-name" style="color: #eee;"></p>
+        <input type="number" id="buy-qty-input" value="1" min="1" style="font-size: 1.2rem; height: 50px; margin-bottom: 15px;">
+        <button class="btn" onclick="confirmPurchaseAction()">تأكيد الشراء</button>
+        <button class="btn" style="background:transparent; color:#fff; border:1px solid #666;" onclick="closeQtyModal()">إلغاء</button>
+    </div>
+</div>
+
+<div id="code-modal" class="custom-modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin-top:0;">تم الشراء بنجاح! 🎉</h3>
+        <div id="codes-container" style="max-height: 200px; overflow-y: auto; margin: 10px 0; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;"></div>
+        <button class="btn" style="background:#fff; color:#3d0016;" onclick="copyAllFromModal()">نسخ كل الأكواد 📋</button>
+        <button class="btn" onclick="closeCodeModal()">إغلاق</button>
+    </div>
+</div>
+
 <script>
     const URL = 'https://script.google.com/macros/s/AKfycbxOTcA7GbOr15kAPwrUEcW3GDBGevkejpSOrGSOIs-RM-lr9ybbUmKr8M_CENul_8bz/exec';
     let myUser = "", myPass = "";
@@ -152,11 +156,36 @@
         }
     };
 
-    // وظيفة تشغيل نغمة النجاح
+    // وظيفة فك الارتباط
+    async function handleUnbind() {
+        const u = document.getElementById('login-user').value;
+        const p = document.getElementById('login-pass').value;
+        if(!u || !p) return showToast("أدخل الهاتف وكلمة المرور أولاً", true);
+        
+        if(!confirm("هل أنت متأكد من رغبتك في فك ارتباط الحساب بالجهاز السابق وربطه بهذا الجهاز؟")) return;
+
+        showLoading(true);
+        try {
+            // ملاحظة: يجب أن يدعم السكريبت في الخلفية (Google Apps Script) Action يسمى unbindDevice
+            const res = await fetch(`${URL}?action=unbindDevice&id=${u}&password=${p}&newDeviceId=${getDeviceId()}`);
+            const data = await res.json();
+            
+            if(data.success) {
+                showToast("تم فك الارتباط بنجاح! يمكنك الدخول الآن.");
+            } else {
+                showToast(data.msg || "فشل فك الارتباط، تأكد من البيانات", true);
+            }
+        } catch(e) {
+            showToast("حدث خطأ في الاتصال", true);
+        }
+        showLoading(false);
+    }
+
+    // تشغيل نغمة النجاح
     function playSuccessSound() {
         const sound = document.getElementById('success-sound');
         sound.currentTime = 0;
-        sound.play().catch(e => console.log("Sound play blocked by browser"));
+        sound.play().catch(e => console.log("Sound play blocked"));
     }
 
     function startBalanceAutoUpdate() {
@@ -171,7 +200,6 @@
             const data = await res.json();
             if (data.success) { 
                 const newBal = parseFloat(data.balance);
-                // إذا زاد الرصيد (وصول حوالة)، شغل الصوت
                 if (newBal > lastKnownBalance && lastKnownBalance !== 0) {
                     playSuccessSound();
                     showToast("تم استلام رصيد جديد! 💰");
@@ -187,7 +215,7 @@
         toast.innerText = msg;
         toast.style.background = isError ? "rgba(231, 76, 60, 0.9)" : "rgba(46, 204, 113, 0.9)";
         toast.style.display = "block";
-        setTimeout(() => { toast.style.display = "none"; }, 3000);
+        setTimeout(() => { toast.style.display = "none"; }, 3500);
     }
 
     async function handleLogin() {
@@ -267,7 +295,7 @@
             } catch(e) { break; }
         }
         if (boughtCodes.length > 0) {
-            playSuccessSound(); // صوت عند نجاح الشراء أيضاً
+            playSuccessSound();
             document.getElementById('display-bal').innerText = lastBalance;
             lastKnownBalance = parseFloat(lastBalance);
             showCodesInModal(boughtCodes);
@@ -330,7 +358,7 @@
             const res = await fetch(`${URL}?action=transfer&id=${myUser}&targetId=${tid}&amount=${amt}`);
             const data = await res.json();
             if(data.success) { 
-                playSuccessSound(); // تشغيل الصوت عند نجاح الإرسال
+                playSuccessSound();
                 showToast(data.msg);
                 document.getElementById('trans-id').value = ""; document.getElementById('trans-amt').value = "";
                 updateBalanceOnly();
