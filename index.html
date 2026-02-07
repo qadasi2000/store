@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V8.5</title>
+    <title>محفظة الماجد الذكية | V8.6 Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; --error: #e74c3c; }
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
-        #toast-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(46, 204, 113, 0.9); color: white; padding: 12px 25px; border-radius: 15px; z-index: 9000; display: none; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; min-width: 200px; }
+        #toast-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(46, 204, 113, 0.9); color: white; padding: 12px 25px; border-radius: 15px; z-index: 9000; display: none; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; min-width: 250px; }
 
         .nav { position: sticky; top: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 15px 0; border-bottom: 2px solid var(--gold); z-index: 1000; margin: 0 auto 20px auto; }
         .nav-btn { flex: 1; text-align: center; font-size: 0.8rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
@@ -21,21 +21,19 @@
         .bal-val { font-size: 3.2rem; font-weight: 700; color: var(--gold); display: block; line-height: 1.2; }
         .wallet-num { font-size: 0.9rem; color: var(--gold); background: rgba(0,0,0,0.3); padding: 4px 15px; border-radius: 20px; margin-bottom: 10px; display: inline-block; border: 1px solid rgba(249,217,118,0.2); }
         
-        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; }
+        input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; font-size: 1rem; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; font-size: 1rem; }
         .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); margin-top: 10px; }
 
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 7000; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-        .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 8000; display: none; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div id="loading-overlay"><div class="loader"></div><div style="color:var(--gold); margin-top:15px; font-weight:bold;">جاري الاتصال بالسيرفر...</div></div>
+<div id="loading-overlay"><div class="loader"></div><div id="loading-text" style="color:var(--gold); margin-top:15px; font-weight:bold;">جاري الاتصال بالسيرفر...</div></div>
 <div id="toast-msg"></div>
 
 <div class="app">
@@ -72,35 +70,129 @@
         <div id="sec-cards">
             <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
         </div>
-
-        <div id="sec-mycards" class="hidden">
-            <div id="purchased-list"></div>
+        
         </div>
-
-        <div id="sec-transfer" class="hidden">
-            <div class="card">
-                <h4 style="color:var(--gold); margin-top:0">💸 تحويل رصيد</h4>
-                <input type="text" id="trans-id" placeholder="رقم المستلم">
-                <input type="number" id="trans-amt" placeholder="المبلغ">
-                <button class="btn" style="background:var(--success); color:#fff" onclick="handleTransfer()">تأكيد التحويل 🚀</button>
-            </div>
-        </div>
-
-        <div id="sec-topup" class="hidden">
-            <div class="card">
-                <h4 style="color:var(--gold); margin-top:0">➕ طلب شحن</h4>
-                <input type="number" id="top-amt" placeholder="المبلغ">
-                <input type="text" id="top-ref" placeholder="رقم المرجع">
-                <button class="btn" onclick="handleTopup()">إرسال الطلب</button>
-            </div>
-            <div id="orders-list"></div>
-        </div>
-    </div>
 </div>
 
 <script>
+    // تأكد أن الرابط ينتهي بـ /exec
     const API_URL = 'https://script.google.com/macros/s/AKfycbzCYrjc97E3X6wXQUA_Ol9B5EhrQo_p8yP7i-jGidXzLzO20RWxXz8KI3BekCdpMbqd/exec';
     let myUser = "", myPass = "";
+
+    // وظيفة الطلب الموحدة لحل مشاكل الاتصال
+    async function apiCall(params) {
+        const queryString = new URLSearchParams(params).toString();
+        const url = `${API_URL}?${queryString}`;
+        
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                redirect: 'follow'
+            });
+            if (!response.ok) throw new Error('Network response was not ok');
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            return { success: false, msg: "فشل الاتصال: تأكد من الإنترنت أو صلاحية الرابط" };
+        }
+    }
+
+    async function handleLogin() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        if(!u || !p) return showToast("أدخل رقم الهاتف وكلمة المرور", true);
+
+        showLoading(true, "جاري التحقق من البيانات...");
+        
+        const data = await apiCall({ action: 'getWallet', id: u, password: p });
+        
+        if (data.success) {
+            myUser = u; myPass = p;
+            localStorage.setItem('m_user', u);
+            localStorage.setItem('m_pass', p);
+            
+            document.getElementById('display-bal').innerText = data.balance;
+            document.getElementById('display-phone').innerText = u;
+            
+            document.getElementById('page-login').classList.add('hidden');
+            document.getElementById('page-content').classList.remove('hidden');
+            
+            loadCardsFast();
+            showToast("أهلاً بك مجدداً ✅");
+        } else {
+            showToast(data.msg || "بيانات الدخول غير صحيحة", true);
+        }
+        showLoading(false);
+    }
+
+    async function handleRegister() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        
+        if(u.length < 9) return showToast("رقم الهاتف يجب أن يكون 9 أرقام", true);
+        if(p.length < 4) return showToast("كلمة المرور قصيرة جداً", true);
+
+        showLoading(true, "جاري إنشاء حسابك الجديد...");
+        
+        const data = await apiCall({ action: 'register', id: u, password: p });
+        
+        if (data.success) {
+            showToast("تم إنشاء الحساب بنجاح! 🎊");
+            handleLogin(); 
+        } else {
+            showToast(data.msg || "هذا الرقم مسجل مسبقاً", true);
+        }
+        showLoading(false);
+    }
+
+    async function loadCardsFast() {
+        const grid = document.getElementById('cards-grid');
+        grid.innerHTML = "<div style='grid-column:1/-1; text-align:center;'>جاري تحميل المتجر...</div>";
+        
+        const data = await apiCall({ action: 'getStock' });
+        
+        if(data.success) {
+            grid.innerHTML = "";
+            Object.keys(data.stock).forEach(key => {
+                const isOut = data.stock[key] <= 0;
+                grid.innerHTML += `
+                <div class="card" style="padding:15px; text-align:center; margin-bottom:0;">
+                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نافد':'متوفر: '+data.stock[key]}</small>
+                    <h4 style="margin:10px 0;">${key}</h4>
+                    <button class="btn" style="padding:8px; font-size:0.8rem;" ${isOut?'disabled':''}>شراء</button>
+                </div>`;
+            });
+        } else {
+            grid.innerHTML = "<div style='grid-column:1/-1;'>تعذر تحميل المنتجات حالياً</div>";
+        }
+    }
+
+    function showLoading(show, text = "") { 
+        document.getElementById('loading-overlay').style.display = show ? "flex" : "none"; 
+        if(text) document.getElementById('loading-text').innerText = text;
+    }
+
+    function showToast(m, e=false) { 
+        const t = document.getElementById('toast-msg'); 
+        t.innerText = m; 
+        t.style.background = e ? "var(--error)" : "var(--success)"; 
+        t.style.display="block"; 
+        setTimeout(()=>t.style.display="none", 4000); 
+    }
+
+    function handleLogout() { localStorage.clear(); location.reload(); }
+    
+    function switchSec(id, el) { 
+        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => {
+            const element = document.getElementById(s);
+            if(element) element.classList.add('hidden');
+        }); 
+        document.getElementById('sec-'+id).classList.remove('hidden'); 
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
+        el.classList.add('active'); 
+    }
 
     window.onload = () => {
         const savedU = localStorage.getItem('m_user');
@@ -111,97 +203,6 @@
             handleLogin(); 
         }
     };
-
-    // تسجيل الدخول والربط بورقة المحافظ
-    async function handleLogin() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("يرجى تعبئة البيانات", true);
-
-        showLoading(true);
-        try {
-            const res = await fetch(`${API_URL}?action=getWallet&id=${u}&password=${p}`);
-            const data = await res.json();
-            
-            if (data.success) {
-                myUser = u; myPass = p;
-                localStorage.setItem('m_user', u);
-                localStorage.setItem('m_pass', p);
-                
-                document.getElementById('display-bal').innerText = data.balance;
-                document.getElementById('display-phone').innerText = u;
-                
-                document.getElementById('page-login').classList.add('hidden');
-                document.getElementById('page-content').classList.remove('hidden');
-                
-                loadCardsFast();
-                startBalanceAutoUpdate();
-                showToast("تم تسجيل الدخول بنجاح");
-            } else {
-                showToast(data.msg || "خطأ في بيانات الدخول", true);
-            }
-        } catch (e) { showToast("فشل الاتصال بالسيرفر", true); }
-        showLoading(false);
-    }
-
-    // إضافة مستخدم جديد للورقة
-    async function handleRegister() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(u.length < 9) return showToast("رقم الهاتف غير صحيح", true);
-        
-        showLoading(true);
-        try {
-            const res = await fetch(`${API_URL}?action=register&id=${u}&password=${p}`);
-            const data = await res.json();
-            if (data.success) {
-                showToast("تم إنشاء الحساب! جاري الدخول...");
-                handleLogin();
-            } else { showToast(data.msg, true); }
-        } catch (e) { showToast("خطأ في عملية التسجيل", true); }
-        showLoading(false);
-    }
-
-    async function loadCardsFast() {
-        const grid = document.getElementById('cards-grid');
-        grid.innerHTML = "جاري التحميل...";
-        try {
-            const res = await fetch(`${API_URL}?action=getStock`);
-            const data = await res.json();
-            if(data.success) {
-                grid.innerHTML = "";
-                Object.keys(data.stock).forEach(key => {
-                    const isOut = data.stock[key] <= 0;
-                    grid.innerHTML += `<div class="item">
-                        <small>${isOut?'نافد':'متوفر: '+data.stock[key]}</small>
-                        <h4>${key}</h4>
-                        <button class="btn" style="padding:8px" ${isOut?'disabled':''}>شراء</button>
-                    </div>`;
-                });
-            }
-        } catch(e) {}
-    }
-
-    function startBalanceAutoUpdate() {
-        setInterval(async () => {
-            if(!myUser) return;
-            try {
-                const res = await fetch(`${API_URL}?action=getBalance&id=${myUser}`);
-                const data = await res.json();
-                if(data.success) document.getElementById('display-bal').innerText = data.balance;
-            } catch(e){}
-        }, 15000);
-    }
-
-    function handleLogout() { localStorage.clear(); location.reload(); }
-    function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
-    function showToast(m, e=false) { const t = document.getElementById('toast-msg'); t.innerText = m; t.style.background = e ? "var(--error)" : "var(--success)"; t.style.display="block"; setTimeout(()=>t.style.display="none", 3000); }
-    function switchSec(id, el) { 
-        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden')); 
-        document.getElementById('sec-'+id).classList.remove('hidden'); 
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
-        el.classList.add('active'); 
-    }
 </script>
 </body>
 </html>
