@@ -10,12 +10,9 @@
             --main: #3d0016; 
             --gold: #f9d976; 
             --gold-dark: #d4af37;
-            --glass: rgba(255, 255, 255, 0.05); 
             --success: #00ff88; 
             --pending: #ffb300; 
-            --error: #ff4b2b; 
             --bg: #0f0006; 
-            --card-bg: rgba(255, 255, 255, 0.03);
         }
 
         body { 
@@ -24,170 +21,121 @@
             color: #fff; 
             font-family: 'Cairo', sans-serif; 
             margin: 0; 
-            overflow-x: hidden; 
-            transition: background 0.5s ease;
             line-height: 1.6;
         }
 
         .app { max-width: 450px; margin: 0 auto; padding: 15px; min-height: 100vh; }
 
+        /* تأثير الإطار الوميضي المتحرك حول الباقات */
+        @keyframes rotate-border {
+            100% { transform: rotate(360deg); }
+        }
+
+        .item { 
+            position: relative;
+            background: #1a000a; 
+            border-radius: 20px; 
+            padding: 18px; 
+            text-align: center; 
+            overflow: hidden; /* ضروري لعمل الإطار */
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .item::before {
+            content: '';
+            position: absolute;
+            z-index: -2;
+            left: -50%;
+            top: -50%;
+            width: 200%;
+            height: 200%;
+            background-color: #222;
+            background-repeat: no-repeat;
+            background-size: 50% 50%, 50% 50%;
+            background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+            background-image: linear-gradient(var(--gold), var(--gold-dark));
+            animation: rotate-border 4s linear infinite;
+        }
+
+        .item::after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            left: 3px;
+            top: 3px;
+            width: calc(100% - 6px);
+            height: calc(100% - 6px);
+            background: #1a000a;
+            border-radius: 17px;
+        }
+
         .marquee-container { 
             background: linear-gradient(90deg, #4a041c, #2a000e); 
             color: var(--gold); 
-            padding: 10px 0; 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            overflow: hidden; 
-            white-space: nowrap; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            position: sticky;
-            top: 0;
-            z-index: 2001;
+            padding: 10px 0; font-size: 0.8rem; font-weight: 600; 
+            overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 2001;
         }
         .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .nav { 
-            position: sticky; 
-            top: 45px; 
-            width: 100%; 
-            background: rgba(30, 0, 15, 0.9); 
-            backdrop-filter: blur(20px);
-            display: flex; 
-            padding: 10px 0; 
-            border-bottom: 1px solid rgba(249, 217, 118, 0.2);
-            z-index: 2000; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
+            position: sticky; top: 45px; width: 100%; background: rgba(30, 0, 15, 0.9); 
+            backdrop-filter: blur(20px); display: flex; padding: 10px 0; 
+            border-bottom: 1px solid rgba(249, 217, 118, 0.2); z-index: 2000;
         }
-        .nav-btn { 
-            flex: 1; text-align: center; font-size: 0.75rem; color: #888; 
-            cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; gap: 2px;
-        }
-        .nav-btn.active { color: var(--gold); font-weight: bold; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
+        .nav-btn { flex: 1; text-align: center; font-size: 0.75rem; color: #888; cursor: pointer; display: flex; flex-direction: column; }
+        .nav-btn.active { color: var(--gold); font-weight: bold; border-bottom: 2px solid var(--gold); }
 
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 24px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-        }
+        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 20px; margin-bottom: 20px; }
 
-        .bal-box { 
-            text-align: center; 
-            padding: 30px 20px; 
-            background: linear-gradient(135deg, #4a041c 0%, #1a000a 100%); 
-            border-radius: 30px; 
-            margin-bottom: 30px; 
-            border: 1px solid rgba(249, 217, 118, 0.3);
-        }
-        .bal-val { font-size: 3rem; font-weight: 800; color: var(--gold); line-height: 1; margin: 10px 0; }
+        .bal-box { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #4a041c 0%, #1a000a 100%); border-radius: 30px; margin-bottom: 30px; border: 1px solid rgba(249, 217, 118, 0.3); }
+        .bal-val { font-size: 2.8rem; font-weight: 800; color: var(--gold); line-height: 1; margin: 10px 0; }
 
-        .help-fab {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 4000;
-            cursor: pointer;
-            font-size: 1.5rem;
-            animation: bounce 2s infinite;
-        }
-
-        .status-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 50px; float: left; }
-        .st-success { background: rgba(0, 255, 136, 0.1); color: var(--success); }
-        .st-pending { background: rgba(255, 179, 0, 0.1); color: var(--pending); }
-
-        #toast-msg { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            padding: 20px 30px; border-radius: 20px; z-index: 9999; text-align: center; 
-            min-width: 250px; display: none; font-weight: bold; backdrop-filter: blur(10px);
-        }
-
-        .item { 
-            background: rgba(255,255,255,0.03); border-radius: 24px; padding: 18px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.05); 
-        }
-
-        .btn { 
-            width: 100%; padding: 14px; border-radius: 16px; border: none; 
-            font-weight: 700; cursor: pointer; 
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); 
-            color: #3d0016; transition: 0.3s;
-        }
-        .btn:disabled { background: #444; color: #888; }
+        .btn { width: 100%; padding: 14px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #3d0016; }
         .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
         
-        input { 
-            width: 100%; padding: 15px; border-radius: 16px; 
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); 
-            color: #fff; text-align: center; margin-bottom: 15px; box-sizing: border-box;
-        }
+        input { width: 100%; padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; text-align: center; margin-bottom: 15px; box-sizing: border-box; }
 
-        .custom-modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; 
-            z-index: 5000; padding: 20px;
-        }
-        .modal-content { background: #1a000a; border: 1px solid var(--gold); border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; }
-
+        .data-size { font-size: 0.75rem; background: var(--gold); color: #000; padding: 2px 12px; border-radius: 50px; display: inline-block; margin-top: 5px; font-weight: bold; }
         .hidden { display: none !important; }
+        .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
+        .modal-content { background: #1a000a; border: 1px solid var(--gold); border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; text-align: center; }
 
-        .my-card-item { background: #fff; color: #1a000a; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
-        .my-card-code { font-family: monospace; font-size: 1.5rem; font-weight: 800; color: #3d0016; display: block; text-align: center; border: 2px dashed #3d0016; padding: 10px; margin: 10px 0; }
+        /* ستايل سجل الطلبات */
+        .log-item { padding: 12px; background: rgba(255,255,255,0.05); margin-bottom: 8px; border-radius: 12px; border-right: 4px solid #444; }
+        .log-success { border-right-color: var(--success); }
+        .log-pending { border-right-color: var(--pending); }
     </style>
 </head>
 <body>
 
 <div class="marquee-container">
-    <div class="marquee-text">⚡ شحن تلقائي وفوري | 📱 دعم فني مباشر | 🔥 خصومات حصرية | 🎫 سجل كروتي يحفظ مشترياتك للأبد</div>
+    <div class="marquee-text">⚡ شحن فوري تلقائي | 🎫 كروتي محفوظة دائماً | 🔥 عروض حصرية لفترة محدودة | 🛠️ دعم فني 24/7</div>
 </div>
 
 <audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
-<div class="help-fab" onclick="toggleHelpModal()">❓</div>
-
-<div id="loading-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display:none; flex-direction: column; align-items: center; justify-content: center;">
-    <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
-    <div id="loading-text" style="color:var(--gold); margin-top:15px; font-weight: 700;">جاري المعالجة...</div>
-</div>
-<style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-
-<div id="toast-msg"></div>
 
 <div class="app">
     <div id="page-login">
         <div style="text-align:center; padding: 50px 0 30px;">
-            <div style="background:var(--gold); width:90px; height:90px; border-radius:28px; margin:0 auto; line-height:90px; font-size:2.5rem; color:#000; font-weight:900;">M</div>
-            <h2 style="margin-top:25px;">محفظة الماجد الذكية</h2>
-            <div id="main-discount-info" style="color:var(--gold); font-size:0.8rem;">🎁 جاهز لخدمتك</div>
+            <div style="background:var(--gold); width:80px; height:80px; border-radius:22px; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:900;">M</div>
+            <h2 style="margin-top:20px;">محفظة الماجد الذكية</h2>
         </div>
         <div class="card">
             <input type="text" id="login-user" placeholder="رقم الهاتف" inputmode="numeric">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            
             <button class="btn" id="btn-main-login" onclick="handleLogin()">تسجيل الدخول</button>
-            
-            <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-                <button class="btn" id="btn-reg-view" onclick="toggleRegisterUI()" style="filter: brightness(1.1) saturate(1.2);">
-                    إنشاء حساب جديد ✨
-                </button>
-                
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <button class="btn btn-outline" id="btn-reg-view" onclick="toggleRegisterUI()">إنشاء حساب جديد ✨</button>
                 <div id="reg-actions" class="hidden">
-                     <p style="font-size: 0.75rem; color: var(--gold); margin-bottom: 10px;">سيتم إنشاء حساب بالبيانات أعلاه</p>
-                     <button class="btn" style="background:var(--success); color:#000" onclick="handleRegister()">تأكيد الإنشاء الآن ✅</button>
-                     <button class="btn btn-outline" onclick="toggleRegisterUI()" style="margin-top: 10px; border-color:#ff6b6b; color:#ff6b6b;">إلغاء</button>
+                     <button class="btn" style="background:var(--success); color:#000" onclick="handleRegister()">تأكيد الإنشاء ✅</button>
+                     <button class="btn btn-outline" onclick="toggleRegisterUI()" style="margin-top: 10px;">إلغاء</button>
                 </div>
             </div>
-
-            <button class="btn btn-outline" style="border:none; opacity:0.5; margin-top:20px; font-size: 0.8rem;" onclick="handleUnbind()">📱 فك ارتباط الجهاز</button>
+            <button class="btn btn-outline" style="border:none; opacity:0.5; margin-top:20px;" onclick="handleUnbind()">📱 فك ارتباط الجهاز</button>
         </div>
     </div>
 
@@ -196,107 +144,52 @@
         <div class="nav-btn" onclick="switchSec('mycards', this); displaySavedCards()"><span>🎫</span><span>كروتي</span></div>
         <div class="nav-btn" onclick="switchSec('transfer', this); loadTransferHistory()"><span>💸</span><span>تحويل</span></div>
         <div class="nav-btn" onclick="switchSec('topup', this); loadOrders()"><span>➕</span><span>شحن</span></div>
-        </nav>
+    </nav>
 
     <div id="page-main" class="hidden">
         <div class="bal-box">
             <div id="display-phone" style="color:var(--gold); font-size:0.9rem;">000000000</div>
-            <small style="opacity:0.8;">الرصيد المتاح</small>
             <div class="bal-val" id="display-bal">0</div>
             <small>ريال يمني</small>
         </div>
 
-        <div id="sec-cards"><div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"></div></div>
-        
+        <div id="sec-cards"><div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 10px;"></div></div>
+
         <div id="sec-mycards" class="hidden">
-            <button id="btn-copy-all" class="btn" style="margin-bottom:15px; display:none;" onclick="copyAllSaved()">نسخ جميع الكروت 📋</button>
             <div id="purchased-list"></div>
         </div>
 
         <div id="sec-transfer" class="hidden">
             <div class="card">
-                <h4>💸 تحويل سريع</h4>
+                <h4>💸 تحويل رصيد</h4>
                 <input type="text" id="trans-id" placeholder="رقم المستلم">
                 <input type="number" id="trans-amt" placeholder="المبلغ">
-                <button class="btn" onclick="handleTransfer()">إرسال الآن 🚀</button>
+                <button class="btn" onclick="handleTransfer()">إرسال الآن</button>
             </div>
-            <h5 style="margin-bottom:10px; color:var(--gold);">📥 سجل الأرصدة الواصلة</h5>
+            <h5 style="color:var(--gold);">📥 الأرصدة الواصلة</h5>
             <div id="transfer-history-list"></div>
         </div>
 
         <div id="sec-topup" class="hidden">
             <div class="card">
-                <h4>➕ طلب رصيد</h4>
+                <h4>➕ طلب شحن رصيد</h4>
                 <input type="number" id="top-amt" placeholder="المبلغ">
                 <input type="text" id="top-ref" placeholder="رقم المرجع">
                 <button class="btn" onclick="handleTopup()">إرسال الطلب</button>
             </div>
-            <h5 style="margin-bottom:10px; color:var(--gold);">📋 سجل طلبات الشحن</h5>
+            <h5 style="color:var(--gold);">📋 سجل طلبات الشحن</h5>
             <div id="orders-list"></div>
         </div>
     </div>
 </div>
 
-<div id="help-modal" class="custom-modal">
-    <div class="modal-content" style="max-width: 400px; text-align: right;">
-        <h3 style="color:var(--gold); text-align:center;">📖 دليل الاستخدام الشامل</h3>
-        <div style="font-size: 0.85rem; max-height: 350px; overflow-y: auto; padding-left: 10px;">
-            <p style="color:var(--gold); border-bottom: 1px solid #333; padding-bottom: 5px;">🔐 واجهة الدخول:</p>
-            <ul style="padding-right: 20px;">
-                <li><b>الدخول:</b> أدخل رقمك وكلمة سرك للدخول المباشر.</li>
-                <li><b>إنشاء حساب:</b> عند النقر عليه، سيختفي زر الدخول ويظهر <b>"تأكيد الإنشاء"</b>، سيتم اعتماد البيانات المكتوبة في الحقول.</li>
-                <li><b>فك الارتباط:</b> يستخدم إذا أردت فتح حسابك من جهاز آخر. عند نجاح الفك، سيقوم النظام بـ <b>تسجيل دخولك تلقائياً</b>.</li>
-            </ul>
-            <p style="color:var(--gold); border-bottom: 1px solid #333; padding-bottom: 5px;">🛒 المتجر وكروتي:</p>
-            <ul style="padding-right: 20px;">
-                <li>اختر الفئة، حدد الكمية، وسيظهر الكود فوراً ويتم حفظه في <b>"كروتي"</b>.</li>
-                <li>تم إلغاء زر الخروج لضمان عدم ضياع سجل كروتي المخزن على متصفحك.</li>
-            </ul>
-            <p style="color:var(--gold); border-bottom: 1px solid #333; padding-bottom: 5px;">💰 الشحن والتحويل:</p>
-            <ul style="padding-right: 20px;">
-                <li><b>التحويل:</b> يمكنك إرسال رصيد لأي مشترك برقم هاتفه.</li>
-                <li><b>الشحن:</b> أدخل المبلغ ورقم المرجع، وتابع حالة الطلب (قيد الانتظار/ناجح) من السجل.</li>
-            </ul>
-        </div>
-        <button class="btn btn-outline" onclick="toggleHelpModal()" style="margin-top:15px;">إغلاق</button>
-    </div>
-</div>
-
-<div id="reg-success-modal" class="custom-modal">
-    <div class="modal-content" style="border-color: var(--success); text-align: center;">
-        <h3 style="color:var(--success);">تم الإنشاء! 🎉</h3>
-        <p>بياناتك للدخول مستقبلاً:</p>
-        <div style="background:rgba(255,255,255,0.1); padding:15px; border-radius:15px; margin:15px 0;">
-            <div>👤 المستخدم: <b id="new-user-id"></b></div>
-            <div>🔑 كلمة السر: <b id="new-user-pass"></b></div>
-        </div>
-        <button class="btn" onclick="closeRegModal()">دخول الآن 🚀</button>
-    </div>
-</div>
-
-<div id="qty-modal" class="custom-modal">
-    <div class="modal-content" style="text-align: center;">
-        <h3 style="color:var(--gold);">تحديد الكمية 🛒</h3>
-        <p id="qty-card-name"></p>
-        <input type="number" id="buy-qty-input" value="1" min="1">
-        <button class="btn" onclick="confirmPurchaseAction()">تأكيد الشراء</button>
-        <button class="btn btn-outline" onclick="closeQtyModal()" style="margin-top:10px;">إلغاء</button>
-    </div>
-</div>
-
-<div id="code-modal" class="custom-modal">
-    <div class="modal-content" style="text-align: center;">
-        <h3 style="color:var(--gold);">تم الشراء بنجاح! 🎉</h3>
-        <div id="codes-container" style="background:rgba(0,0,0,0.2); border-radius:15px; padding:10px; margin:15px 0;"></div>
-        <button class="btn" style="background:#fff; color:#000;" onclick="copyAllFromModal()">نسخ الكل 📋</button>
-        <button class="btn btn-outline" onclick="closeCodeModal()" style="margin-top:10px;">إغلاق</button>
-    </div>
-</div>
+<div id="qty-modal" class="custom-modal"><div class="modal-content"><h3 id="qty-card-name"></h3><input type="number" id="buy-qty-input" value="1"><button class="btn" onclick="confirmPurchaseAction()">شراء</button><button class="btn btn-outline" onclick="closeQtyModal()" style="margin-top:10px;">إلغاء</button></div></div>
+<div id="toast-msg" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 50px; z-index: 9999; display: none; font-weight: bold; background: var(--success); color: #000;"></div>
 
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbx0XM9GhZO0SQ8ddzrH3vhJNOMBfI43PIGrYtIwHTHdy08OU5uBFZVMeJ7OHqQKOZc/exec';
     let myUser = "", myPass = "", lastKnownBalance = 0;
-    let currentBuyingCard = { name: "", max: 0 };
+    const dataVolumes = { "100": "512MB", "200": "1GB", "300": "1.5GB", "500": "2.5GB", "1000": "5GB", "2000": "10GB", "3000": "15GB", "5000": "25GB", "10000": "50GB" };
 
     async function apiRequest(params) {
         params.deviceId = getDeviceId();
@@ -304,40 +197,25 @@
         try {
             const res = await fetch(`${API_URL}?${query}`, { method: 'GET', redirect: 'follow' });
             return await res.json();
-        } catch (e) { return { success: false, msg: "فشل الاتصال" }; }
+        } catch (e) { return { success: false, msg: "خطأ في الاتصال" }; }
     }
 
+    function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
+
     window.onload = () => {
-        const savedU = localStorage.getItem('m_user');
-        const savedP = localStorage.getItem('m_pass');
-        if(savedU && savedP) {
-            document.getElementById('login-user').value = savedU;
-            document.getElementById('login-pass').value = savedP;
-            handleLogin();
+        const savedU = localStorage.getItem('m_user'), savedP = localStorage.getItem('m_pass');
+        if(savedU && savedP) { 
+            document.getElementById('login-user').value = savedU; 
+            document.getElementById('login-pass').value = savedP; 
+            handleLogin(); 
         }
     };
 
-    function toggleRegisterUI() {
-        const ra = document.getElementById('reg-actions');
-        const rb = document.getElementById('btn-reg-view');
-        const lb = document.getElementById('btn-main-login');
-        ra.classList.toggle('hidden');
-        rb.classList.toggle('hidden');
-        lb.classList.toggle('hidden');
-    }
-
-    function toggleHelpModal() {
-        const m = document.getElementById('help-modal');
-        m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
-    }
-
     async function handleLogin() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أدخل بياناتك", true);
-        showLoading(true, "جاري الدخول...");
+        const u = document.getElementById('login-user').value, p = document.getElementById('login-pass').value;
+        if(!u || !p) return;
         const data = await apiRequest({ action: 'getWallet', id: u, password: p });
-        if (data.success) {
+        if(data.success) {
             myUser = u; myPass = p;
             localStorage.setItem('m_user', u); localStorage.setItem('m_pass', p);
             document.getElementById('display-bal').innerText = data.balance;
@@ -346,86 +224,80 @@
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('top-nav').classList.remove('hidden');
             loadCardsFast();
-            startBalanceAutoUpdate();
         } else { showToast(data.msg, true); }
-        showLoading(false);
     }
 
-    async function handleUnbind() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أدخل بياناتك أولاً", true);
-        showLoading(true, "جاري فك الارتباط...");
-        const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
+    async function loadCardsFast() {
+        const grid = document.getElementById('cards-grid');
+        const data = await apiRequest({ action: 'getStock' });
         if(data.success) {
-            showToast("✅ تم الفك، جاري تسجيل دخولك...");
-            setTimeout(handleLogin, 1000);
-        } else { showToast(data.msg, true); }
-        showLoading(false);
+            grid.innerHTML = "";
+            Object.keys(data.stock).forEach(key => {
+                const price = key.replace(/[^0-9]/g, '');
+                const volume = dataVolumes[price] || "";
+                grid.innerHTML += `
+                <div class="item">
+                    <small style="color:var(--gold)">${data.stock[key] > 0 ? 'متوفر' : 'نافد'}</small>
+                    <h3 style="margin:5px 0;">${key}</h3>
+                    ${volume ? `<span class="data-size">${volume}</span>` : ''}
+                    <button class="btn" style="margin-top:10px; font-size:0.8rem;" onclick="openQtyModal('${key}', ${data.stock[key]})">طلب</button>
+                </div>`;
+            });
+        }
     }
 
-    async function handleRegister() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أكمل البيانات", true);
-        showLoading(true, "جاري الإنشاء...");
-        const data = await apiRequest({ action: 'register', id: u, password: p });
-        if(data.success) {
-            document.getElementById('new-user-id').innerText = u;
-            document.getElementById('new-user-pass').innerText = p;
-            document.getElementById('reg-success-modal').style.display = 'flex';
-        } else { showToast(data.msg, true); }
-        showLoading(false);
-    }
-
-    function closeRegModal() {
-        document.getElementById('reg-success-modal').style.display = 'none';
-        handleLogin();
-    }
-
-    // سجل الشحن والارصدة الواصلة المطور
+    // سجل الشحن المطور
     async function loadOrders() {
         const list = document.getElementById('orders-list');
-        list.innerHTML = "<small>جاري التحديث...</small>";
+        list.innerHTML = "<p>جاري التحميل...</p>";
         const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success && data.orders) {
             list.innerHTML = data.orders.map(o => `
-                <div style="padding:12px; background:rgba(255,255,255,0.05); margin-bottom:8px; border-radius:12px; border-right: 4px solid ${o.status.includes('جاح') ? 'var(--success)' : 'var(--pending)'};">
-                    <span class="status-badge ${o.status.includes('جاح') ? 'st-success' : 'st-pending'}">${o.status}</span>
-                    <b style="color:var(--gold);">${o.amount} ريال</b><br>
-                    <small style="opacity:0.6;">مرجع: ${o.ref || '---'}</small>
+                <div class="log-item ${o.status.includes('جاح') ? 'log-success' : 'log-pending'}">
+                    <div style="display:flex; justify-content:space-between;">
+                        <b>${o.amount} ريال</b>
+                        <small>${o.status}</small>
+                    </div>
+                    <small style="opacity:0.6;">المرجع: ${o.ref}</small>
                 </div>
-            `).join('') || "<p>لا يوجد طلبات</p>";
+            `).reverse().join('');
         }
     }
 
+    // سجل الأرصدة الواصلة
     async function loadTransferHistory() {
         const list = document.getElementById('transfer-history-list');
-        list.innerHTML = "<small>جاري التحديث...</small>";
+        list.innerHTML = "<p>جاري التحميل...</p>";
         const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success && data.transfers) {
-            // تصفية الأرصدة الواصلة فقط (in)
             const incoming = data.transfers.filter(t => t.type === 'in');
             list.innerHTML = incoming.map(t => `
-                <div style="padding:10px; background:rgba(0, 255, 136, 0.05); margin-bottom:5px; border-radius:10px; border-left: 3px solid var(--success);">
-                    <small style="color:var(--success);">📩 واصل من: ${t.from || 'نظام'}</small><br>
+                <div class="log-item log-success">
                     <b>+ ${t.amount} ر.ي</b>
+                    <div style="font-size:0.7rem;">من: ${t.from || 'النظام'}</div>
                 </div>
-            `).join('') || "<p>لا يوجد أرصدة مستلمة</p>";
+            `).reverse().join('') || "<p>لا توجد أرصدة واصلة حالياً</p>";
         }
     }
 
-    // دوال المساعد والطلبات
-    function showToast(m, e=false) {
-        const t = document.getElementById('toast-msg');
-        t.innerText = m;
-        t.style.background = e ? "rgba(231, 76, 60, 0.95)" : "rgba(46, 204, 113, 0.95)";
-        t.style.display="block";
-        setTimeout(()=>t.style.display="none", 3500);
+    async function handleTopup() {
+        const a = document.getElementById('top-amt').value, r = document.getElementById('top-ref').value;
+        if(!a || !r) return showToast("أكمل البيانات", true);
+        const data = await apiRequest({ action: 'requestTopup', id: myUser, amount: a, ref: r });
+        showToast(data.msg); loadOrders();
     }
 
-    function showLoading(s, txt) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; document.getElementById('loading-text').innerText = txt; }
-    function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
+    async function handleTransfer() {
+        const tid = document.getElementById('trans-id').value, amt = document.getElementById('trans-amt').value;
+        const data = await apiRequest({ action: 'transfer', id: myUser, targetId: tid, amount: amt });
+        showToast(data.msg, !data.success);
+    }
+
+    function toggleRegisterUI() {
+        document.getElementById('reg-actions').classList.toggle('hidden');
+        document.getElementById('btn-main-login').classList.toggle('hidden');
+        document.getElementById('btn-reg-view').classList.toggle('hidden');
+    }
 
     function switchSec(id, el) {
         ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
@@ -434,88 +306,14 @@
         el.classList.add('active');
     }
 
-    async function loadCardsFast() {
-        const grid = document.getElementById('cards-grid');
-        grid.innerHTML = "<small style='grid-column:1/-1;'>تحديث المتجر...</small>";
-        const data = await apiRequest({ action: 'getStock' });
-        if(data.success) {
-            grid.innerHTML = "";
-            Object.keys(data.stock).forEach(key => {
-                const isOut = data.stock[key] <= 0;
-                grid.innerHTML += `
-                <div class="item">
-                    <small style="color:${isOut?'#ff4b2b':'var(--success)'};">${isOut?'نافد':'متوفر: '+data.stock[key]}</small>
-                    <h4 style="margin:8px 0;">${key}</h4>
-                    <button class="btn" onclick="openQtyModal('${key}', ${data.stock[key]})" ${isOut?'disabled':''}>طلب</button>
-                </div>`;
-            });
-        }
+    function showToast(m, e=false) {
+        const t = document.getElementById('toast-msg');
+        t.innerText = m; t.style.background = e ? "#ff4b2b" : "var(--success)";
+        t.style.display="block"; setTimeout(()=>t.style.display="none", 3000);
     }
 
-    function openQtyModal(n, m) { 
-        currentBuyingCard = {name: n, max: m}; 
-        document.getElementById('qty-card-name').innerText = n; 
-        document.getElementById('buy-qty-input').max = m;
-        document.getElementById('qty-modal').style.display = 'flex'; 
-    }
+    function openQtyModal(n) { document.getElementById('qty-card-name').innerText = n; document.getElementById('qty-modal').style.display = 'flex'; }
     function closeQtyModal() { document.getElementById('qty-modal').style.display = 'none'; }
-
-    async function confirmPurchaseAction() {
-        let qty = parseInt(document.getElementById('buy-qty-input').value);
-        if (qty <= 0 || qty > currentBuyingCard.max) return showToast("الكمية غير متوفرة", true);
-        closeQtyModal();
-        showLoading(true, "جاري الشراء...");
-        let codes = [];
-        for (let i = 0; i < qty; i++) {
-            const data = await apiRequest({ action: 'buyCard', id: myUser, password: myPass, cardType: currentBuyingCard.name });
-            if(data.success) {
-                codes.push(data.code);
-                saveCardLocally(currentBuyingCard.name, data.code);
-                document.getElementById('display-bal').innerText = data.newBalance;
-            } else { showToast(data.msg, true); break; }
-        }
-        if(codes.length) { showCodesInModal(codes); loadCardsFast(); }
-        showLoading(false);
-    }
-
-    function showCodesInModal(codes) {
-        document.getElementById('codes-container').innerHTML = codes.map(c => `<div style="color:var(--gold); font-weight:bold; padding:5px;">${c}</div>`).join('');
-        document.getElementById('code-modal').style.display = 'flex';
-    }
-    function closeCodeModal() { document.getElementById('code-modal').style.display = 'none'; }
-    function saveCardLocally(t, c) { let cards = JSON.parse(localStorage.getItem('m_cards') || '[]'); cards.unshift({type:t, code:c, date: new Date().toLocaleString('ar-YE')}); localStorage.setItem('m_cards', JSON.stringify(cards)); }
-    
-    function displaySavedCards() {
-        const container = document.getElementById('purchased-list');
-        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
-        document.getElementById('btn-copy-all').style.display = cards.length ? 'block' : 'none';
-        container.innerHTML = cards.map(c => `<div class="my-card-item"><small>${c.date}</small><span class="my-card-code">${c.code}</span></div>`).join('') || "لا يوجد كروت";
-    }
-
-    async function handleTransfer() {
-        const tid = document.getElementById('trans-id').value;
-        const amt = document.getElementById('trans-amt').value;
-        showLoading(true, "تحويل...");
-        const data = await apiRequest({ action: 'transfer', id: myUser, targetId: tid, amount: amt });
-        showToast(data.msg, !data.success);
-        showLoading(false);
-    }
-
-    async function handleTopup() {
-        const a = document.getElementById('top-amt').value;
-        const r = document.getElementById('top-ref').value;
-        showLoading(true, "إرسال...");
-        const data = await apiRequest({ action: 'requestTopup', id: myUser, amount: a, ref: r });
-        showToast(data.msg); loadOrders();
-        showLoading(false);
-    }
-
-    function startBalanceAutoUpdate() {
-        setInterval(async () => {
-            const data = await apiRequest({ action: 'getBalance', id: myUser });
-            if (data.success) document.getElementById('display-bal').innerText = data.balance;
-        }, 20000);
-    }
 </script>
 </body>
 </html>
