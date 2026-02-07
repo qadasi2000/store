@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V7.5 Pro</title>
+    <title>محفظة الماجد الذكية | V7.6 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; --error: #e74c3c; }
         body { background: #1a000a; color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; }
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
         
-        /* شريط الإعلانات */
+        /* 1. عكس الشريط الإعلاني (من الشمال لليمين) */
         .marquee-container { background: #4a041c; color: var(--gold); padding: 8px 0; border-bottom: 1px solid var(--gold); font-size: 0.85rem; font-weight: bold; overflow: hidden; white-space: nowrap; position: relative; z-index: 1001; }
-        .marquee-text { display: inline-block; animation: marquee 20s linear infinite; padding-right: 100%; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .marquee-text { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+        @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         /* التنبيهات */
         #toast-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(46, 204, 113, 0.9); color: white; padding: 12px 25px; border-radius: 15px; z-index: 6000; display: none; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; min-width: 200px; }
@@ -27,7 +27,8 @@
         .bal-val { font-size: 3.2rem; font-weight: 700; color: var(--gold); display: block; line-height: 1.2; }
         .wallet-num { font-size: 0.9rem; color: var(--gold); background: rgba(0,0,0,0.3); padding: 4px 15px; border-radius: 20px; margin-bottom: 10px; display: inline-block; border: 1px solid rgba(249,217,118,0.2); }
         
-        .discount-badge { background: var(--gold); color: #3d0016; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-top: 10px; display: inline-block; }
+        /* Badge الخصم */
+        .discount-badge { background: var(--gold); color: #3d0016; padding: 5px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-top: 10px; display: inline-block; box-shadow: 0 4px 15px rgba(249,217,118,0.2); }
 
         .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
         .price-tag { margin: 8px 0; }
@@ -35,7 +36,10 @@
         .new-price { color: var(--gold); font-weight: 700; }
 
         input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
-        .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 0.95rem; }
+        
+        /* إلغاء التعارض بين الأزرار */
+        .auth-actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; font-size: 0.95rem; }
         .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
         .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; }
         .btn:active { transform: scale(0.96); }
@@ -59,7 +63,7 @@
 <body>
 
 <div class="marquee-container" id="ad-bar">
-    <div class="marquee-text">🔥 خصومات كبرى | ⚡ شحن تلقائي وفوري برقم (1) | 📱 لطلب المساعدة تواصل معنا عبر واتساب | 🎫 تفقد قسم "كروتي" للأكواد المشتراة</div>
+    <div class="marquee-text">🎫 تفقد قسم "كروتي" للأكواد المشتراة | 📱 لطلب المساعدة تواصل معنا عبر واتساب | ⚡ شحن تلقائي وفوري برقم (1) | 🔥 خصومات كبرى </div>
 </div>
 
 <audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
@@ -71,16 +75,20 @@
         <div style="text-align:center; padding: 30px 0;">
             <div style="background:var(--gold); width:80px; height:80px; border-radius:50%; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:bold;">M</div>
             <h2 style="margin-top:20px; color:var(--gold); margin-bottom: 5px;">محفظة الماجد الذكية</h2>
-            <div id="main-discount-info" class="discount-badge">جاري جلب العروض...</div>
+            <div id="main-discount-info" class="discount-badge">جاري التحقق من الخصومات...</div>
         </div>
         <div class="card">
             <input type="text" id="login-user" placeholder="رقم الهاتف">
             <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
-            <button class="btn btn-outline" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
+            
+            <div class="auth-actions">
+                <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+                <button class="btn btn-outline" onclick="handleRegister()">إنشاء حساب جديد ✨</button>
+            </div>
+
             <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; text-align: center;">
                 <small style="color: #aaa;">هل قمت بتغيير هاتفك؟</small>
-                <button class="btn btn-outline" style="font-size: 0.8rem; margin-top: 5px;" onclick="handleUnbind()">فك ارتباط الجهاز 📱</button>
+                <button class="btn btn-outline" style="font-size: 0.8rem; margin-top: 8px; padding: 8px;" onclick="handleUnbind()">فك ارتباط الجهاز الحالي 📱</button>
             </div>
         </div>
     </div>
@@ -157,7 +165,7 @@
     let currentBuyingCard = { name: "", max: 0 };
 
     window.onload = () => {
-        fetchDiscountInfo();
+        fetchDiscountInfo(); // جلب الخصم فور تحميل الصفحة
         const savedU = localStorage.getItem('m_user');
         const savedP = localStorage.getItem('m_pass');
         if(savedU && savedP) {
@@ -174,12 +182,12 @@
             const data = await res.json();
             if(data.success) {
                 globalDiscount = data.discount;
-                document.getElementById('main-discount-info').innerText = `🎁 خصم حصري ${(globalDiscount * 100).toFixed(0)}% على جميع الكروت`;
+                // تعديل النص المطلوب: احصل على خصم X%
+                document.getElementById('main-discount-info').innerText = `🎁 احصل على خصم ${(globalDiscount * 100).toFixed(0)}% الآن`;
             }
-        } catch(e) { document.getElementById('main-discount-info').innerText = "🎁 أفضل العروض والأسعار"; }
+        } catch(e) { document.getElementById('main-discount-info').innerText = "🎁 احصل على خصم فوري عند الشراء"; }
     }
 
-    // إنشاء حساب جديد
     async function handleRegister() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
@@ -195,7 +203,6 @@
         showLoading(false);
     }
 
-    // فك الارتباط
     async function handleUnbind() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
@@ -229,7 +236,7 @@
                 document.getElementById('page-login').classList.add('hidden');
                 document.getElementById('page-main').classList.remove('hidden');
                 document.getElementById('top-nav').classList.remove('hidden');
-                document.getElementById('ad-bar').classList.add('hidden'); // إخفاء الإعلان بعد الدخول
+                document.getElementById('ad-bar').classList.add('hidden'); 
                 loadCardsFast();
                 startBalanceAutoUpdate();
             } else { showToast(data.msg, true); }
@@ -309,7 +316,6 @@
         } catch(e) {}
     }
 
-    // دوال المساعدة
     function showToast(m, e=false) { const t = document.getElementById('toast-msg'); t.innerText = m; t.style.background = e ? "var(--error)" : "var(--success)"; t.style.display="block"; setTimeout(()=>t.style.display="none", 3500); }
     function showLoading(s) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; }
     function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
