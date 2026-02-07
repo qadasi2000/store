@@ -3,99 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة الماجد الذكية | V8.6 Pro</title>
+    <title>محفظة الماجد الذكية | V8.7 Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --main: #3d0016; 
-            --gold: #f9d976; 
-            --glass: rgba(255,255,255,0.07); 
-            --success: #2ecc71; 
-            --pending: #f39c12; 
-            --error: #e74c3c; 
-            --bg: #1a000a; 
-        }
-
+        :root { --main: #3d0016; --gold: #f9d976; --glass: rgba(255,255,255,0.07); --success: #2ecc71; --pending: #f39c12; --error: #e74c3c; --bg: #1a000a; }
         body { background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; overflow-x: hidden; transition: background 0.5s ease; }
         body.register-mode { background: #001a1a; } 
-
         .app { max-width: 450px; margin: 0 auto; padding: 20px; min-height: 100vh; }
-        
-        .login-container { text-align: center; padding: 40px 10px; }
-        .logo-circle { background: var(--gold); width: 80px; height: 80px; border-radius: 25px; margin: 0 auto 20px; line-height: 80px; font-size: 2.2rem; color: #000; font-weight: bold; transform: rotate(-10deg); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        
         .marquee-container { background: #4a041c; color: var(--gold); padding: 8px 0; border-bottom: 1px solid var(--gold); font-size: 0.85rem; font-weight: bold; overflow: hidden; white-space: nowrap; position: relative; z-index: 1001; }
-        .marquee-text { display: inline-block; animation: marquee 35s linear infinite; padding-left: 100%; }
+        .marquee-text { display: inline-block; animation: marquee 30s linear infinite; padding-left: 100%; }
         @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
         #toast-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(46, 204, 113, 0.9); color: white; padding: 12px 25px; border-radius: 15px; z-index: 9000; display: none; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); text-align: center; min-width: 250px; }
-
         .nav { position: sticky; top: 0; width: 100%; max-width: 450px; background: #1a000a; display: flex; padding: 15px 0; border-bottom: 2px solid var(--gold); z-index: 1000; margin: 0 auto 20px auto; }
         .nav-btn { flex: 1; text-align: center; font-size: 0.8rem; color: #aaa; cursor: pointer; transition: 0.3s; font-weight: 600; }
         .nav-btn.active { color: var(--gold); transform: scale(1.05); }
-
-        .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .card { background: var(--glass); border: 1px solid rgba(249,217,118,0.15); border-radius: 25px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
         .bal-box { text-align: center; padding: 30px 0; background: linear-gradient(to bottom, #4a041c, #1a000a); border-radius: 25px; margin-bottom: 25px; border: 1px solid var(--gold); }
         .bal-val { font-size: 3.2rem; font-weight: 700; color: var(--gold); display: block; line-height: 1.2; }
         .wallet-num { font-size: 0.9rem; color: var(--gold); background: rgba(0,0,0,0.3); padding: 4px 15px; border-radius: 20px; margin-bottom: 10px; display: inline-block; border: 1px solid rgba(249,217,118,0.2); }
-        
-        .discount-badge { background: var(--gold); color: #3d0016; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-top: 10px; display: inline-block; }
-
-        input { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid rgba(249,217,118,0.3); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 12px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; transition: 0.3s; }
-        input:focus { border-color: var(--gold); outline: none; background: rgba(0,0,0,0.6); }
-
-        .btn { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 1rem; }
+        .data-size { display: block; background: rgba(249, 217, 118, 0.1); color: var(--gold); font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-top: 5px; border: 1px solid rgba(249, 217, 118, 0.3); }
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
+        .btn { width: 100%; padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: var(--gold); color: #3d0016; transition: 0.3s; margin-bottom: 8px; font-size: 0.95rem; }
         .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
-
-        .item { background: rgba(255,255,255,0.04); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; position: relative; }
-        .new-price { color: var(--gold); font-weight: 700; }
-        
-        .history-item { font-size: 0.8rem; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .hidden { display: none !important; }
+        .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; }
+        .my-card-code { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 1px; margin: 10px 0; }
+        .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 15px; }
+        .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 20px; padding: 20px; width: 90%; text-align: center; max-width: 320px; }
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        .history-item { font-size: 0.8rem; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
 <div class="marquee-container" id="ad-bar">
-    <div class="marquee-text">🔥 خصومات كبرى | ⚡ شحن تلقائي وفوري برقم (1) | 📱 لطلب المساعدة تواصل معنا عبر واتساب | 🎫 تفقد قسم "كروتي" للأكواد المشتراة</div>
+    <div class="marquee-text">🔥 خصومات حصرية لمستخدمي التطبيق | ⚡ الشحن فوري وآلي | 🎫 جميع كروت الشبكات متوفرة الآن</div>
 </div>
 
+<audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
 <div id="loading-overlay"><div class="loader"></div><div id="loading-text" style="color:var(--gold); margin-top:10px;">جاري المعالجة...</div></div>
 <div id="toast-msg"></div>
 
 <div class="app">
     <div id="page-login">
-        <div class="login-container">
-            <div class="logo-circle">M</div>
-            <h2 style="color:var(--gold); margin: 0 0 5px 0;">محفظة الماجد الذكية</h2>
-            <p style="color: #888; margin-bottom: 25px; font-size: 0.9rem;">الجيل الثامن للدفع الإلكتروني</p>
-            <div id="main-discount-info" class="discount-badge">أهلاً بك في عالم السرعة</div>
+        <div style="text-align:center; padding: 30px 0;">
+            <div style="background:var(--gold); width:80px; height:80px; border-radius:50%; margin:0 auto; line-height:80px; font-size:2rem; color:#000; font-weight:bold;">M</div>
+            <h2 style="margin-top:20px; color:var(--gold); margin-bottom: 5px;">محفظة الماجد الذكية</h2>
+            <div id="main-discount-info" class="discount-badge">أهلاً بك في الجيل الجديد</div>
         </div>
-        
         <div class="card">
-            <div style="margin-bottom: 15px; text-align: right;">
-                <label style="font-size: 0.85rem; color: var(--gold); margin-right: 5px;">رقم الهاتف</label>
-                <input type="text" id="login-user" placeholder="7xxxxxxxx" inputmode="numeric">
-            </div>
-            <div style="margin-bottom: 20px; text-align: right;">
-                <label style="font-size: 0.85rem; color: var(--gold); margin-right: 5px;">كلمة المرور</label>
-                <input type="password" id="login-pass" placeholder="••••••••">
-            </div>
-
-            <button class="btn" onclick="handleLogin()">دخول للمحفظة</button>
-            <button class="btn btn-outline" id="btn-reg-view" onclick="toggleRegisterUI()">ليس لديك حساب؟ سجل الآن ✨</button>
-            
+            <input type="text" id="login-user" placeholder="رقم الهاتف" inputmode="numeric">
+            <input type="password" id="login-pass" placeholder="كلمة المرور">
+            <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <button class="btn btn-outline" id="btn-reg-view" onclick="toggleRegisterUI()">إنشاء حساب جديد ✨</button>
             <div id="reg-actions" class="hidden">
-                 <button class="btn" style="background:var(--success); color:#fff" onclick="handleRegister()">تأكيد بيانات التسجيل</button>
-                 <button class="btn btn-outline" onclick="toggleRegisterUI()">إلغاء والعودة</button>
+                 <button class="btn" style="background:var(--success); color:#fff" onclick="handleRegister()">تأكيد إنشاء الحساب</button>
+                 <button class="btn btn-outline" onclick="toggleRegisterUI()">العودة لتسجيل الدخول</button>
             </div>
             
-            <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; text-align: center;">
-                <small style="color: #666; display: block; margin-bottom: 8px;">في حال تغيير الجهاز، يرجى الضغط أدناه</small>
-                <button class="btn btn-outline" style="font-size: 0.75rem; padding: 8px;" onclick="handleUnbind()">فك ارتباط الجهاز 📱</button>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; text-align: center;">
+                <button class="btn btn-outline" style="font-size: 0.8rem;" onclick="handleUnbind()">فك ارتباط الجهاز الحالي 📱</button>
             </div>
         </div>
     </div>
@@ -116,11 +85,12 @@
             <small>ريال يمني</small>
         </div>
 
-        <div id="sec-cards">
-            <div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
+        <div id="sec-cards"><div id="cards-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div></div>
+        
+        <div id="sec-mycards" class="hidden">
+            <button id="btn-copy-all" class="btn" style="background:var(--success); color:#fff; display:none; margin-bottom:15px;" onclick="copyAllSaved()">نسخ جميع الكودات 📋</button>
+            <div id="purchased-list"></div>
         </div>
-
-        <div id="sec-mycards" class="hidden"><div id="purchased-list"></div></div>
 
         <div id="sec-transfer" class="hidden">
             <div class="card">
@@ -142,9 +112,36 @@
     </div>
 </div>
 
+<div id="qty-modal" class="custom-modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin-top:0;">تحديد الكمية 🛒</h3>
+        <p id="qty-card-name" style="color: #eee;"></p>
+        <input type="number" id="buy-qty-input" value="1" min="1">
+        <button class="btn" onclick="confirmPurchaseAction()">تأكيد الشراء</button>
+        <button class="btn btn-outline" onclick="closeQtyModal()">إلغاء</button>
+    </div>
+</div>
+
+<div id="code-modal" class="custom-modal">
+    <div class="modal-content">
+        <h3 style="color:var(--gold); margin-top:0;">تم الشراء بنجاح! 🎉</h3>
+        <div id="codes-container" style="max-height: 200px; overflow-y: auto; margin: 10px 0; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 5px;"></div>
+        <button class="btn" style="background:#fff; color:#3d0016;" onclick="copyAllFromModal()">نسخ كل الأكواد 📋</button>
+        <button class="btn btn-outline" onclick="closeCodeModal()">إغلاق</button>
+    </div>
+</div>
+
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwH6SWfold_HbZIDMffs9JkxvkP15EJquUwCLjrMcUtpxAr-Gvgm4wLyrHj9eOh2GmB/exec';
-    let myUser = "", myPass = "";
+    const API_URL = 'https://script.google.com/macros/s/AKfycbybqinKRQl_bYaaA_59bGFPYuy0vtgnjLSTEB815fThaHRN-Ia2WrdOIbSq0KheApZO/exec';
+    
+    let myUser = "", myPass = "", lastKnownBalance = 0;
+    let balanceTimer = null;
+    let currentBuyingCard = { name: "", max: 0 };
+
+    const dataVolumes = {
+        "100": "512 ميجا", "200": "1 جيجا", "300": "1.5 جيجا", "500": "2.5 جيجا",
+        "1000": "5 جيجا", "2000": "10 جيجا", "3000": "15 جيجا", "5000": "25 جيجا"
+    };
 
     async function apiRequest(params) {
         params.deviceId = getDeviceId();
@@ -155,97 +152,123 @@
         } catch (e) { return { success: false, msg: "فشل الاتصال بالسيرفر" }; }
     }
 
-    // --- نظام الترحيب لأول مرة ---
-    function showWelcomeGuide() {
-        const guideMsg = `🌟 أهلاً بك في محفظة الماجد! 🌟\n\nإليك دليل سريع:\n1️⃣ المتجر: لشراء الكروت بأفضل الأسعار.\n2️⃣ كروتي: تجد هنا الأكواد التي اشتريتها.\n3️⃣ الشحن: اطلب تعبئة رصيدك برقم المرجع.\n4️⃣ الأمان: حسابك مرتبط بهذا الجهاز فقط.\n\nنتمنى لك تجربة رائعة!`;
-        setTimeout(() => {
-            alert(guideMsg);
-            localStorage.setItem('m_first_time', 'true');
-        }, 800);
-    }
-
     async function handleLogin() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("تأكد من تسجيل رقم الهاتف وكلمة المرور", true);
+        if(!u || !p) return showToast("أدخل بياناتك كاملة", true);
         
-        showLoading(true, "جاري التحقق...");
+        showLoading(true, "جاري الدخول...");
         const data = await apiRequest({ action: 'getWallet', id: u, password: p });
+        
         if (data.success) {
             myUser = u; myPass = p;
             localStorage.setItem('m_user', u); localStorage.setItem('m_pass', p);
-            
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('display-phone').innerText = u;
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('top-nav').classList.remove('hidden');
-            
             loadCardsFast();
-            if (!localStorage.getItem('m_first_time')) showWelcomeGuide();
-
+            startBalanceAutoUpdate();
         } else { showToast(data.msg, true); }
         showLoading(false);
     }
 
-    async function handleRegister() {
+    async function handleUnbind() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("يجب كتابة رقم الهاتف وكلمة المرور لتأمين حسابك", true);
-        if(u.length < 9) return showToast("رقم الهاتف غير صحيح", true);
+        if(!u || !p) return showToast("أدخل هاتفك وكلمة المرور أولاً", true);
+        if(!confirm("هل أنت متأكد من فك ارتباط جهازك؟ سيسمح هذا بالدخول من هاتف آخر.")) return;
         
-        showLoading(true, "جاري إنشاء الحساب...");
-        const data = await apiRequest({ action: 'register', id: u, password: p });
-        if(data.success) {
-            showToast("🎉 تم إنشاء حسابك بنجاح!");
-            handleLogin();
-        } else { showToast(data.msg, true); }
+        showLoading(true, "جاري فك الارتباط...");
+        const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
+        showToast(data.msg, !data.success);
         showLoading(false);
     }
 
-    function toggleRegisterUI() {
-        document.body.classList.toggle('register-mode');
-        document.getElementById('reg-actions').classList.toggle('hidden');
-        document.getElementById('btn-reg-view').classList.toggle('hidden');
+    async function displaySavedCards() {
+        const container = document.getElementById('purchased-list');
+        container.innerHTML = "<p style='text-align:center;'>جاري مزامنة بياناتك... 🔄</p>";
+        const data = await apiRequest({ action: 'getMyCards', id: myUser });
+        
+        if(data.success && data.cards.length > 0) {
+            document.getElementById('btn-copy-all').style.display = 'block';
+            container.innerHTML = data.cards.map(c => `
+                <div class="my-card-item" id="card-row-${c.rowId}">
+                    <small style="color:#777">${c.date} - ${c.type}</small>
+                    <span class="my-card-code">${c.code}</span>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn" style="flex:2; padding:5px; font-size:0.8rem;" onclick="copySingle('${c.code}')">نسخ 📋</button>
+                        <button class="btn" style="flex:1; padding:5px; font-size:0.8rem; background:#e74c3c; color:#fff;" onclick="archiveCard('${c.rowId}')">حذف 🗑️</button>
+                    </div>
+                </div>`).join('');
+        } else {
+            container.innerHTML = "<p style='text-align:center;color:#888;'>لا توجد كروت حالية</p>";
+            document.getElementById('btn-copy-all').style.display = 'none';
+        }
     }
 
+    async function archiveCard(rowId) {
+        if(!confirm("سيتم إخفاء هذا الكرت من القائمة، هل تود المتابعة؟")) return;
+        showLoading(true);
+        const data = await apiRequest({ action: 'archiveCard', id: myUser, rowId: rowId });
+        showLoading(false);
+        if(data.success) {
+            document.getElementById(`card-row-${rowId}`).style.opacity = '0';
+            setTimeout(()=>document.getElementById(`card-row-${rowId}`).remove(), 300);
+            showToast("تم الحذف");
+        }
+    }
+
+    function startBalanceAutoUpdate() {
+        if(balanceTimer) clearInterval(balanceTimer);
+        balanceTimer = setInterval(async () => {
+            const data = await apiRequest({ action: 'getBalance', id: myUser });
+            if (data.success) {
+                if (parseFloat(data.balance) > lastKnownBalance && lastKnownBalance != 0) {
+                    playSuccessSound(); showToast("وصل رصيد جديد! 💰");
+                }
+                lastKnownBalance = parseFloat(data.balance);
+                document.getElementById('display-bal').innerText = data.balance;
+            }
+        }, 15000);
+    }
+
+    // الدوال الأساسية (Show/Hide/Toast)
     function showToast(m, e=false) {
         const t = document.getElementById('toast-msg');
-        t.innerText = m;
-        t.style.background = e ? "var(--error)" : "var(--success)";
-        t.style.display="block";
-        setTimeout(()=>t.style.display="none", 3500);
+        t.innerText = m; t.style.background = e ? "var(--error)" : "var(--success)";
+        t.style.display="block"; setTimeout(()=>t.style.display="none", 3500);
     }
-
-    function showLoading(s, txt="") {
-        document.getElementById('loading-overlay').style.display = s ? "flex" : "none";
-        document.getElementById('loading-text').innerText = txt;
-    }
-
-    function switchSec(id, el) {
-        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
-        document.getElementById('sec-'+id).classList.remove('hidden');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function getDeviceId() {
-        let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        localStorage.setItem('m_dev_id', d);
-        return d;
-    }
-
+    function showLoading(s, t="") { document.getElementById('loading-overlay').style.display = s?"flex":"none"; document.getElementById('loading-text').innerText=t; }
+    function playSuccessSound() { document.getElementById('success-sound').play().catch(()=>{}); }
+    function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
     function handleLogout() { localStorage.clear(); location.reload(); }
-
-    window.onload = () => {
-        const savedU = localStorage.getItem('m_user');
-        const savedP = localStorage.getItem('m_pass');
-        if(savedU && savedP) {
-            document.getElementById('login-user').value = savedU;
-            document.getElementById('login-pass').value = savedP;
-            handleLogin();
+    
+    // باقي دوال المتجر (كما هي في V8.7)
+    async function loadCardsFast() {
+        const grid = document.getElementById('cards-grid');
+        grid.innerHTML = "<small style='grid-column:1/-1;'>جاري جلب المخزون...</small>";
+        const data = await apiRequest({ action: 'getStock' });
+        if(data.success) {
+            grid.innerHTML = "";
+            Object.keys(data.stock).forEach(key => {
+                const price = parseInt(key.replace(/[^0-9]/g, '')) || 0;
+                const discPrice = Math.floor(price * (1 - data.discount));
+                const volume = dataVolumes[price] || "";
+                grid.innerHTML += `<div class="item">
+                    <small style="color:${data.stock[key]<=0?'#ff4d4d':'#2ecc71'}">${data.stock[key]<=0?'نافد':'متوفر: '+data.stock[key]}</small>
+                    <h4 style="margin:5px 0 0 0;">${key}</h4>
+                    ${volume ? `<span class="data-size">📦 ${volume}</span>` : ''}
+                    <div class="price-tag"><span style="text-decoration:line-through; font-size:0.7rem; color:#ff6b6b;">${price}</span> <span style="color:var(--gold); font-weight:bold;">${discPrice} ر.ي</span></div>
+                    <button class="btn" onclick="openQtyModal('${key}', ${data.stock[key]})" ${data.stock[key]<=0?'disabled':''}>شراء</button>
+                </div>`;
+            });
         }
-    };
+    }
+    function openQtyModal(n, m) { currentBuyingCard = {name: n, max: m}; document.getElementById('qty-card-name').innerText=n; document.getElementById('qty-modal').style.display='flex'; }
+    function closeQtyModal() { document.getElementById('qty-modal').style.display='none'; }
+    function copySingle(t) { navigator.clipboard.writeText(t).then(()=>showToast("تم النسخ")); }
 </script>
 </body>
 </html>
