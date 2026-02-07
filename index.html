@@ -40,10 +40,6 @@
         .my-card-code { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 1px; margin: 10px 0; }
         .copy-btn-small { background: #f3f3f3; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: #333; width: 100%; }
 
-        .order-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 10px; border-right: 4px solid var(--pending); text-align: right; }
-        .order-item.success { border-right-color: var(--success); }
-        .status-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 10px; float: left; color: #fff; }
-
         .custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
         .modal-content { background: #3d0016; border: 2px solid var(--gold); border-radius: 30px; padding: 25px; width: 100%; text-align: center; max-width: 380px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
 
@@ -141,6 +137,7 @@
     const URL = 'https://script.google.com/macros/s/AKfycbxOTcA7GbOr15kAPwrUEcW3GDBGevkejpSOrGSOIs-RM-lr9ybbUmKr8M_CENul_8bz/exec';
     let myUser = "", myPass = "";
     let currentBuyingCard = { name: "", max: 0 };
+    let balanceTimer = null;
 
     window.onload = () => {
         const savedU = localStorage.getItem('m_user');
@@ -151,6 +148,23 @@
             handleLogin();
         }
     };
+
+    // تحديث الرصيد تلقائياً كل 10 ثواني
+    function startBalanceAutoUpdate() {
+        if(balanceTimer) clearInterval(balanceTimer);
+        balanceTimer = setInterval(updateBalanceOnly, 10000);
+    }
+
+    async function updateBalanceOnly() {
+        if (!myUser) return;
+        try {
+            const res = await fetch(`${URL}?action=getBalance&id=${myUser}`);
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('display-bal').innerText = data.balance;
+            }
+        } catch (e) {}
+    }
 
     function showToast(msg, isError = false) {
         const toast = document.getElementById('toast-msg');
@@ -177,7 +191,8 @@
                 document.getElementById('page-login').classList.add('hidden');
                 document.getElementById('page-main').classList.remove('hidden');
                 document.getElementById('top-nav').classList.remove('hidden');
-                loadCards();
+                loadCardsFast();
+                startBalanceAutoUpdate();
             } else {
                 localStorage.clear();
                 if(data.error === "NOT_FOUND") {
@@ -190,9 +205,12 @@
         showLoading(false);
     }
 
-    async function loadCards() {
+    // عرض الباقات بسرعة ثم تحديث الكميات
+    async function loadCardsFast() {
         const grid = document.getElementById('cards-grid');
-        grid.innerHTML = "<small>جاري التحديث...</small>";
+        // عرض هيكل مبدئي سريع إذا كان هناك كروت معروفة سابقاً (اختياري) أو عرض رسالة تحميل
+        grid.innerHTML = "<small style='grid-column: 1 / -1; text-align: center;'>جاري جلب الباقات...</small>";
+        
         try {
             const res = await fetch(`${URL}?action=getStock`);
             const stock = await res.json();
@@ -201,14 +219,15 @@
                 const isOut = stock[key] <= 0;
                 const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
                 const discountedPrice = Math.floor(originalPrice * 0.80);
-                grid.innerHTML += `<div class="item">
-                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
+                grid.innerHTML += `
+                <div class="item" id="card-${key.replace(/\s+/g, '')}">
+                    <small class="stock-count" style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
                     <h4 style="margin:5px 0">${key}</h4>
                     <div class="price-tag"><span class="old-price">${originalPrice}</span> <span class="new-price">${discountedPrice} ر.ي</span></div>
                     <button class="btn" onclick="openQtyModal('${key}', ${stock[key]})" ${isOut?'disabled':''}>شراء</button>
                 </div>`;
             });
-        } catch(e) { grid.innerHTML = "خطأ في الاتصال"; }
+        } catch(e) { grid.innerHTML = "خطأ في تحميل المتجر"; }
     }
 
     function openQtyModal(name, max) {
@@ -244,7 +263,7 @@
         if (boughtCodes.length > 0) {
             document.getElementById('display-bal').innerText = lastBalance;
             showCodesInModal(boughtCodes);
-            loadCards(); // تحديث فوري للأعداد في المتجر
+            loadCardsFast(); 
         }
         showLoading(false);
     }
@@ -303,7 +322,12 @@
             const res = await fetch(`${URL}?action=transfer&id=${myUser}&targetId=${tid}&amount=${amt}`);
             const data = await res.json();
             showToast(data.msg, !data.success);
-            if(data.success) { document.getElementById('trans-id').value = ""; document.getElementById('trans-amt').value = ""; }
+            if(data.success) { 
+                document.getElementById('trans-id').value = ""; 
+                document.getElementById('trans-amt').value = "";
+                // تحديث الرصيد فورا بعد التحويل
+                updateBalanceOnly();
+            }
         } catch(e) { showToast("خطأ في التحويل", true); }
         showLoading(false);
     }
@@ -349,7 +373,11 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
     }
-    function handleLogout() { localStorage.clear(); location.reload(); }
+    function handleLogout() { 
+        if(balanceTimer) clearInterval(balanceTimer);
+        localStorage.clear(); 
+        location.reload(); 
+    }
 </script>
 </body>
 </html>
