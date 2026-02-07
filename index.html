@@ -34,6 +34,7 @@
         .old-price { text-decoration: line-through; color: #ff6b6b; font-size: 0.75rem; margin-left: 5px; }
         .new-price { color: var(--gold); font-weight: 700; }
         
+        /* تصميم رصيد الجيجا */
         .data-size { display: block; background: rgba(249, 217, 118, 0.1); color: var(--gold); font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; margin-top: 5px; border: 1px solid rgba(249, 217, 118, 0.3); }
 
         input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--gold); background: rgba(0,0,0,0.4); color: #fff; text-align: center; margin-bottom: 10px; box-sizing: border-box; font-family: 'Cairo'; font-weight: bold; }
@@ -169,9 +170,17 @@
     let balanceTimer = null;
     let currentBuyingCard = { name: "", max: 0 };
 
+    // مصفوفة لتحديد الأحجام بناءً على السعر
     const dataVolumes = {
-        "100": "512 ميجا", "200": "1 جيجا", "300": "1.5 جيجا", "500": "2.5 جيجا",
-        "1000": "5 جيجا", "2000": "10 جيجا", "3000": "15 جيجا", "5000": "25 جيجا", "10000": "50 جيجا"
+        "100": "512 ميجا",
+        "200": "1 جيجا",
+        "300": "1.5 جيجا",
+        "500": "2.5 جيجا",
+        "1000": "5 جيجا",
+        "2000": "10 جيجا",
+        "3000": "15 جيجا",
+        "5000": "25 جيجا",
+        "10000": "50 جيجا"
     };
 
     async function apiRequest(params) {
@@ -201,6 +210,7 @@
         const body = document.body;
         const regActions = document.getElementById('reg-actions');
         const btnRegView = document.getElementById('btn-reg-view');
+        
         if(body.classList.contains('register-mode')) {
             body.classList.remove('register-mode');
             regActions.classList.add('hidden');
@@ -225,12 +235,15 @@
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
         if(!u || !p) return showToast("أدخل بياناتك", true);
+        
         showLoading(true, "جاري الدخول...");
         const data = await apiRequest({ action: 'getWallet', id: u, password: p });
+        
         if (data.success) {
             myUser = u; myPass = p;
             document.body.classList.remove('register-mode');
-            localStorage.setItem('m_user', u); localStorage.setItem('m_pass', p);
+            localStorage.setItem('m_user', u);
+            localStorage.setItem('m_pass', p);
             lastKnownBalance = parseFloat(data.balance);
             document.getElementById('display-bal').innerText = data.balance;
             document.getElementById('display-phone').innerText = u;
@@ -238,8 +251,11 @@
             document.getElementById('page-main').classList.remove('hidden');
             document.getElementById('top-nav').classList.remove('hidden');
             document.getElementById('ad-bar').classList.add('hidden');
-            loadCardsFast(); startBalanceAutoUpdate();
-        } else showToast(data.msg, true);
+            loadCardsFast();
+            startBalanceAutoUpdate();
+        } else {
+            showToast(data.msg, true);
+        }
         showLoading(false);
     }
 
@@ -247,5 +263,229 @@
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
         if(u.length < 9) return showToast("الرقم غير صحيح", true);
+        
         showLoading(true, "جاري التسجيل...");
         const data = await apiRequest({ action: 'register', id: u, password: p });
+        if(data.success) {
+            showToast("تم التسجيل بنجاح!");
+            handleLogin();
+        } else {
+            showToast(data.msg, true);
+        }
+        showLoading(false);
+    }
+
+    async function handleUnbind() {
+        const u = document.getElementById('login-user').value.trim();
+        const p = document.getElementById('login-pass').value.trim();
+        if(!u || !p) return showToast("أدخل بياناتك", true);
+        if(!confirm("سيتم فك ارتباط حسابك بهذا الجهاز، هل تود المتابعة؟")) return;
+
+        showLoading(true, "جاري فك الارتباط...");
+        const data = await apiRequest({ action: 'unbindDevice', id: u, password: p });
+        showToast(data.msg, !data.success);
+        showLoading(false);
+    }
+
+    // 1. تعديل عرض الباقات لتشمل رصيد الجيجا
+    async function loadCardsFast() {
+        const grid = document.getElementById('cards-grid');
+        grid.innerHTML = "<small style='grid-column:1/-1;'>جاري التحديث...</small>";
+        const data = await apiRequest({ action: 'getStock' });
+        if(data.success) {
+            grid.innerHTML = "";
+            Object.keys(data.stock).forEach(key => {
+                const price = parseInt(key.replace(/[^0-9]/g, '')) || 0;
+                const discPrice = Math.floor(price * (1 - data.discount));
+                const isOut = data.stock[key] <= 0;
+                
+                // تحديد حجم الجيجا بناءً على السعر المستخرج من الاسم
+                const volume = dataVolumes[price] || "";
+
+                grid.innerHTML += `
+                <div class="item">
+                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نافد':'متوفر: '+data.stock[key]}</small>
+                    <h4 style="margin:5px 0 0 0;">${key}</h4>
+                    ${volume ? `<span class="data-size">📦 ${volume}</span>` : ''}
+                    <div class="price-tag">
+                        <span class="old-price">${price}</span> <span class="new-price">${discPrice} ر.ي</span>
+                    </div>
+                    <button class="btn" onclick="openQtyModal('${key}', ${data.stock[key]})" ${isOut?'disabled':''}>شراء</button>
+                </div>`;
+            });
+        }
+    }
+
+    async function confirmPurchaseAction() {
+        let qty = parseInt(document.getElementById('buy-qty-input').value);
+        if (qty <= 0 || qty > currentBuyingCard.max) return showToast("الكمية غير متاحة", true);
+        closeQtyModal();
+        showLoading(true, "جاري المعالجة...");
+        
+        let boughtCodes = [];
+        let finalBal = 0;
+        
+        for (let i = 0; i < qty; i++) {
+            const data = await apiRequest({ action: 'buyCard', id: myUser, password: myPass, cardType: currentBuyingCard.name });
+            if(data.success) {
+                boughtCodes.push(data.code);
+                finalBal = data.newBalance;
+                saveCardLocally(currentBuyingCard.name, data.code);
+            } else {
+                showToast(data.msg, true);
+                break;
+            }
+        }
+        
+        if (boughtCodes.length > 0) {
+            playSuccessSound();
+            document.getElementById('display-bal').innerText = finalBal;
+            lastKnownBalance = parseFloat(finalBal);
+            showCodesInModal(boughtCodes);
+            loadCardsFast(); 
+        }
+        showLoading(false);
+    }
+
+    function startBalanceAutoUpdate() {
+        if(balanceTimer) clearInterval(balanceTimer);
+        balanceTimer = setInterval(async () => {
+            const data = await apiRequest({ action: 'getBalance', id: myUser });
+            if (data.success) {
+                if (parseFloat(data.balance) > lastKnownBalance) {
+                    playSuccessSound();
+                    showToast("تم استلام رصيد جديد! 💰");
+                    loadTransferHistory();
+                }
+                lastKnownBalance = parseFloat(data.balance);
+                document.getElementById('display-bal').innerText = data.balance;
+            }
+        }, 15000);
+    }
+
+    function getDeviceId() {
+        let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        localStorage.setItem('m_dev_id', d);
+        return d;
+    }
+
+    function showToast(m, e=false) {
+        const t = document.getElementById('toast-msg');
+        t.innerText = m;
+        t.style.background = e ? "var(--error)" : "var(--success)";
+        t.style.display="block";
+        setTimeout(()=>t.style.display="none", 3500);
+    }
+
+    function showLoading(s, txt="جاري المعالجة...") {
+        document.getElementById('loading-overlay').style.display = s ? "flex" : "none";
+        document.getElementById('loading-text').innerText = txt;
+    }
+
+    function playSuccessSound() { document.getElementById('success-sound').play().catch(()=>{}); }
+    
+    function switchSec(id, el) {
+        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        document.getElementById('sec-'+id).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function openQtyModal(n, m) { currentBuyingCard = {name: n, max: m}; document.getElementById('qty-card-name').innerText=n; document.getElementById('qty-modal').style.display='flex'; }
+    function closeQtyModal() { document.getElementById('qty-modal').style.display='none'; }
+    
+    function saveCardLocally(t, c) {
+        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
+        cards.unshift({type:t, code:c, date: new Date().toLocaleString('ar-YE')});
+        localStorage.setItem('m_cards', JSON.stringify(cards));
+    }
+
+    function displaySavedCards() {
+        const container = document.getElementById('purchased-list');
+        const btn = document.getElementById('btn-copy-all');
+        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
+        if(!cards.length) { container.innerHTML = "<p style='text-align:center;color:#888;'>لا يوجد كروت</p>"; btn.style.display='none'; return; }
+        btn.style.display='block';
+        container.innerHTML = cards.map(c => `<div class="my-card-item"><small>${c.date} - ${c.type}</small><span class="my-card-code">${c.code}</span><button class="btn" style="padding:5px;font-size:0.8rem;" onclick="copySingle('${c.code}')">نسخ 📋</button></div>`).join('');
+    }
+
+    function copySingle(t) { navigator.clipboard.writeText(t).then(()=>showToast("تم النسخ")); }
+
+    function copyAllSaved() {
+        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
+        let txt = cards.map(c => `نوع: ${c.type} | كود: ${c.code}`).join('\n');
+        navigator.clipboard.writeText(txt).then(()=>showToast("تم نسخ الكل مع البيانات"));
+    }
+
+    function showCodesInModal(codes) {
+        document.getElementById('codes-container').innerHTML = codes.map(c => `<div style="padding:8px; border-bottom:1px solid #444; color:var(--gold); font-weight:bold;">${c}</div>`).join('');
+        document.getElementById('code-modal').style.display = 'flex';
+    }
+    function closeCodeModal() { document.getElementById('code-modal').style.display = 'none'; }
+    function copyAllFromModal() {
+        const codes = Array.from(document.querySelectorAll('#codes-container div')).map(el => el.innerText).join('\n');
+        navigator.clipboard.writeText(codes).then(() => showToast("تم النسخ"));
+    }
+
+    async function handleTransfer() {
+        const tid = document.getElementById('trans-id').value;
+        const amt = document.getElementById('trans-amt').value;
+        if(!tid || !amt) return showToast("أكمل البيانات", true);
+        showLoading(true, "جاري التحويل...");
+        const data = await apiRequest({ action: 'transfer', id: myUser, targetId: tid, amount: amt });
+        showToast(data.msg, !data.success);
+        if(data.success) {
+            document.getElementById('trans-id').value="";
+            document.getElementById('trans-amt').value="";
+            loadTransferHistory();
+        }
+        showLoading(false);
+    }
+
+    async function loadTransferHistory() {
+        const histDiv = document.getElementById('transfer-history-list');
+        histDiv.innerHTML = "<small>جاري التحديث...</small>";
+        const data = await apiRequest({ action: 'getOrders', id: myUser });
+        if(data.success && data.transfers) {
+            histDiv.innerHTML = data.transfers.slice(0, 5).map(t => `
+                <div class="history-item">
+                    <span>${t.type === 'in' ? '⬅️ استلام' : '➡️ إرسال'}</span>
+                    <b style="color:${t.type === 'in' ? 'var(--success)' : '#ff6b6b'}">${t.amount} ر.ي</b>
+                    <small>${t.date}</small>
+                </div>
+            `).join('');
+        } else {
+            histDiv.innerHTML = "<small style='color:#666'>لا توجد تحويلات حديثة</small>";
+        }
+    }
+
+    async function handleTopup() {
+        const a = document.getElementById('top-amt').value;
+        const r = document.getElementById('top-ref').value;
+        if(!a || !r) return showToast("أكمل البيانات", true);
+        showLoading(true, "جاري الإرسال...");
+        const data = await apiRequest({ action: 'requestTopup', id: myUser, amount: a, ref: r });
+        showToast(data.msg || "تم الإرسال");
+        loadOrders();
+        showLoading(false);
+    }
+
+    async function loadOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = "<small>جاري جلب الطلبات...</small>";
+        const data = await apiRequest({ action: 'getOrders', id: myUser });
+        if(data.success) {
+            const orderedData = data.orders; 
+            list.innerHTML = orderedData.map(o => `
+                <div class="order-item ${o.status === 'قيد الانتظار' ? 'pending' : 'success'}">
+                    <span style="float:left; font-weight:bold; font-size:0.8rem;">${o.status}</span>
+                    <b style="color:var(--gold)">${o.amount} ريال</b><br>
+                    <small style="color:#aaa;">${o.date} | مرجع: ${o.ref}</small>
+                </div>`).join('');
+        }
+    }
+
+    function handleLogout() { localStorage.clear(); location.reload(); }
+</script>
+</body>
+</html>
