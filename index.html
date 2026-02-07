@@ -31,7 +31,7 @@
 
         .app { max-width: 450px; margin: 0 auto; padding: 15px; min-height: 100vh; }
 
-        /* شريط الإعلانات */
+        /* شريط الإعلانات - عكس الحركة */
         .marquee-container { 
             background: linear-gradient(90deg, #4a041c, #2a000e); 
             color: var(--gold); 
@@ -41,33 +41,33 @@
             overflow: hidden; 
             white-space: nowrap; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 10;
+            position: sticky;
+            top: 0;
+            z-index: 2001;
         }
+        /* تعديل الحركة لتبدأ من اليسار إلى اليمين */
         .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        /* الناف بار السفلي */
+        /* الناف بار العلوي الجديد */
         .nav { 
-            position: fixed; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 90%; 
-            max-width: 400px; 
-            background: rgba(30, 0, 15, 0.85); 
+            position: sticky; 
+            top: 45px; /* أسفل الشريط المتحرك */
+            width: 100%; 
+            background: rgba(30, 0, 15, 0.9); 
             backdrop-filter: blur(20px);
             display: flex; 
-            padding: 12px; 
-            border-radius: 25px; 
-            border: 1px solid rgba(249, 217, 118, 0.2);
+            padding: 10px 0; 
+            border-bottom: 1px solid rgba(249, 217, 118, 0.2);
             z-index: 2000; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
         .nav-btn { 
             flex: 1; text-align: center; font-size: 0.75rem; color: #888; 
-            cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; gap: 4px;
+            cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; gap: 2px;
         }
-        .nav-btn.active { color: var(--gold); transform: translateY(-5px); font-weight: bold; }
+        .nav-btn.active { color: var(--gold); font-weight: bold; border-bottom: 2px solid var(--gold); padding-bottom: 5px; }
 
         /* البطاقات */
         .card { 
@@ -80,13 +80,31 @@
 
         .bal-box { 
             text-align: center; 
-            padding: 40px 20px; 
+            padding: 30px 20px; 
             background: linear-gradient(135deg, #4a041c 0%, #1a000a 100%); 
             border-radius: 30px; 
             margin-bottom: 30px; 
             border: 1px solid rgba(249, 217, 118, 0.3);
         }
-        .bal-val { font-size: 3.5rem; font-weight: 800; color: var(--gold); }
+        .bal-val { font-size: 3rem; font-weight: 800; color: var(--gold); line-height: 1; margin: 10px 0; }
+
+        /* التنبيهات (المتوسطة) */
+        #toast-msg { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            padding: 20px 30px; 
+            border-radius: 20px; 
+            z-index: 9999; 
+            text-align: center; 
+            min-width: 250px; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            display: none;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
 
         /* شبكة المنتجات */
         .item { 
@@ -117,25 +135,16 @@
             color: #fff; text-align: center; margin-bottom: 15px; box-sizing: border-box;
         }
 
-        /* إصلاح المودال (النافذة المنبثقة) */
         .custom-modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); 
-            display: none; /* يتم تغييره بواسطة JS إلى flex */
-            align-items: center; justify-content: center; 
+            background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; 
             z-index: 5000; padding: 20px; box-sizing: border-box;
         }
-        .modal-content { 
-            background: #1a000a; border: 1px solid var(--gold); 
-            border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; text-align: center; 
-        }
+        .modal-content { background: #1a000a; border: 1px solid var(--gold); border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; text-align: center; }
 
         .data-size { font-size: 0.7rem; color: var(--gold); border: 1px solid var(--gold); padding: 2px 10px; border-radius: 50px; display: inline-block; margin-top: 5px; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .hidden { display: none !important; }
-        #page-main { padding-bottom: 100px; }
 
-        /* تنسيق كروتي */
         .my-card-item { background: #fff; color: #1a000a; border-radius: 20px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
         .my-card-code { font-family: monospace; font-size: 1.5rem; font-weight: 800; color: #3d0016; display: block; text-align: center; margin: 15px 0; border: 2px dashed #3d0016; padding: 10px; border-radius: 10px; }
     </style>
@@ -147,11 +156,13 @@
 </div>
 
 <audio id="success-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_50727f751d.mp3" preload="auto"></audio>
+
 <div id="loading-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display:none; flex-direction: column; align-items: center; justify-content: center;">
     <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
     <div id="loading-text" style="color:var(--gold); margin-top:15px; font-weight: 700;">جاري المعالجة...</div>
 </div>
 <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+
 <div id="toast-msg"></div>
 
 <div class="app">
@@ -185,7 +196,7 @@
     <div id="page-main" class="hidden">
         <div class="bal-box">
             <div id="display-phone" style="color:var(--gold); font-size:0.9rem;">000000000</div>
-            <small style="opacity:0.7;">AVAILABLE BALANCE</small>
+            <small style="opacity:0.8; font-weight: bold; letter-spacing: 1px;">الرصيد المتاح</small>
             <div class="bal-val" id="display-bal">0</div>
             <small>ريال يمني</small>
         </div>
@@ -259,23 +270,14 @@
     };
 
     function toggleRegisterUI() {
-        document.body.classList.toggle('register-mode');
         document.getElementById('reg-actions').classList.toggle('hidden');
         document.getElementById('btn-reg-view').classList.toggle('hidden');
-    }
-
-    async function fetchDiscountInfo() {
-        const data = await apiRequest({ action: 'getStock' });
-        if(data.success) {
-            globalDiscount = data.discount;
-            document.getElementById('main-discount-info').innerText = `🎁 خصم حصري ${(globalDiscount * 100).toFixed(0)}% متوفر الآن`;
-        }
     }
 
     async function handleLogin() {
         const u = document.getElementById('login-user').value.trim();
         const p = document.getElementById('login-pass').value.trim();
-        if(!u || !p) return showToast("أدخل بياناتك", true);
+        if(!u || !p) return showToast("يرجى إدخال البيانات", true);
         showLoading(true, "جاري الدخول...");
         const data = await apiRequest({ action: 'getWallet', id: u, password: p });
         if (data.success) {
@@ -293,16 +295,29 @@
         showLoading(false);
     }
 
-    async function handleRegister() {
-        const u = document.getElementById('login-user').value.trim();
-        const p = document.getElementById('login-pass').value.trim();
-        if(u.length < 9) return showToast("الرقم قصير جداً", true);
-        showLoading(true, "جاري التسجيل...");
-        const data = await apiRequest({ action: 'register', id: u, password: p });
-        if(data.success) { showToast("تم التسجيل!"); handleLogin(); } else { showToast(data.msg, true); }
-        showLoading(false);
+    function showToast(m, e=false) {
+        const t = document.getElementById('toast-msg');
+        t.innerText = m;
+        t.style.background = e ? "rgba(231, 76, 60, 0.95)" : "rgba(46, 204, 113, 0.95)";
+        t.style.display="block";
+        setTimeout(()=>t.style.display="none", 3500);
     }
 
+    function switchSec(id, el) {
+        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
+        document.getElementById('sec-'+id).classList.remove('hidden');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // [باقي الدوال البرمجية الأصلية]
+    async function fetchDiscountInfo() {
+        const data = await apiRequest({ action: 'getStock' });
+        if(data.success) {
+            globalDiscount = data.discount;
+            document.getElementById('main-discount-info').innerText = `🎁 خصم حصري ${(globalDiscount * 100).toFixed(0)}% متوفر الآن`;
+        }
+    }
     async function loadCardsFast() {
         const grid = document.getElementById('cards-grid');
         grid.innerHTML = "<small style='grid-column:1/-1;'>تحديث المتجر...</small>";
@@ -325,7 +340,13 @@
             });
         }
     }
-
+    function openQtyModal(n, m) { 
+        currentBuyingCard = {name: n, max: m}; 
+        document.getElementById('qty-card-name').innerText = n; 
+        document.getElementById('buy-qty-input').max = m;
+        document.getElementById('qty-modal').style.display = 'flex'; 
+    }
+    function closeQtyModal() { document.getElementById('qty-modal').style.display = 'none'; }
     async function confirmPurchaseAction() {
         let qty = parseInt(document.getElementById('buy-qty-input').value);
         if (qty <= 0 || qty > currentBuyingCard.max) return showToast("الكمية غير متوفرة", true);
@@ -350,53 +371,14 @@
         }
         showLoading(false);
     }
-
-    function openQtyModal(n, m) { 
-        currentBuyingCard = {name: n, max: m}; 
-        document.getElementById('qty-card-name').innerText = n; 
-        document.getElementById('buy-qty-input').max = m;
-        document.getElementById('qty-modal').style.display = 'flex'; 
-    }
-    function closeQtyModal() { document.getElementById('qty-modal').style.display = 'none'; }
-    
     function showCodesInModal(codes) {
         document.getElementById('codes-container').innerHTML = codes.map(c => `<div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.1); color:var(--gold); font-family:monospace; font-weight:bold; font-size:1.2rem;">${c}</div>`).join('');
         document.getElementById('code-modal').style.display = 'flex';
     }
     function closeCodeModal() { document.getElementById('code-modal').style.display = 'none'; }
-
-    function showToast(m, e=false) {
-        const t = document.getElementById('toast-msg');
-        t.innerText = m;
-        t.style.background = e ? "rgba(231, 76, 60, 0.9)" : "rgba(46, 204, 113, 0.9)";
-        t.style.display="block";
-        setTimeout(()=>t.style.display="none", 3500);
-    }
-
-    function showLoading(s, txt) {
-        document.getElementById('loading-overlay').style.display = s ? "flex" : "none";
-        document.getElementById('loading-text').innerText = txt;
-    }
-
-    function switchSec(id, el) {
-        ['sec-cards', 'sec-topup', 'sec-mycards', 'sec-transfer'].forEach(s => document.getElementById(s).classList.add('hidden'));
-        document.getElementById('sec-'+id).classList.remove('hidden');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-    }
-
-    function getDeviceId() {
-        let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        localStorage.setItem('m_dev_id', d);
-        return d;
-    }
-
-    function saveCardLocally(t, c) {
-        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
-        cards.unshift({type:t, code:c, date: new Date().toLocaleString('ar-YE')});
-        localStorage.setItem('m_cards', JSON.stringify(cards));
-    }
-
+    function showLoading(s, txt) { document.getElementById('loading-overlay').style.display = s ? "flex" : "none"; document.getElementById('loading-text').innerText = txt; }
+    function getDeviceId() { let d = localStorage.getItem('m_dev_id') || 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); localStorage.setItem('m_dev_id', d); return d; }
+    function saveCardLocally(t, c) { let cards = JSON.parse(localStorage.getItem('m_cards') || '[]'); cards.unshift({type:t, code:c, date: new Date().toLocaleString('ar-YE')}); localStorage.setItem('m_cards', JSON.stringify(cards)); }
     function displaySavedCards() {
         const container = document.getElementById('purchased-list');
         const btn = document.getElementById('btn-copy-all');
@@ -405,18 +387,9 @@
         btn.style.display='block';
         container.innerHTML = cards.map(c => `<div class="my-card-item"><small>${c.date} | ${c.type}</small><span class="my-card-code">${c.code}</span><button class="btn" style="padding:5px; font-size:0.8rem;" onclick="copySingle('${c.code}')">نسخ 📋</button></div>`).join('');
     }
-
     function copySingle(t) { navigator.clipboard.writeText(t).then(()=>showToast("تم النسخ")); }
-    function copyAllSaved() {
-        let cards = JSON.parse(localStorage.getItem('m_cards') || '[]');
-        let txt = cards.map(c => `${c.type}: ${c.code}`).join('\n');
-        navigator.clipboard.writeText(txt).then(()=>showToast("تم النسخ"));
-    }
-    function copyAllFromModal() {
-        const codes = Array.from(document.querySelectorAll('#codes-container div')).map(el => el.innerText).join('\n');
-        navigator.clipboard.writeText(codes).then(() => showToast("تم النسخ"));
-    }
-
+    function copyAllSaved() { let cards = JSON.parse(localStorage.getItem('m_cards') || '[]'); let txt = cards.map(c => `${c.type}: ${c.code}`).join('\n'); navigator.clipboard.writeText(txt).then(()=>showToast("تم النسخ")); }
+    function copyAllFromModal() { const codes = Array.from(document.querySelectorAll('#codes-container div')).map(el => el.innerText).join('\n'); navigator.clipboard.writeText(codes).then(() => showToast("تم النسخ")); }
     async function handleTransfer() {
         const tid = document.getElementById('trans-id').value;
         const amt = document.getElementById('trans-amt').value;
@@ -427,14 +400,12 @@
         if(data.success) { loadTransferHistory(); }
         showLoading(false);
     }
-
     async function loadTransferHistory() {
         const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success && data.transfers) {
             document.getElementById('transfer-history-list').innerHTML = data.transfers.slice(0, 5).map(t => `<div style="padding:10px; background:rgba(255,255,255,0.05); margin-bottom:5px; border-radius:10px;">${t.type === 'in' ? '📩 استلام' : '📤 إرسال'} : ${t.amount} ر.ي</div>`).join('');
         }
     }
-
     async function handleTopup() {
         const a = document.getElementById('top-amt').value;
         const r = document.getElementById('top-ref').value;
@@ -444,14 +415,12 @@
         showToast(data.msg || "تم الإرسال"); loadOrders();
         showLoading(false);
     }
-
     async function loadOrders() {
         const data = await apiRequest({ action: 'getOrders', id: myUser });
         if(data.success) {
             document.getElementById('orders-list').innerHTML = data.orders.map(o => `<div style="padding:10px; background:rgba(255,255,255,0.05); margin-bottom:10px; border-radius:12px;"><b>${o.amount} ريال</b> - ${o.status}</div>`).join('');
         }
     }
-
     function startBalanceAutoUpdate() {
         setInterval(async () => {
             const data = await apiRequest({ action: 'getBalance', id: myUser });
@@ -462,7 +431,6 @@
             }
         }, 15000);
     }
-
     function playSuccessSound() { document.getElementById('success-sound').play().catch(()=>{}); }
     async function handleUnbind() {
         const u = document.getElementById('login-user').value.trim();
