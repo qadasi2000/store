@@ -37,6 +37,11 @@
         .btn:disabled { background: #555 !important; color: #888 !important; cursor: not-allowed; opacity: 0.6; }
         .btn:active { transform: scale(0.96); opacity: 0.9; }
         
+        /* تصميم قائمة الطلبات المحدث */
+        .order-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid #888; }
+        .order-item.pending { border-left-color: var(--pending); background: rgba(243, 156, 18, 0.1); }
+        .order-item.success { border-left-color: var(--success); background: rgba(46, 204, 113, 0.1); }
+
         .my-card-item { background: #fff; color: #3d0016; border-radius: 15px; padding: 15px; margin-bottom: 10px; border-right: 5px solid var(--gold); position: relative; }
         .my-card-code { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #d35400; display: block; text-align: center; letter-spacing: 1px; margin: 10px 0; }
         .copy-btn-small { background: #f3f3f3; border: none; padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: bold; color: #333; width: 100%; }
@@ -140,11 +145,12 @@
 </div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxOTcA7GbOr15kAPwrUEcW3GDBGevkejpSOrGSOIs-RM-lr9ybbUmKr8M_CENul_8bz/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbxCYrjc97E3X6wXQUA_Ol9B5EhrQo_p8yP7i-jGidXzLzO20RWxXz8KI3BekCdpMbqd/exec';
     let myUser = "", myPass = "";
     let currentBuyingCard = { name: "", max: 0 };
     let balanceTimer = null;
     let lastKnownBalance = 0;
+    let globalDiscount = 0.20; // نسبة الخصم الافتراضية
 
     window.onload = () => {
         const savedU = localStorage.getItem('m_user');
@@ -156,32 +162,28 @@
         }
     };
 
-    // وظيفة فك الارتباط
+    // --- ميزة فك الارتباط المحدثة ---
     async function handleUnbind() {
         const u = document.getElementById('login-user').value;
         const p = document.getElementById('login-pass').value;
         if(!u || !p) return showToast("أدخل الهاتف وكلمة المرور أولاً", true);
-        
-        if(!confirm("هل أنت متأكد من رغبتك في فك ارتباط الحساب بالجهاز السابق وربطه بهذا الجهاز؟")) return;
+        if(!confirm("هل أنت متأكد من رغبتك في فك ارتباط الحساب؟")) return;
 
         showLoading(true);
         try {
-            // ملاحظة: يجب أن يدعم السكريبت في الخلفية (Google Apps Script) Action يسمى unbindDevice
-            const res = await fetch(`${URL}?action=unbindDevice&id=${u}&password=${p}&newDeviceId=${getDeviceId()}`);
+            const res = await fetch(`${URL}?action=unbindDevice&id=${u}&password=${p}`);
             const data = await res.json();
-            
             if(data.success) {
-                showToast("تم فك الارتباط بنجاح! يمكنك الدخول الآن.");
+                showToast("✅ تم فك الارتباط بنجاح! يمكنك الدخول الآن.");
             } else {
-                showToast(data.msg || "فشل فك الارتباط، تأكد من البيانات", true);
+                showToast(data.msg || "فشل فك الارتباط", true);
             }
         } catch(e) {
-            showToast("حدث خطأ في الاتصال", true);
+            showToast("حدث خطأ في الاتصال بالسيرفر", true);
         }
         showLoading(false);
     }
 
-    // تشغيل نغمة النجاح
     function playSuccessSound() {
         const sound = document.getElementById('success-sound');
         sound.currentTime = 0;
@@ -245,26 +247,36 @@
         showLoading(false);
     }
 
+    // --- ميزة جلب المخزون مع الخصم الديناميكي ---
     async function loadCardsFast() {
         const grid = document.getElementById('cards-grid');
         grid.innerHTML = "<small style='grid-column: 1 / -1; text-align: center;'>جاري التحديث...</small>";
         try {
             const res = await fetch(`${URL}?action=getStock`);
-            const stock = await res.json();
-            grid.innerHTML = "";
-            Object.keys(stock).forEach(key => {
-                const isOut = stock[key] <= 0;
-                const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
-                const discountedPrice = Math.floor(originalPrice * 0.80);
-                grid.innerHTML += `
-                <div class="item">
-                    <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
-                    <h4 style="margin:5px 0; font-size:0.95rem;">${key}</h4>
-                    <div class="price-tag"><span class="old-price">${originalPrice}</span> <span class="new-price">${discountedPrice} ر.ي</span></div>
-                    <button class="btn" onclick="openQtyModal('${key}', ${stock[key]})" ${isOut?'disabled':''}>${isOut?'غير متوفر':'شراء'}</button>
-                </div>`;
-            });
-        } catch(e) { grid.innerHTML = "خطأ في التحديث"; }
+            const data = await res.json();
+            if(data.success) {
+                globalDiscount = data.discount; // تحديث نسبة الخصم من الشيت
+                const stock = data.stock;
+                grid.innerHTML = "";
+                Object.keys(stock).forEach(key => {
+                    const isOut = stock[key] <= 0;
+                    const originalPrice = parseInt(key.replace(/[^0-9]/g, '')) || 0;
+                    // حساب السعر بناءً على الخصم القادم من السيرفر
+                    const discountedPrice = Math.floor(originalPrice * (1 - globalDiscount));
+                    
+                    grid.innerHTML += `
+                    <div class="item">
+                        <small style="color:${isOut?'#ff4d4d':'#2ecc71'}">${isOut?'نفد':'متوفر: '+stock[key]}</small>
+                        <h4 style="margin:5px 0; font-size:0.95rem;">${key}</h4>
+                        <div class="price-tag">
+                            <span class="old-price">${originalPrice}</span> 
+                            <span class="new-price">${discountedPrice} ر.ي</span>
+                        </div>
+                        <button class="btn" onclick="openQtyModal('${key}', ${stock[key]})" ${isOut?'disabled':''}>${isOut?'غير متوفر':'شراء'}</button>
+                    </div>`;
+                });
+            }
+        } catch(e) { grid.innerHTML = "خطأ في تحديث البيانات"; }
     }
 
     function openQtyModal(name, max) {
@@ -383,17 +395,23 @@
         showLoading(false);
     }
 
+    // --- ميزة عرض الطلبات المرتبة ---
     async function loadOrders() {
         const list = document.getElementById('orders-list');
         try {
             const res = await fetch(`${URL}?action=getOrders&id=${myUser}`);
             const data = await res.json();
             if(data.success) {
-                list.innerHTML = data.orders.map(o => `
-                    <div class="order-item ${o.status === 'مكتمل' ? 'success' : ''}">
-                        <span style="float:left; font-size:0.7rem;">${o.status}</span>
-                        <b>${o.amount} ريال</b><br><small>${o.date}</small>
-                    </div>`).join('');
+                // الكود في الخلفية يقوم بالترتيب، هنا فقط نقوم بالعرض
+                list.innerHTML = data.orders.map(o => {
+                    const statusClass = o.status === 'قيد الانتظار' ? 'pending' : (o.status === 'مكتمل' ? 'success' : '');
+                    return `
+                    <div class="order-item ${statusClass}">
+                        <span style="float:left; font-size:0.75rem; font-weight:bold;">${o.status}</span>
+                        <b style="color:var(--gold)">${o.amount} ريال</b><br>
+                        <small style="color:#aaa;">${o.date} | مرجع: ${o.ref}</small>
+                    </div>`;
+                }).join('');
             }
         } catch(e) {}
     }
